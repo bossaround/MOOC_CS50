@@ -1,0 +1,1295 @@
+---
+title: "Descriptive Statistics for the MOOC data"
+output:
+  html_notebook: default
+  html_document: default
+  pdf_document: default
+---
+
+Descriptive statistics and logistic regression predicting irregular participants and certification
+
+```{r warning=FALSE}
+# if using mac:
+setwd("/Users/chenchen/Dropbox/MOOK/MOOC_CS50")
+# if using win:
+#setwd("C:/Users/Chen/Dropbox/MOOK")
+# if using ThinkPad
+#setwd("C:/Users/ciolo/Dropbox/MOOK")
+#load data
+dat <- read.csv("CS50_ChosenUsers_1_irt.csv",header=TRUE, sep=",")
+```
+```{r}
+save(dat, file = "CS50_raw_completed_pretest.RData")
+```
+```{r warning=FALSE}
+#those folllow the sequence are regular students, and those do not follow the seqence are irregular students
+#please note this does not count p9, the final.
+dat$regular<-NA
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==0 & dat$p0==1 )] <- 1
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2==0 & dat$p1==1 & dat$p0==1 )] <- 2
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3==0 & dat$p2+ dat$p1==2 & dat$p0==1 )] <- 3
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4==0 & dat$p3+ dat$p2+ dat$p1==3 & dat$p0==1 )] <- 4
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5==0 & dat$p4+ dat$p3+ dat$p2+ dat$p1==4 & dat$p0==1 )] <- 5
+dat$regular[which(dat$p8 + dat$p7 + dat$p6==0 & dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==5 & dat$p0==1 )] <- 6
+dat$regular[which(dat$p8 + dat$p7 ==0 & dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==6 & dat$p0==1 )] <- 7
+dat$regular[which(dat$p8 == 0 & dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==7 & dat$p0==1 )] <- 8
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==8 & dat$p0==1 )] <- 9
+
+
+dat$regularf<-0
+#dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1> 0 & dat$p0 ==1 )] <- 0
+#dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==0 & dat$p0==1 )] <- 1
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2==0 & dat$p1==1 & dat$p0==1 )] <- 1
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3==0 & dat$p2+ dat$p1==2 & dat$p0==1 )] <- 2
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4==0 & dat$p3+ dat$p2+ dat$p1==3 & dat$p0==1 )] <- 3
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5==0 & dat$p4+ dat$p3+ dat$p2+ dat$p1==4 & dat$p0==1 )] <- 4
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6==0 & dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==5 & dat$p0==1 )] <- 5
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 ==0 & dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==6 & dat$p0==1 )] <- 6
+dat$regularf[which(dat$p9 + dat$p8 == 0 & dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==7 & dat$p0==1 )] <- 7
+dat$regularf[which(dat$p9 == 0 & dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==8 & dat$p0==1 )] <- 8
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==9 & dat$p0==1 )] <- 9
+
+#dat$irregular <- NA
+#dat$irregular[which(is.na(dat$regularf) & dat$p0==1)] <- 1
+#dat$irregular[which(dat$regularf > 0 & dat$p0==1)] <- 0
+```
+```{r warning=FALSE}
+#processing some other variables
+#set reference date to 2014 May, created binary enroll phase.
+#add number of computer language, number of none-zero, highest profeciency in any language
+dat$age = 2015- as.numeric(as.character(dat$profile_year_of_birth))
+dat$age[which(dat$age<10)] <- NA
+dat$age[which(dat$age>80)] <- NA
+dat$age[which(dat$age>69)] <- NA
+#dat$c0 <- as.numeric(as.character(dat$c0))
+dat$c1 <- as.numeric(as.character(dat$c1))
+dat$c2 <- as.numeric(as.character(dat$c2))
+dat$c3 <- as.numeric(as.character(dat$c3))
+dat$c4 <- as.numeric(as.character(dat$c4))
+dat$c5 <- as.numeric(as.character(dat$c5))
+dat$c6 <- as.numeric(as.character(dat$c6))
+dat$c7 <- as.numeric(as.character(dat$c7))
+dat$c8 <- as.numeric(as.character(dat$c8))
+dat$c9 <- as.numeric(as.character(dat$c9))
+dat$c10 <- as.numeric(as.character(dat$c10))
+
+dat$edu <- 7-as.numeric(as.character(dat$profile_level_of_education))
+dat$edu[which(dat$edu<1)] <- NA
+dat$numlang <- as.numeric(as.character(dat$num_lang))
+dat$father_ed[which(dat$father_ed>6)]<-NA
+dat$father_edu <- 6-dat$father_ed
+dat$mother_ed[which(dat$mother_ed>6)]<-NA
+dat$mother_edu <- 6-dat$mother_ed
+dat$engfluent <- dat$fluent_1 + dat$fluent_2 + dat$fluent_3 + dat$fluent_4
+dat$nointendcomplete <- dat$complete_1 + dat$complete_2 + dat$complete_3 
+dat$sat_math[which(dat$sat_math<300)] <- NA
+dat$sat_verb[which(dat$sat_verb<200)] <-NA
+dat$prog_year <- as.numeric(as.character(dat$prog_years))
+dat$exp <- NA
+dat$exp[which(dat$experience==1)] <- 1
+dat$exp[which(dat$experience==0)] <- 0
+dat$reason_lc <- as.factor(dat$reason_lc)
+dat$reason_lc[which(dat$reason_lc==3)] <- NA
+dat$reason <- as.numeric(dat$reason_lc)
+dat$foreign[which(is.na(dat$COUNTRY))] <- NA
+dat$npset <- NA
+dat$npset <-  dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1
+dat$reason_lc[which(dat$reason_lc==0)] <-1
+dat$extrovert <- as.numeric(as.character(dat$introvert))
+dat$extrovert[which(dat$extrovert == 4)] <-3
+dat$extrovert[which(dat$extrovert == 5)] <- 4
+dat$colab_pref<- as.numeric(dat$colab_pref)
+dat$progroup <- NA
+dat$progroup[which(dat$colab_pref==4)] <-2
+dat$progroup[which(dat$colab_pref==6)] <- 0
+dat$progroup[which(dat$colab_pref==3 | dat$colab_pref==5)] <- 1
+#dat$cert <- 4- dat$cert
+dat$nohelp <- dat$ppl_help_11
+dat$gamehour5 <- as.numeric(as.character(dat$games))
+dat$maxproglang <- apply(dat[187:223], 1, function(x) max(x, na.rm=TRUE))
+dat$maxproglang[which(dat$maxproglang<0)] <- 0
+dat$totalproglang <- apply(dat[301:332], 1, function(x) sum(x, na.rm=TRUE))
+dat$totalproglang[which(dat$totalproglang>21)] <- 21
+
+dat$forums <- 3-dat$forums
+dat$exp_complete_video <- dat$complete_1
+dat$exp_complete_assign <- dat$complete_2
+dat$exp_complete_final <- dat$complete_3
+#need to remove NAs when calculating the max
+```
+```{r}
+dat$final <- NA
+dat$final[which(dat$gradepf==0 & !is.na(dat$sb_p9))] <- 0
+dat$final[which(dat$gradepf==1)] <- 1
+
+```
+
+```{r}
+dat$sb0<- as.Date(dat$enrollment_created, "%Y-%m-%d %H:%M") -100
+dat$refday<- as.Date(dat$couse_all_upload, "%Y-%m-%d %H:%M")
+#dat$enrolltime <- as.numeric(dat$enrollday - dat$refday)
+```
+```{r}
+# dat$sb1<- as.Date(dat$sb_p1, "%m/%d/%Y %H:%M")
+# dat$sb2<- as.Date(dat$sb_p2, "%m/%d/%Y %H:%M")
+# dat$sb3<- as.Date(dat$sb_p3, "%m/%d/%Y %H:%M")
+# dat$sb4<- as.Date(dat$sb_p4, "%m/%d/%Y %H:%M")
+# dat$sb5<- as.Date(dat$sb_p5, "%m/%d/%Y %H:%M")
+# dat$sb6<- as.Date(dat$sb_p6, "%m/%d/%Y %H:%M")
+# dat$sb7<- as.Date(dat$sb_p7, "%m/%d/%Y %H:%M")
+# dat$sb8<- as.Date(dat$sb_p8, "%m/%d/%Y %H:%M")
+# dat$sb9<- as.Date(dat$sb_pf, "%m/%d/%Y %H:%M")
+
+dat$sb1<- as.POSIXct(dat$sb_p1, "%m/%d/%Y %H:%M", tz = "GMT")
+dat$sb2<- as.POSIXct(dat$sb_p2, "%m/%d/%Y %H:%M", tz = "GMT")+1
+dat$sb3<- as.POSIXct(dat$sb_p3, "%m/%d/%Y %H:%M", tz = "GMT")+2
+dat$sb4<- as.POSIXct(dat$sb_p4, "%m/%d/%Y %H:%M", tz = "GMT")+3
+dat$sb5<- as.POSIXct(dat$sb_p5, "%m/%d/%Y %H:%M", tz = "GMT")+4
+dat$sb6<- as.POSIXct(dat$sb_p6, "%m/%d/%Y %H:%M", tz = "GMT")+5
+dat$sb7<- as.POSIXct(dat$sb_p7, "%m/%d/%Y %H:%M", tz = "GMT")+6
+dat$sb8<- as.POSIXct(dat$sb_p8, "%m/%d/%Y %H:%M", tz = "GMT")+7
+dat$sb9<- as.POSIXct(dat$sb_p9, "%m/%d/%Y %H:%M", tz = "GMT")+8
+```
+```{r}
+dat$ms<-rowSums(dat[,c("p1","p2","p3","p4","p5","p6","p7","p8","p9")], na.rm = TRUE)
+dat$ms2<-rowSums(dat[,c("p1","p2","p3","p4","p5","p6","p7","p8")], na.rm = TRUE)
+```
+
+```{r}
+dat2 = dat[dat$p0==1,]
+dat3 <- dat2[, c("user_id","sb0","sb1","sb2","sb3","sb4","sb5","sb6","sb7","sb8","sb9","ms","regularf","final","certificate","gradepf")]
+```
+```{r}
+prank<-function(x){
+  r<-rank(x,ties.method='min')
+  r[is.na(x)]<-NA
+  r
+}
+```
+
+```{r}
+dat4<-data.frame(dat3,t(apply(dat3[,2:11],1,prank)))
+```
+```{r}
+# the labels are named poorly... step here actually mean psets, the value means the ranking of the time that they submitted the milestone
+colnames(dat4)[17:26] <- c("step0","step1","step2","step3","step4","step5","step6","step7","step8","step9")
+dat4f <- dat4[dat4$step9==2 & !is.na(dat4$step9),]
+```
+
+```{r}
+dat5 <- reshape(dat4, dir="long",varying = list(17:26), timevar = "milestone",v.names = "step",idvar="user_id")
+dat5 <- dat5[order(dat5$user_id),]
+dat6<- dat5[!is.na(dat5$step),]
+
+dat5f <- reshape(dat4f, dir="long",varying = list(17:26), timevar = "milestone",v.names = "step",idvar="user_id")
+dat5f <- dat5f[order(dat5f$user_id),]
+dat6f<- dat5f[!is.na(dat5f$step),]
+#in dat6, milestone=1 means p0, and milestone=10 means p9
+```
+```{r}
+dat4s <- dat4
+#dat4s$step10 <- pmax(dat4[,17:26],na.rm = TRUE) 
+dat4s$step10 <- do.call(pmax, c(dat4s[17:26], na.rm=TRUE)) + 1
+#dat4s$step12 <- apply(dat4s[,17:26], 1, max,na.rm=TRUE)
+dat4sp<- data.table(dat4s)  # the next line only work for data.table, use is.data.table(DT) to check if TRUE
+dat4sp[, `:=`(g = .GRP, n = .N), by=.(step0,step1,step2,step3,step4,step5,step6,step7,step8,step9,step10)]
+dat4sf <- dat4s[dat4s$step9==2 & !is.na(dat4s$step9),]
+# get the early challengers who passed and failed the final.
+dat4sf1 <- dat4s[dat4s$step9==2 & !is.na(dat4s$step9) & dat4s$gradepf == 1,]
+dat4sf0 <- dat4s[dat4s$step9==2 & !is.na(dat4s$step9) & dat4s$gradepf == 0,]
+
+
+```
+```{r}
+dat4spm <- dat4sp[dat4sp$n>50]
+```
+```{r}
+# dat4s[,17:26] <- dat4m
+```
+
+
+
+```{r}
+dat5s <- reshape(dat4s, dir="long",varying = list(17:27), timevar = "milestone",v.names = "step",idvar="user_id")
+dat5s <- dat5s[order(dat5s$user_id),]
+dat5s[1:20,16:18]
+
+dat5sf <- reshape(dat4sf, dir="long",varying = list(17:27), timevar = "milestone",v.names = "step",idvar="user_id")
+dat5sf <- dat5sf[order(dat5sf$user_id),]
+dat5sf[1:20,16:18]
+
+dat5sf1 <- reshape(dat4sf1, dir="long",varying = list(17:27), timevar = "milestone",v.names = "step",idvar="user_id")
+dat5sf1 <- dat5sf1[order(dat5sf1$user_id),]
+dat5sf1[1:20,16:18]
+
+dat5sf0 <- reshape(dat4sf0, dir="long",varying = list(17:27), timevar = "milestone",v.names = "step",idvar="user_id")
+dat5sf0 <- dat5sf0[order(dat5sf0$user_id),]
+dat5sf0[1:20,16:18]
+
+dat5sp <- reshape(dat4spm, dir="long",varying = list(17:27), timevar = "milestone",v.names = "step",idvar="user_id")
+dat5sp <- dat5sp[order(dat5sp$user_id),]
+dat5sp[1:20,16:20]
+#dat5s <- dat5s[order(dat5s$ms,dat5s$user_id, dat5s$step),]
+```
+```{r}
+dat6s<- dat5s[!is.na(dat5s$step),]
+#dat6s$milestone[which(is.na(dat6s$step))] <- 11
+#dat6s$milestone[which(dat6s$milestone==11)] <- -10
+#dat6s$steps <- rep(1:11,nrow(dat4s))
+dat6sf<- dat5sf[!is.na(dat5sf$step),]
+dat6sf1<- dat5sf1[!is.na(dat5sf1$step),]
+dat6sf0<- dat5sf0[!is.na(dat5sf0$step),]
+dat6sp<- dat5sp[!is.na(dat5sp$step),]
+```
+```{r}
+#dat6s$stepm <- ifelse(is.na(dat6s$step), dat6s$steps, dat6s$step)
+```
+
+
+```{r}
+library(riverplot)
+library(tidyr)
+#detach("package:dplyr", unload=TRUE)
+library(plyr)
+# path <- spread(dat6,step,milestone) %>%
+#    count(`1`,`2`)
+```
+```{r}
+path <- spread(dat6,step,milestone)
+colnames(path)[17:26] <- c("step1","step2","step3","step4","step5","step6","step7","step8","step9","step10")
+paths <- path %>%
+count(var=c('step1','step2','step3','step4','step5','step6','step7','step8','step9','step10'))
+```
+```{r}
+pathf <- spread(dat6f,step,milestone)
+colnames(pathf)[17:26] <- c("step1","step2","step3","step4","step5","step6","step7","step8","step9","step10")
+pathsf <- pathf %>%
+count(var=c('step1','step2','step3','step4','step5','step6','step7','step8','step9','step10'))
+
+
+```
+```{r}
+path2 <- spread(dat6s,step,milestone)
+colnames(path2)[17:26] <- c("step1","step2","step3","step4","step5","step6","step7","step8","step9","step10")
+paths2 <- path2 %>%
+count(var=c('step1','step2','step3','step4','step5','step6','step7','step8','step9','step10'))
+```
+```{r}
+path2f <- spread(dat6sf,step,milestone)
+colnames(path2f)[17:26] <- c("step1","step2","step3","step4","step5","step6","step7","step8","step9","step10")
+paths2f <- path2f %>%
+count(var=c('step1','step2','step3','step4','step5','step6','step7','step8','step9','step10'))
+
+pathf1 <- spread(dat6sf1,step,milestone)
+colnames(pathf1)[17:26] <- c("step1","step2","step3","step4","step5","step6","step7","step8","step9","step10")
+pathsf1 <- pathf1 %>%
+count(var=c('step1','step2','step3','step4','step5','step6','step7','step8','step9','step10'))
+
+pathf0 <- spread(dat6sf0,step,milestone)
+colnames(pathf0)[17:26] <- c("step1","step2","step3","step4","step5","step6","step7","step8","step9","step10")
+pathsf0 <- pathf0 %>%
+count(var=c('step1','step2','step3','step4','step5','step6','step7','step8','step9','step10'))
+```
+```{r}
+path2p <- spread(dat6sp,step,milestone)
+colnames(path2p)[19:28] <- c("step1","step2","step3","step4","step5","step6","step7","step8","step9","step10")
+paths2p <- path2p %>%
+count(var=c('step1','step2','step3','step4','step5','step6','step7','step8','step9','step10'))
+```
+
+```{r}
+prefix <- function(p, n) {paste(p, n, sep = '-')}
+nodes <- distinct(dat6, step, milestone) %>%
+  mutate(ID = prefix(step, milestone),
+         y = dense_rank(milestone)) %>%
+  select(ID, x = step, y)
+nodesf <- distinct(dat6f, step, milestone) %>%
+  mutate(ID = prefix(step, milestone),
+         y = dense_rank(milestone)) %>%
+  select(ID, x = step, y)
+nodesf1 <- distinct(dat6sf1, step, milestone) %>%
+  mutate(ID = prefix(step, milestone),
+         y = dense_rank(milestone)) %>%
+  select(ID, x = step, y)
+nodesf0 <- distinct(dat6sf0, step, milestone) %>%
+  mutate(ID = prefix(step, milestone),
+         y = dense_rank(milestone)) %>%
+  select(ID, x = step, y)
+nodes2 <- distinct(dat6s, step, milestone) %>%
+  mutate(ID = prefix(step, milestone),
+         y = dense_rank(milestone)) %>%
+  select(ID, x = step, y)
+nodes2f <- distinct(dat6sf, step, milestone) %>%
+  mutate(ID = prefix(step, milestone),
+         y = dense_rank(milestone)) %>%
+  select(ID, x = step, y)
+nodes2p <- distinct(dat6sp, step, milestone) %>%
+  mutate(ID = prefix(step, milestone),
+         y = dense_rank(milestone)) %>%
+  select(ID, x = step, y)
+```
+```{r}
+detach("package:plyr", unload=TRUE)
+library(dplyr)
+e12 <- group_by(paths, N1 = step1, N2 = step2) %>%
+  summarise(Value=sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(1, N1),
+         N2 = prefix(2, N2))
+
+e23 <- group_by(paths, N1 = step2, N2 = step3) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(2, N1),
+         N2 = prefix(3, N2))
+
+e34 <- group_by(paths, N1 = step3, N2 = step4) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(3, N1),
+         N2 = prefix(4, N2))
+
+e45 <- group_by(paths, N1 = step4, N2 = step5) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(4, N1),
+         N2 = prefix(5, N2))
+
+e56 <- group_by(paths, N1 = step5, N2 = step6) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(5, N1),
+         N2 = prefix(6, N2))
+
+e67 <- group_by(paths, N1 = step6, N2 = step7) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(6, N1),
+         N2 = prefix(7, N2))
+
+e78 <- group_by(paths, N1 = step7, N2 = step8) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(7, N1),
+         N2 = prefix(8, N2))
+
+e89 <- group_by(paths, N1 = step8, N2 = step9) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(8, N1),
+         N2 = prefix(9, N2))
+
+e90 <- group_by(paths, N1 = step9, N2 = step10) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(9, N1),
+         N2 = prefix(10, N2))
+
+#-----------------
+
+e12f <- group_by(pathsf, N1 = step1, N2 = step2) %>%
+  summarise(Value=sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(1, N1),
+         N2 = prefix(2, N2))
+
+e23f <- group_by(pathsf, N1 = step2, N2 = step3) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(2, N1),
+         N2 = prefix(3, N2))
+
+e34f <- group_by(pathsf, N1 = step3, N2 = step4) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(3, N1),
+         N2 = prefix(4, N2))
+
+e45f <- group_by(pathsf, N1 = step4, N2 = step5) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(4, N1),
+         N2 = prefix(5, N2))
+
+e56f <- group_by(pathsf, N1 = step5, N2 = step6) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(5, N1),
+         N2 = prefix(6, N2))
+
+e67f <- group_by(pathsf, N1 = step6, N2 = step7) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(6, N1),
+         N2 = prefix(7, N2))
+
+e78f <- group_by(pathsf, N1 = step7, N2 = step8) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(7, N1),
+         N2 = prefix(8, N2))
+
+e89f <- group_by(pathsf, N1 = step8, N2 = step9) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(8, N1),
+         N2 = prefix(9, N2))
+
+e90f <- group_by(pathsf, N1 = step9, N2 = step10) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(9, N1),
+         N2 = prefix(10, N2))
+
+#-----------------
+
+e12s <- group_by(paths2, N1 = step1, N2 = step2) %>%
+  summarise(Value=sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(1, N1),
+         N2 = prefix(2, N2))
+
+e23s <- group_by(paths2, N1 = step2, N2 = step3) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(2, N1),
+         N2 = prefix(3, N2))
+
+e34s <- group_by(paths2, N1 = step3, N2 = step4) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(3, N1),
+         N2 = prefix(4, N2))
+
+e45s <- group_by(paths2, N1 = step4, N2 = step5) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(4, N1),
+         N2 = prefix(5, N2))
+
+e56s <- group_by(paths2, N1 = step5, N2 = step6) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(5, N1),
+         N2 = prefix(6, N2))
+
+e67s <- group_by(paths2, N1 = step6, N2 = step7) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(6, N1),
+         N2 = prefix(7, N2))
+
+e78s <- group_by(paths2, N1 = step7, N2 = step8) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(7, N1),
+         N2 = prefix(8, N2))
+
+e89s<- group_by(paths2, N1 = step8, N2 = step9) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(8, N1),
+         N2 = prefix(9, N2))
+
+e90s <- group_by(paths2, N1 = step9, N2 = step10) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(9, N1),
+         N2 = prefix(10, N2))
+#--------------------------
+
+
+e12sf <- group_by(paths2f, N1 = step1, N2 = step2) %>%
+  summarise(Value=sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(1, N1),
+         N2 = prefix(2, N2))
+
+e23sf <- group_by(paths2f, N1 = step2, N2 = step3) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(2, N1),
+         N2 = prefix(3, N2))
+
+e34sf <- group_by(paths2f, N1 = step3, N2 = step4) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(3, N1),
+         N2 = prefix(4, N2))
+
+e45sf <- group_by(paths2f, N1 = step4, N2 = step5) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(4, N1),
+         N2 = prefix(5, N2))
+
+e56sf <- group_by(paths2f, N1 = step5, N2 = step6) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(5, N1),
+         N2 = prefix(6, N2))
+
+e67sf <- group_by(paths2f, N1 = step6, N2 = step7) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(6, N1),
+         N2 = prefix(7, N2))
+
+e78sf <- group_by(paths2f, N1 = step7, N2 = step8) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(7, N1),
+         N2 = prefix(8, N2))
+
+e89sf<- group_by(paths2f, N1 = step8, N2 = step9) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(8, N1),
+         N2 = prefix(9, N2))
+
+e90sf <- group_by(paths2f, N1 = step9, N2 = step10) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(9, N1),
+         N2 = prefix(10, N2))
+
+#-----------------
+
+e12sp <- group_by(paths2p, N1 = step1, N2 = step2) %>%
+  summarise(Value=sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(1, N1),
+         N2 = prefix(2, N2))
+
+e23sp <- group_by(paths2p, N1 = step2, N2 = step3) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(2, N1),
+         N2 = prefix(3, N2))
+
+e34sp <- group_by(paths2p, N1 = step3, N2 = step4) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(3, N1),
+         N2 = prefix(4, N2))
+
+e45sp <- group_by(paths2p, N1 = step4, N2 = step5) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(4, N1),
+         N2 = prefix(5, N2))
+
+e56sp <- group_by(paths2p, N1 = step5, N2 = step6) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(5, N1),
+         N2 = prefix(6, N2))
+
+e67sp <- group_by(paths2p, N1 = step6, N2 = step7) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(6, N1),
+         N2 = prefix(7, N2))
+
+e78sp <- group_by(paths2p, N1 = step7, N2 = step8) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(7, N1),
+         N2 = prefix(8, N2))
+
+e89sp<- group_by(paths2p, N1 = step8, N2 = step9) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(8, N1),
+         N2 = prefix(9, N2))
+
+e90sp <- group_by(paths2p, N1 = step9, N2 = step10) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(9, N1),
+         N2 = prefix(10, N2))
+
+#-----------------
+
+e12f1 <- group_by(pathsf1, N1 = step1, N2 = step2) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value=sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(1, N1),
+         N2 = prefix(2, N2))
+
+e23f1 <- group_by(pathsf1, N1 = step2, N2 = step3) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(2, N1),
+         N2 = prefix(3, N2))
+
+e34f1 <- group_by(pathsf1, N1 = step3, N2 = step4) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(3, N1),
+         N2 = prefix(4, N2))
+
+e45f1 <- group_by(pathsf1, N1 = step4, N2 = step5) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(4, N1),
+         N2 = prefix(5, N2))
+
+e56f1 <- group_by(pathsf1, N1 = step5, N2 = step6) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(5, N1),
+         N2 = prefix(6, N2))
+
+e67f1 <- group_by(pathsf1, N1 = step6, N2 = step7) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(6, N1),
+         N2 = prefix(7, N2))
+
+e78f1 <- group_by(pathsf1, N1 = step7, N2 = step8) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(7, N1),
+         N2 = prefix(8, N2))
+
+e89f1 <- group_by(pathsf1, N1 = step8, N2 = step9) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(8, N1),
+         N2 = prefix(9, N2))
+
+e90f1 <- group_by(pathsf1, N1 = step9, N2 = step10) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(9, N1),
+         N2 = prefix(10, N2))
+
+#--------------------------
+
+e12f0 <- group_by(pathsf0, N1 = step1, N2 = step2) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value=sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(1, N1),
+         N2 = prefix(2, N2))
+
+e23f0 <- group_by(pathsf0, N1 = step2, N2 = step3) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(2, N1),
+         N2 = prefix(3, N2))
+
+e34f0 <- group_by(pathsf0, N1 = step3, N2 = step4) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(3, N1),
+         N2 = prefix(4, N2))
+
+e45f0 <- group_by(pathsf0, N1 = step4, N2 = step5) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(4, N1),
+         N2 = prefix(5, N2))
+
+e56f0 <- group_by(pathsf0, N1 = step5, N2 = step6) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(5, N1),
+         N2 = prefix(6, N2))
+
+e67f0 <- group_by(pathsf0, N1 = step6, N2 = step7) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(6, N1),
+         N2 = prefix(7, N2))
+
+e78f0 <- group_by(pathsf0, N1 = step7, N2 = step8) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(7, N1),
+         N2 = prefix(8, N2))
+
+e89f0 <- group_by(pathsf0, N1 = step8, N2 = step9) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(8, N1),
+         N2 = prefix(9, N2))
+
+e90f0 <- group_by(pathsf0, N1 = step9, N2 = step10) %>%
+  filter(!is.na(N2)) %>%
+  summarise(Value = sum(freq)) %>%
+  ungroup() %>%
+  mutate(N1 = prefix(9, N1),
+         N2 = prefix(10, N2))
+```
+```{r}
+edges <- bind_rows(e12, e23,e34,e45,e56,e67,e78,e89,e90) %>% 
+  mutate(Value=Value) %>%
+  as.data.frame()
+
+edgesf <- bind_rows(e12f, e23f,e34f,e45f,e56f,e67f,e78f,e89f,e90f) %>% 
+  mutate(Value=Value) %>%
+  as.data.frame()
+
+edgesf1 <- bind_rows(e12f1, e23f1,e34f1,e45f1,e56f1,e67f1,e78f1,e89f1,e90f1) %>% 
+  mutate(Value=Value) %>%
+  as.data.frame()
+
+edgesf0 <- bind_rows(e12f0, e23f0,e34f0,e45f0,e56f0,e67f0,e78f0,e89f0,e90f0) %>% 
+  mutate(Value=Value) %>%
+  as.data.frame()
+
+edges2 <- bind_rows(e12s, e23s,e34s,e45s,e56s,e67s,e78s,e89s,e90s) %>% 
+  mutate(Value=Value) %>%
+  as.data.frame()
+
+edges2f <- bind_rows(e12sf, e23sf,e34sf,e45sf,e56sf,e67sf,e78sf,e89sf,e90sf) %>% 
+  mutate(Value=Value) %>%
+  as.data.frame()
+
+edges2p <- bind_rows(e12sp, e23sp,e34sp,e45sp,e56sp,e67sp,e78sp,e89sp,e90sp) %>% 
+  mutate(Value=Value) %>%
+  as.data.frame()
+```
+```{r}
+edgesss <- edges[-c(10:13),]
+
+edgesssf <- edgesf
+
+edgesssf1 <- edgesf1
+
+edgesssf0 <- edgesf0
+
+edgesss2 <- edges2[-c(11:14),]
+
+edgesss2f <- edges2f
+
+edgesss2p <- edges2p
+```
+```{r}
+# style <- default.style()
+# style$srt <- '0'  # display node labels horizontally
+style <- list( edgestyle= "straight", nodestyle= "invisible",alpha=0.2)
+#png(filename = "riverplot1",width=900,height = 700)
+makeRiver(nodes, edgesss) %>%
+plot(default_style = style)
+#dev.off()
+```
+```{r}
+# style <- default.style()
+# style$srt <- '0'  # display node labels horizontally
+style <- list( edgestyle= "straight", nodestyle= "invisible",alpha=0.2)
+#png(filename = "riverplot1",width=900,height = 700)
+makeRiver(nodesf, edgesssf) %>%
+plot(default_style = style)
+#dev.off()
+```
+```{r}
+# style <- default.style()
+# style$srt <- '0'  # display node labels horizontally
+style <- list( edgestyle= "straight", nodestyle= "visible",alpha=1)
+#png(filename = "riverplot1",width=900,height = 700)
+makeRiver(nodes2, edgesss2) %>%
+plot(default_style = style)
+#dev.off()
+```
+```{r}
+# style <- default.style()
+# style$srt <- '0'  # display node labels horizontally
+style <- list( edgestyle= "straight", nodestyle= "visible",alpha=1)
+#png(filename = "riverplot1",width=900,height = 700)
+makeRiver(nodes2f, edgesss2f) %>%
+plot(default_style = style)
+#dev.off()
+```
+```{r}
+library(networkD3)
+
+ nodess <- data.frame(unique(c(edgesss$N1,edgesss$N2)),stringsAsFactors=FALSE)  
+ nodess$ID <- as.numeric(rownames(nodess)) - 1 # sankeyNetwork requires IDs to be zero-indexed
+  names(nodess) <- c("name", "ID")
+
+  nodess$newname <- sub(".*-","P", nodess$name)
+ # nodess$newname <- sub("P11","DROP", nodess$newname)
+  nodess$newname <- sub("P10", "FINAL", nodess$newname)
+  nodess$newname <- sub("P1", "Pre", nodess$newname)
+  nodess$newname <- sub("P2", "P.1", nodess$newname)
+  nodess$newname <- sub("P3", "P.2", nodess$newname)
+  nodess$newname <- sub("P4", "P.3", nodess$newname)
+  nodess$newname <- sub("P5", "P.4", nodess$newname)
+  nodess$newname <- sub("P6", "P.5", nodess$newname)
+  nodess$newname <- sub("P7", "P.6", nodess$newname)
+  nodess$newname <- sub("P8", "P.7", nodess$newname)
+  nodess$newname <- sub("P9", "P.8", nodess$newname)
+  
+  # Create two versions of nodes for merging
+  nodess_source <- nodess
+  nodess_target <- nodess
+
+  names(nodess_source) <- c("source", "source_ID")
+  names(nodess_target) <- c("target", "target_ID")
+
+  # Replace source & target in links DF with IDs
+  linkss <- inner_join(edgesss, nodess, by = c("N1"="name")) %>%
+    rename(source_ID = ID) %>%
+    inner_join(nodess, by = c("N2"="name")) %>%
+    rename(target_ID = ID) 
+
+  # Create Sankey Plot
+   sankeyNetwork(
+    Links = linkss,
+    Nodes = nodess,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "newname",
+    fontSize = 12,
+    nodeWidth = 30
+  )
+
+```
+```{r}
+# edgesss2t <- edgesss2[edgesss2$Value>100,]
+ nodess2 <- data.frame(unique(c(edgesss2$N1,edgesss2$N2)),stringsAsFactors=FALSE)  
+ nodess2$ID <- as.numeric(rownames(nodess2)) - 1 # sankeyNetwork requires IDs to be zero-indexed
+  names(nodess2) <- c("name", "ID")
+  nodess2$newname <- sub(".*-","P", nodess2$name)
+  nodess2$newname <- sub("P11","DROP", nodess2$newname)
+  nodess2$newname <- sub("P10", "FINAL", nodess2$newname)
+  nodess2$newname <- sub("P1", "Pre", nodess2$newname)
+  nodess2$newname <- sub("P2", "P.1", nodess2$newname)
+  nodess2$newname <- sub("P3", "P.2", nodess2$newname)
+  nodess2$newname <- sub("P4", "P.3", nodess2$newname)
+  nodess2$newname <- sub("P5", "P.4", nodess2$newname)
+  nodess2$newname <- sub("P6", "P.5", nodess2$newname)
+  nodess2$newname <- sub("P7", "P.6", nodess2$newname)
+  nodess2$newname <- sub("P8", "P.7", nodess2$newname)
+  nodess2$newname <- sub("P9", "P.8", nodess2$newname)
+  # Create two versions of nodes for merging
+  nodess_source2 <- nodess2
+  nodess_target2 <- nodess2
+
+  names(nodess_source2) <- c("source", "source_ID")
+  names(nodess_target2) <- c("target", "target_ID")
+
+  # Replace source & target in links DF with IDs
+  linkss2 <- inner_join(edgesss2, nodess2, by = c("N1"="name")) %>%
+    rename(source_ID = ID) %>%
+    inner_join(nodess2, by = c("N2"="name")) %>%
+    rename(target_ID = ID) 
+#linkss3 <- linkss2[linkss2$Value>10,]
+  # Create Sankey Plot
+   sankeyNetwork(
+    Links = linkss2,
+    Nodes = nodess2,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "newname",
+    fontSize = 12,
+    nodeWidth = 30,
+    NodeGroup = "newname",
+    nodePadding = 5,
+    sinksRight = FALSE
+  )
+
+```
+```{r}
+library(networkD3)
+
+ nodessf <- data.frame(unique(c(edgesssf$N1,edgesssf$N2)),stringsAsFactors=FALSE)  
+ nodessf$ID <- as.numeric(rownames(nodessf)) - 1 # sankeyNetwork requires IDs to be zero-indexed
+  names(nodessf) <- c("name", "ID")
+
+  nodessf$newname <- sub(".*-","P", nodessf$name)
+ # nodess$newname <- sub("P11","DROP", nodess$newname)
+  nodessf$newname <- sub("P10", "FINAL", nodessf$newname)
+  nodessf$newname <- sub("P1", "Pre", nodessf$newname)
+  nodessf$newname <- sub("P2", "P.1", nodessf$newname)
+  nodessf$newname <- sub("P3", "P.2", nodessf$newname)
+  nodessf$newname <- sub("P4", "P.3", nodessf$newname)
+  nodessf$newname <- sub("P5", "P.4", nodessf$newname)
+  nodessf$newname <- sub("P6", "P.5", nodessf$newname)
+  nodessf$newname <- sub("P7", "P.6", nodessf$newname)
+  nodessf$newname <- sub("P8", "P.7", nodessf$newname)
+  nodessf$newname <- sub("P9", "P.8", nodessf$newname)
+  
+  # Create two versions of nodes for merging
+  nodess_sourcef <- nodessf
+  nodess_targetf <- nodessf
+
+  names(nodess_sourcef) <- c("source", "source_ID")
+  names(nodess_targetf) <- c("target", "target_ID")
+
+  # Replace source & target in links DF with IDs
+  linkssf <- inner_join(edgesssf, nodessf, by = c("N1"="name")) %>%
+    rename(source_ID = ID) %>%
+    inner_join(nodessf, by = c("N2"="name")) %>%
+    rename(target_ID = ID) 
+
+  # Create Sankey Plot
+   sankeyNetwork(
+    Links = linkssf,
+    Nodes = nodessf,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "newname",
+    fontSize = 12,
+    nodeWidth = 30,
+    sinksRight = FALSE
+  )
+
+```
+```{r}
+library(networkD3)
+
+ nodessf1 <- data.frame(unique(c(edgesssf1$N1,edgesssf1$N2)),stringsAsFactors=FALSE)  
+ nodessf1$ID <- as.numeric(rownames(nodessf1)) - 1 # sankeyNetwork requires IDs to be zero-indexed
+  names(nodessf1) <- c("name", "ID")
+
+  nodessf1$newname <- sub(".*-","P", nodessf1$name)
+  nodessf1$newname <- sub("P11","DROP", nodessf1$newname)
+  nodessf1$newname <- sub("P10", "FINAL", nodessf1$newname)
+  nodessf1$newname <- sub("P1", "Pre", nodessf1$newname)
+  nodessf1$newname <- sub("P2", "P.1", nodessf1$newname)
+  nodessf1$newname <- sub("P3", "P.2", nodessf1$newname)
+  nodessf1$newname <- sub("P4", "P.3", nodessf1$newname)
+  nodessf1$newname <- sub("P5", "P.4", nodessf1$newname)
+  nodessf1$newname <- sub("P6", "P.5", nodessf1$newname)
+  nodessf1$newname <- sub("P7", "P.6", nodessf1$newname)
+  nodessf1$newname <- sub("P8", "P.7", nodessf1$newname)
+  nodessf1$newname <- sub("P9", "P.8", nodessf1$newname)
+  
+  # Create two versions of nodes for merging
+  nodess_sourcef1 <- nodessf1
+  nodess_targetf1 <- nodessf1
+
+  names(nodess_sourcef1) <- c("source", "source_ID")
+  names(nodess_targetf1) <- c("target", "target_ID")
+
+  # Replace source & target in links DF with IDs
+  linkssf1 <- inner_join(edgesssf1, nodessf1, by = c("N1"="name")) %>%
+    rename(source_ID = ID) %>%
+    inner_join(nodessf1, by = c("N2"="name")) %>%
+    rename(target_ID = ID) 
+
+  # Create Sankey Plot
+   sankeyNetwork(
+    Links = linkssf1,
+    Nodes = nodessf1,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "newname",
+    fontSize = 12,
+    nodeWidth = 40,
+    nodePadding = 20,
+    NodeGroup = "newname",
+    sinksRight = FALSE
+  )
+
+```
+```{r}
+library(networkD3)
+
+ nodessf0 <- data.frame(unique(c(edgesssf0$N1,edgesssf0$N2)),stringsAsFactors=FALSE)  
+ nodessf0$ID <- as.numeric(rownames(nodessf0)) - 1 # sankeyNetwork requires IDs to be zero-indexed
+  names(nodessf0) <- c("name", "ID")
+
+  nodessf0$newname <- sub(".*-","P", nodessf0$name)
+  nodessf0$newname <- sub("P11","DROP", nodessf0$newname)
+  nodessf0$newname <- sub("P10", "FINAL", nodessf0$newname)
+  nodessf0$newname <- sub("P1", "Pre", nodessf0$newname)
+  nodessf0$newname <- sub("P2", "P.1", nodessf0$newname)
+  nodessf0$newname <- sub("P3", "P.2", nodessf0$newname)
+  nodessf0$newname <- sub("P4", "P.3", nodessf0$newname)
+  nodessf0$newname <- sub("P5", "P.4", nodessf0$newname)
+  nodessf0$newname <- sub("P6", "P.5", nodessf0$newname)
+  nodessf0$newname <- sub("P7", "P.6", nodessf0$newname)
+  nodessf0$newname <- sub("P8", "P.7", nodessf0$newname)
+  nodessf0$newname <- sub("P9", "P.8", nodessf0$newname)
+  
+  # Create two versions of nodes for merging
+  nodess_sourcef0 <- nodessf0
+  nodess_targetf0 <- nodessf0
+
+  names(nodess_sourcef0) <- c("source", "source_ID")
+  names(nodess_targetf0) <- c("target", "target_ID")
+
+  # Replace source & target in links DF with IDs
+  linkssf0 <- inner_join(edgesssf0, nodessf0, by = c("N1"="name")) %>%
+    rename(source_ID = ID) %>%
+    inner_join(nodessf0, by = c("N2"="name")) %>%
+    rename(target_ID = ID) 
+
+  # Create Sankey Plot
+   sankeyNetwork(
+    Links = linkssf0,
+    Nodes = nodessf0,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "newname",
+    fontSize = 12,
+    nodeWidth = 40,
+    nodePadding = 20,
+    NodeGroup = "newname",
+    sinksRight = FALSE
+  )
+
+```
+
+```{r}
+
+ nodess2f <- data.frame(unique(c(edgesss2f$N1,edgesss2f$N2)),stringsAsFactors=FALSE)  
+ nodess2f$ID <- as.numeric(rownames(nodess2f)) - 1 # sankeyNetwork requires IDs to be zero-indexed
+  names(nodess2f) <- c("name", "ID")
+  nodess2f$newname <- sub(".*-","P", nodess2f$name)
+  nodess2f$newname <- sub("P11","DROP", nodess2f$newname)
+  nodess2f$newname <- sub("P10", "FINAL", nodess2f$newname)
+  nodess2f$newname <- sub("P1", "Pre", nodess2f$newname)
+  nodess2f$newname <- sub("P2", "P.1", nodess2f$newname)
+  nodess2f$newname <- sub("P3", "P.2", nodess2f$newname)
+  nodess2f$newname <- sub("P4", "P.3", nodess2f$newname)
+  nodess2f$newname <- sub("P5", "P.4", nodess2f$newname)
+  nodess2f$newname <- sub("P6", "P.5", nodess2f$newname)
+  nodess2f$newname <- sub("P7", "P.6", nodess2f$newname)
+  nodess2f$newname <- sub("P8", "P.7", nodess2f$newname)
+  nodess2f$newname <- sub("P9", "P.8", nodess2f$newname)
+  # Create two versions of nodes for merging
+  nodess_source2f<- nodess2f
+  nodess_target2f <- nodess2f
+
+  names(nodess_source2f) <- c("source", "source_ID")
+  names(nodess_target2f) <- c("target", "target_ID")
+
+  # Replace source & target in links DF with IDs
+  linkss2f <- inner_join(edgesss2f, nodess2f, by = c("N1"="name")) %>%
+    rename(source_ID = ID) %>%
+    inner_join(nodess2f, by = c("N2"="name")) %>%
+    rename(target_ID = ID) 
+
+  # Create Sankey Plot
+   sankeyNetwork(
+    Links = linkss2f,
+    Nodes = nodess2f,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "newname",
+    fontSize = 12,
+    nodeWidth = 40,
+    nodePadding = 20,
+    NodeGroup = "newname",
+    sinksRight = FALSE
+
+  )
+
+```
+```{r}
+
+ nodess2p <- data.frame(unique(c(edgesss2p$N1,edgesss2p$N2)),stringsAsFactors=FALSE)  
+ nodess2p$ID <- as.numeric(rownames(nodess2p)) - 1 # sankeyNetwork requires IDs to be zero-indexed
+  names(nodess2p) <- c("name", "ID")
+  nodess2p$newname <- sub(".*-","P", nodess2p$name)
+  nodess2p$newname <- sub("P11","DROP", nodess2p$newname)
+  nodess2p$newname <- sub("P10", "FINAL", nodess2p$newname)
+  nodess2p$newname <- sub("P1", "Pre", nodess2p$newname)
+  nodess2p$newname <- sub("P2", "P.1", nodess2p$newname)
+  nodess2p$newname <- sub("P3", "P.2", nodess2p$newname)
+  nodess2p$newname <- sub("P4", "P.3", nodess2p$newname)
+  nodess2p$newname <- sub("P5", "P.4", nodess2p$newname)
+  nodess2p$newname <- sub("P6", "P.5", nodess2p$newname)
+  nodess2p$newname <- sub("P7", "P.6", nodess2p$newname)
+  nodess2p$newname <- sub("P8", "P.7", nodess2p$newname)
+  nodess2p$newname <- sub("P9", "P.8", nodess2p$newname)
+  # Create two versions of nodes for merging
+  nodess_source2p<- nodess2p
+  nodess_target2p <- nodess2p
+
+  names(nodess_source2p) <- c("source", "source_ID")
+  names(nodess_target2p) <- c("target", "target_ID")
+
+  # Replace source & target in links DF with IDs
+  linkss2p <- inner_join(edgesss2p, nodess2p, by = c("N1"="name")) %>%
+    rename(source_ID = ID) %>%
+    inner_join(nodess2p, by = c("N2"="name")) %>%
+    rename(target_ID = ID) 
+
+  # Create Sankey Plot
+   sankeyNetwork(
+    Links = linkss2p,
+    Nodes = nodess2p,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "newname",
+    fontSize = 12,
+    nodeWidth = 40,
+    nodePadding = 20,
+    NodeGroup = "newname",
+    sinksRight = FALSE,
+
+
+  )
+
+```
+```{r}
+ee <- edgesss2p
+ee$Value <- c(29:1)
+nn <- data.frame(unique(c(ee$N1,ee$N2)),stringsAsFactors=FALSE)  
+ nn$ID <- as.numeric(rownames(nn)) - 1 # sankeyNetwork requires IDs to be zero-indexed
+  names(nn) <- c("name", "ID")
+  nn$newname <- sub(".*-","B", nn$name)
+  nn$newname <- sub("P11","END", nn$newname)
+  nn$newname <- sub("P10", "Z", nn$newname)
+  nn$newname <- sub("P1", "A", nn$newname)
+  nn$newname <- sub("P2", "B", nn$newname)
+  nn$newname <- sub("P3", "C", nn$newname)
+  nn$newname <- sub("P4", "D", nn$newname)
+  nn$newname <- sub("P5", "E", nn$newname)
+  nn$newname <- sub("P6", "F", nn$newname)
+  nn$newname <- sub("P7", "G", nn$newname)
+  nn$newname <- sub("P8", "H", nn$newname)
+  nn$newname <- sub("P9", "I", nn$newname)
+  # Create two versions of nodes for merging
+  nodess_source2n<- nn
+  nodess_target2n <- nn
+
+  names(nodess_source2n) <- c("source", "source_ID")
+  names(nodess_target2n) <- c("target", "target_ID")
+
+  # Replace source & target in links DF with IDs
+  ll <- inner_join(ee, nn, by = c("N1"="name")) %>%
+    rename(source_ID = ID) %>%
+    inner_join(nn, by = c("N2"="name")) %>%
+    rename(target_ID = ID) 
+
+  # Create Sankey Plot
+   sankeyNetwork(
+    Links = ll,
+    Nodes = nn,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "newname",
+    fontSize = 12,
+    nodeWidth = 40,
+    nodePadding = 20,
+    NodeGroup = "newname",
+    sinksRight = FALSE
+
+  )
+
+```
+```{r}
+save(nn,ee,file= "sankeyexample.RData")
+```
+```{r}
+# no dropout full
+node_nd <- nodess
+edge_nd <- edgesss
+link_nd <- linkss
+# include dropout full
+node_d <- nodess2
+edge_d <- edgesss2
+link_d <- linkss2
+# early final include dropout
+node_f <- nodess2f
+edge_f <- edgesss2f
+link_f <- linkss2f
+# popular path > 50
+node_p50 <- nodess2p
+edge_p50 <- edgesss2p
+link_p50 <- linkss2p
+```
+```{r}
+save(node_nd, edge_nd,link_nd, node_d, edge_d,link_d, node_f,edge_f ,link_f, node_p50,edge_p50,link_p50, file= "CS50_node_edge_link_incl_dropout_earlyfinal_popular50.RData")
+
+save(node_p50,edge_p50,link_p50, file= "CS50_node_edge_link_popular50.RData")
+```
+```{r}
+library(magrittr)
+
+  sankeyNetwork(
+    Links = linkss,
+    Nodes = nodess,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "name",
+    fontSize = 12,
+    nodeWidth = 30
+  ) %>%
+saveNetwork(file = 'CS50_Sankey_no_drop_v2.html')
+
+   sankeyNetwork(
+    Links = linkss2,
+    Nodes = nodess2,
+    Source = "source_ID",
+    Target = "target_ID",
+    Value = "Value",
+    NodeID = "name",
+    fontSize = 12,
+    nodeWidth = 30
+  ) %>%
+saveNetwork(file = 'CS50_Sankey_drop_v2.html')
+```
