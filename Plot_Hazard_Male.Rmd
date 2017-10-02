@@ -1,0 +1,104 @@
+---
+title: "Draw Hazard Plot from Survival Analysis"
+output: html_notebook
+---
+
+```{r}
+setwd(("~/Dropbox/MOOK/MOOC_CS50"))
+load(url("https://github.com/bossaround/MOOC_CS50/raw/master/male_foreign_cubic_linear_point_data.RData"))
+```
+```{r}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ ggplot()+
+  geom_smooth (data= datL, method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_value*0.9, color=interaction(model,male), fill=interaction(model,male))) +
+  geom_smooth (data=datC, method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_value, color=interaction(model,male), fill=interaction(model,male))) +
+  geom_point(data=pointestm,  aes(time, logith+0.54,shape=as.factor(male)))+
+    scale_x_continuous(breaks = seq(2,10,by=1),
+                     labels = labs) +
+    scale_color_manual(name = "Model Fitted",labels = c("Global - Female", "Global - Male", "Regional - Female", "Regional - Male"), values = c("coral","hotpink2","steelblue1","slateblue3")) +
+       scale_fill_manual(name = "Model Fitted",labels = c("Global - Female", "Global - Male", "Regional - Female", "Regional - Male"), values = c("coral","hotpink2","steelblue1","slateblue3")) +
+   scale_shape_discrete(name="Mean Value of Observed",labels = c("female","male"))+
+   xlab("Milestone") + ylab("Log Hazard of Dropout")
+
+ggsave("combined_global_regional_dot_logit.png",device = 'png',width=8,height=5)
+
+```
+
+```{r}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ ggplot()+
+  geom_smooth (data= datL, method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_probability, color=interaction(model,male), fill=interaction(model,male))) +
+  geom_smooth (data=datC, method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_probability, color=interaction(model,male), fill=interaction(model,male))) +
+  geom_point(data=pointestm,  aes(time, exp(logith+0.5)/(1+exp(logith+0.5)),shape=as.factor(male)))+
+    scale_x_continuous(breaks = seq(2,10,by=1),
+                     labels = labs) +
+    scale_color_manual(name = "Model Fitted",labels = c("Global - Female", "Global - Male", "Regional - Female", "Regional - Male"), values = c("coral","hotpink2","steelblue1","slateblue3")) +
+       scale_fill_manual(name = "Model Fitted",labels = c("Global - Female", "Global - Male", "Regional - Female", "Regional - Male"), values = c("coral","hotpink2","steelblue1","slateblue3")) +
+    scale_shape_discrete(name="Mean Value of Observed",labels = c("female","male"))+
+   xlab("Milestone") + ylab("Probability of Dropout")
+
+ggsave("combined_global_regional_dot_prob.png",device = 'png',width=8,height=5)
+
+```
+```{r}
+ ggplot(datC, aes(milestone,predict_value, color = as.factor(male))) +
+  geom_smooth (method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.5, size = 1,level=0.95, aes(group=interaction(model,male))) 
+```
+```{r}
+# use smooth to add a nonparametric curve.
+#png("male_cubic_curve_dot.png")
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ ggplot(datC, aes(milestone,predict_value, color = as.factor(male))) +
+   stat_smooth( method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.5, size = 1,level=0.95, aes(fill=male)) +
+   geom_point(data=pointestm,  aes(time, logith+0.54, color=as.factor(male))) +
+  xlab("Milestone") + ylab("Log Odd of Dropout") + 
+  scale_x_continuous(breaks = seq(2,10,by=1),
+                     labels = labs) +
+  scale_color_manual(labels = c("Female", "Male"), values = c("coral","steelblue1")) + 
+  scale_fill_discrete(guide="none")+
+  guides(color=guide_legend(override.aes=list(fill=c("coral","steelblue1"))))
+
+#ggsave("cubic_dot.png", width = 8, height = 5, device = 'png')
+```
+Foreign
+```{r}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+labs_legend = c("Global - US", "Global - Foreign", "Regional - US", "Regional - Foreign")
+color_legend = c("coral","hotpink2","steelblue1","slateblue3")
+
+ ggplot()+
+  geom_smooth (data= datL, method="glm", formula = y~x ,  alpha=0.55, size = 1,level=0.88, aes(milestone, predict_value, color=interaction(model,foreign), fill=interaction(model,foreign))) +
+  geom_smooth (data=datK, method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.55, size = 1,level=0.95, aes(milestone, predict_value, color=interaction(model,foreign), fill=interaction(model,foreign))) +
+  geom_point(data=pointestf,  aes(time, logith+0.5,shape=as.factor(foreign)))+
+    scale_x_continuous(breaks = seq(2,10,by=1),
+                     labels = labs) +
+    scale_color_manual(name = "Model Fitted",labels = labs_legend, values = color_legend) +
+       scale_fill_manual(name = "Model Fitted",labels = labs_legend, values = color_legend) +
+   scale_shape_discrete(name="Mean Value of Observed",labels = c("US","Foreign"))+
+   xlab("Milestone") + ylab("Log Hazard of Dropout")
+
+ ggsave("foreign_combined_global_regional_dot_logit.png",device = 'png',width=8,height=5)
+
+```
+```{r}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+labs_legend = c("Global - US", "Global - Foreign", "Regional - US", "Regional - Foreign")
+color_legend = c("coral","hotpink2","steelblue1","slateblue3")
+
+ ggplot()+
+  geom_smooth (data= datL, method="glm", formula = y~x,  alpha=0.55, size = 1,level=0.88, aes(milestone, predict_probability, color=interaction(model,foreign), fill=interaction(model,foreign))) +
+  geom_smooth (data=datK, method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.55, size = 1,level=0.95, aes(milestone, predict_probability, color=interaction(model,foreign), fill=interaction(model,foreign))) +
+  geom_point(data=pointestf,  aes(time, exp(logith+0.54)/(1+exp(logith+0.54)),shape=as.factor(foreign)))+
+    scale_x_continuous(breaks = seq(2,10,by=1),
+                     labels = labs) +
+    scale_color_manual(name = "Model Fitted",labels = labs_legend, values = color_legend) +
+       scale_fill_manual(name = "Model Fitted",labels = labs_legend, values = color_legend) +
+   scale_shape_discrete(name="Mean Value of Observed",labels = c("US","Foreign"))+
+   xlab("Milestone") + ylab("Log Hazard of Dropout")
+
+ ggsave("foreign_combined_global_regional_dot_probability.png",device = 'png',width=8,height=5)
+
+```

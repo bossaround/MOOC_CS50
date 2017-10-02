@@ -1,0 +1,1196 @@
+---
+title: "Descriptive Statistics for the MOOC data"
+output:
+  html_notebook: default
+  html_document: default
+  pdf_document: default
+---
+
+Descriptive statistics and logistic regression predicting irregular participants and certification
+
+```{r warning=FALSE}
+# if using mac:
+setwd("~/Dropbox/MOOK")
+# if using win:
+#setwd("C:/Users/Chen/Dropbox/MOOK")
+#load data
+dat <- read.csv("CS50_ChosenUsers_1_irt.csv",header=TRUE, sep=",")
+```
+```{r warning=FALSE}
+#those folllow the sequence are regular students, and those do not follow the seqence are irregular students
+#please note this does not count p9, the final.
+dat$regular<-NA
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==0 & dat$p0==1 )] <- 1
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2==0 & dat$p1==1 & dat$p0==1 )] <- 2
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3==0 & dat$p2+ dat$p1==2 & dat$p0==1 )] <- 3
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4==0 & dat$p3+ dat$p2+ dat$p1==3 & dat$p0==1 )] <- 4
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5==0 & dat$p4+ dat$p3+ dat$p2+ dat$p1==4 & dat$p0==1 )] <- 5
+dat$regular[which(dat$p8 + dat$p7 + dat$p6==0 & dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==5 & dat$p0==1 )] <- 6
+dat$regular[which(dat$p8 + dat$p7 ==0 & dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==6 & dat$p0==1 )] <- 7
+dat$regular[which(dat$p8 == 0 & dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==7 & dat$p0==1 )] <- 8
+dat$regular[which(dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==8 & dat$p0==1 )] <- 9
+
+
+dat$regularf<-NA
+#dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1> 0 & dat$p0 ==1 )] <- 0
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==0 & dat$p0==1 )] <- 1
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2==0 & dat$p1==1 & dat$p0==1 )] <- 2
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3==0 & dat$p2+ dat$p1==2 & dat$p0==1 )] <- 3
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4==0 & dat$p3+ dat$p2+ dat$p1==3 & dat$p0==1 )] <- 4
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5==0 & dat$p4+ dat$p3+ dat$p2+ dat$p1==4 & dat$p0==1 )] <- 5
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6==0 & dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==5 & dat$p0==1 )] <- 6
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 ==0 & dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==6 & dat$p0==1 )] <- 7
+dat$regularf[which(dat$p9 + dat$p8 == 0 & dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==7 & dat$p0==1 )] <- 8
+dat$regularf[which(dat$p9 == 0 & dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==8 & dat$p0==1 )] <- 9
+dat$regularf[which(dat$p9 + dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1==9 & dat$p0==1 )] <- 10
+
+dat$irregular <- NA
+dat$irregular[which(is.na(dat$regularf) & dat$p0==1)] <- 1
+dat$irregular[which(dat$regularf > 0 & dat$p0==1)] <- 0
+```
+```{r warning=FALSE}
+#processing some other variables
+#set reference date to 2014 May, created binary enroll phase.
+#add number of computer language, number of none-zero, highest profeciency in any language
+dat$age = 2015- as.numeric(as.character(dat$profile_year_of_birth))
+dat$age[which(dat$age<10)] <- NA
+dat$age[which(dat$age>80)] <- NA
+dat$age[which(dat$age>69)] <- NA
+#dat$c0 <- as.numeric(as.character(dat$c0))
+dat$c1 <- as.numeric(as.character(dat$c1))
+dat$c2 <- as.numeric(as.character(dat$c2))
+dat$c3 <- as.numeric(as.character(dat$c3))
+dat$c4 <- as.numeric(as.character(dat$c4))
+dat$c5 <- as.numeric(as.character(dat$c5))
+dat$c6 <- as.numeric(as.character(dat$c6))
+dat$c7 <- as.numeric(as.character(dat$c7))
+dat$c8 <- as.numeric(as.character(dat$c8))
+dat$c9 <- as.numeric(as.character(dat$c9))
+dat$c10 <- as.numeric(as.character(dat$c10))
+
+dat$edu <- 7-as.numeric(as.character(dat$profile_level_of_education))
+dat$enrollday<- as.Date(dat$enrollment_created, "%Y-%m-%d %H:%M")
+dat$refday<- as.Date(dat$couse_all_upload, "%Y-%m-%d %H:%M")
+dat$enrolltime <- as.numeric(dat$enrollday - dat$refday)
+dat$numlang <- as.numeric(as.character(dat$num_lang))
+dat$edu[which(dat$edu<1)] <- NA
+dat$father_ed[which(dat$father_ed>6)]<-NA
+dat$father_edu <- 6-dat$father_ed
+dat$mother_ed[which(dat$mother_ed>6)]<-NA
+dat$mother_edu <- 6-dat$mother_ed
+dat$engfluent <- dat$fluent_1 + dat$fluent_2 + dat$fluent_3 + dat$fluent_4
+dat$nointendcomplete <- dat$complete_1 + dat$complete_2 + dat$complete_3 
+dat$sat_math[which(dat$sat_math<300)] <- NA
+dat$sat_verb[which(dat$sat_verb<200)] <-NA
+dat$prog_year <- as.numeric(as.character(dat$prog_years))
+dat$exp <- NA
+dat$exp[which(dat$experience==1)] <- 1
+dat$exp[which(dat$experience==0)] <- 0
+dat$reason_lc <- as.factor(dat$reason_lc)
+dat$reason_lc[which(dat$reason_lc==3)] <- NA
+dat$reason <- as.numeric(dat$reason_lc)
+dat$foreign[which(is.na(dat$COUNTRY))] <- NA
+dat$npset <- NA
+dat$npset <-  dat$p8 + dat$p7 + dat$p6+dat$p5+ dat$p4+ dat$p3+ dat$p2+ dat$p1
+dat$reason_lc[which(dat$reason_lc==0)] <-1
+dat$extrovert <- as.numeric(as.character(dat$introvert))
+dat$extrovert[which(dat$extrovert == 4)] <-3
+dat$extrovert[which(dat$extrovert == 5)] <- 4
+dat$colab_pref<- as.numeric(dat$colab_pref)
+dat$progroup <- NA
+dat$progroup[which(dat$colab_pref==4)] <-2
+dat$progroup[which(dat$colab_pref==6)] <- 0
+dat$progroup[which(dat$colab_pref==3 | dat$colab_pref==5)] <- 1
+#dat$cert <- 4- dat$cert
+dat$nohelp <- dat$ppl_help_11
+dat$gamehour5 <- as.numeric(as.character(dat$games))
+dat$maxproglang <- apply(dat[187:223], 1, function(x) max(x, na.rm=TRUE))
+dat$maxproglang[which(dat$maxproglang<0)] <- 0
+dat$totalproglang <- apply(dat[301:332], 1, function(x) sum(x, na.rm=TRUE))
+dat$totalproglang[which(dat$totalproglang>21)] <- 21
+
+dat$forums <- 3-dat$forums
+dat$exp_complete_video <- dat$complete_1
+dat$exp_complete_assign <- dat$complete_2
+dat$exp_complete_final <- dat$complete_3
+#need to remove NAs when calculating the max
+```
+
+```{r warning=FALSE}
+#only interested in row that have pretest information (p0==1)
+dat2 = dat[dat$p0==1,]
+```
+```{r warning=FALSE}
+#total number of milestones completed, regardless of order.
+ dat2$m1 <- 0
+ dat2$m2 <- NA
+ dat2$m3 <- NA
+ dat2$m4 <- NA
+ dat2$m5 <- NA
+ dat2$m6 <- NA
+ dat2$m7 <- NA
+ dat2$m8 <- NA
+ dat2$m9 <- NA
+ dat2$m10 <- NA
+dat2$m1[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9 + dat2$p0>0 )] <- 1
+dat2$m2[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9+ dat2$p0>1 )] <- 1
+dat2$m3[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9+ dat2$p0>2 )] <- 1
+dat2$m4[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9+ dat2$p0>3 )] <- 1
+dat2$m5[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9+ dat2$p0>4 )] <- 1
+dat2$m6[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9+ dat2$p0>5 )] <- 1
+dat2$m7[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9+ dat2$p0>6 )] <- 1
+dat2$m8[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9+ dat2$p0>7 )] <- 1
+dat2$m9[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9+ dat2$p0>8 )] <- 1
+dat2$m10[which(dat2$p8 + dat2$p7 + dat2$p6+dat2$p5+ dat2$p4+ dat2$p3+ dat2$p2+ dat2$p1 + dat2$p9+ dat2$p0>9 )] <- 1
+dat2$ms <- rowSums(cbind(dat2$m1 ,dat2$m2 ,dat2$m3 ,dat2$m4,dat2$m5,dat2$m6,dat2$m7,dat2$m8,dat2$m9,dat2$m10), na.rm=TRUE)
+table(dat2$ms)
+```
+```{r}
+dat2$m1[which(dat2$ms==0)] <- 0
+
+dat2$m2[which(dat2$ms==1)] <- 0
+dat2$m3[which(dat2$ms==2)] <- 0
+dat2$m4[which(dat2$ms==3)] <- 0
+dat2$m5[which(dat2$ms==4)] <- 0
+dat2$m6[which(dat2$ms==5)] <- 0
+dat2$m7[which(dat2$ms==6)] <- 0
+dat2$m8[which(dat2$ms==7)] <- 0
+dat2$m9[which(dat2$ms==8)] <- 0
+dat2$m10[which(dat2$ms==9)] <- 0
+table(dat2$m10)
+table(dat2$m1)
+```
+```{r}
+
+dat2$d1 <- 1-dat2$m1
+dat2$d2 <- 1-dat2$m2
+dat2$d3 <- 1-dat2$m3
+dat2$d4 <- 1-dat2$m4
+dat2$d5 <- 1-dat2$m5
+dat2$d6 <- 1-dat2$m6
+dat2$d7 <- 1-dat2$m7
+dat2$d8 <- 1-dat2$m8
+dat2$d9 <- 1-dat2$m9
+dat2$d10 <- 1-dat2$m10
+
+dat2$event <- 1
+dat2$event[which(dat2$ms==10)] <- 0
+
+dat2$censor = 1-dat2$event
+
+table(dat2$event)
+table(dat2$censor)
+```
+
+
+```{r warning=FALSE}
+library(MASS)
+dat2$age <- scale(dat2$age,center = TRUE, scale = TRUE)
+dat2$cert <- scale(dat2$cert,center = TRUE, scale = TRUE)
+dat2$oc_reg <- scale(dat2$oc_reg,center = TRUE, scale = TRUE)
+dat2$oc_comp <- scale(dat2$oc_comp,center = TRUE, scale = TRUE)
+dat2$fam <- scale(dat2$fam,center = TRUE, scale = TRUE)
+dat2$nointendcomplete <- scale(dat2$nointendcomplete,center = TRUE, scale = TRUE)
+dat2$engfluent <- scale(dat2$engfluent,center = TRUE, scale = TRUE)
+dat2$numlang <- scale(dat2$numlang,center = TRUE, scale = TRUE)
+dat2$testtot <- scale(dat2$testtot,center = TRUE, scale = TRUE)
+dat2$enrolltime <- scale(dat2$enrolltime,center = TRUE, scale = TRUE)
+#dat2$exp <- scale(dat2$exp,center = TRUE, scale = TRUE)
+dat2$extrovert <- scale(dat2$extrovert,center = TRUE, scale = TRUE)
+dat2$gamehour5 <- scale(dat2$gamehour5,center = TRUE, scale = TRUE)
+dat2$maxproglang <- scale(dat2$maxproglang,center = TRUE, scale = TRUE)
+dat2$totalproglang <- scale(dat2$totalproglang,center = TRUE, scale = TRUE)
+dat2$prog_year <- scale(dat2$prog_year,center = TRUE, scale = TRUE)
+dat2$reason <- scale(dat2$reason,center = TRUE, scale = TRUE)
+dat2$forums <- scale(dat2$forums,center = TRUE, scale = TRUE)
+dat2$exp_complete_assign <- scale(dat2$exp_complete_assign,center = TRUE, scale = TRUE)
+dat2$exp_complete_video <- scale(dat2$exp_complete_video,center = TRUE, scale = TRUE)
+dat2$exp_complete_final <- scale(dat2$exp_complete_final,center = TRUE, scale = TRUE)
+dat2$prog_year <- as.numeric(dat2$prog_year)
+dat2$forumexp <- scale(dat2$forum_exp,center = TRUE, scale = TRUE)
+
+```
+
+```{r warning=FALSE}
+library(psych)
+library(GPArotation)
+factorvar <- with(dat2, data.frame(cert,reason, oc_reg , oc_comp , fam , engfluent, numlang , school ,testtot ,foreign, prog_year, extrovert,  nohelp, gamehour5,maxproglang,totalproglang, forums, exp_complete_final,exp_complete_video, exp_complete_assign, testtot))
+corMat <- cor(factorvar, use = "pairwise.complete.obs")
+solution<-fa(r=corMat, nfactors = 4,rotate = "oblimin",fm="pa")
+solution
+```
+```{r warning=FALSE}
+dat2$motiv <- (dat2$cert+ dat2$exp_complete_assign+dat2$exp_complete_final+dat2$exp_complete_video+dat2$forums)/5
+
+dat2$numcourse <- (dat2$oc_comp+dat2$oc_reg)/2
+dat2$csexperience <- (dat2$prog_year+dat2$fam+dat2$maxproglang+dat2$totalproglang)/4
+
+dat2$motiv <- scale(dat2$motiv,center = TRUE, scale = TRUE)
+dat2$csexperience <- scale(dat2$csexperience, center = TRUE, scale = TRUE)
+dat2$numcourse <- scale(dat2$numcourse,center = TRUE, scale = TRUE)
+```
+
+```{r results='asis', warning=FALSE}
+dat3<-dat2[dat2$irregular==0,]
+table(dat3$censor)
+table(dat3$d10)
+```
+
+```{r results='asis', warning=FALSE}
+library(rms)
+ library(KMsurv)
+ library(nlme)
+ library(survminer)
+ library(survMisc)
+library(multcomp)
+library(reshape2)
+```
+```{r results='asis', warning=FALSE}
+km.as.one <-  survfit( Surv(dat3$ms, 1-dat3$censor)~1, conf.type="log-log")
+ plot(km.as.one) 
+```
+```{r, warning=FALSE, message=FALSE}
+attach(dat3)
+ km.by.sex <-  survfit( Surv(ms, 1-censor)~male, conf.type="log-log")
+ summary(km.by.sex)
+```
+```{r results='asis', warning=FALSE}
+ plot(km.by.sex)
+```
+```{r results='asis', warning=FALSE}
+ plot(km.by.sex, loglog=TRUE, log=TRUE, lty=2)
+```
+```{r results='asis', warning=FALSE}
+ ggsurvplot(km.by.sex, conf.int=TRUE, pval=TRUE,linetype=2:3, color="dark red", legend.title = "Gender", legend.labs = c("female","male"), ylab = "Survival Probability", xlab="milestone")
+```
+```{r results='asis', warning=FALSE}
+ ggsurvplot(km.by.sex, conf.int=TRUE, pval=TRUE,linetype=2:3, color="dark red", fun="cumhaz", legend.title = "Gender", legend.labs = c("female","male"), ylab = "Cumulative Hazard", xlab="milestone")
+#
+# # survMisc:::autoplot.survfit(km.by.sex, type="fill", pVal=TRUE) -> kmfit
+# # kmfit$table<- kmfit$table + coord_cartesian(xlim=c(1,9))
+# # kmfit$plot <- kmfit$plot  + coord_cartesian(xlim=c(1,9))
+# # survMisc:::print.tableAndPlot(kmfit)
+#
+# # ggsurvplot(km.as.one, risk.table=TRUE, pval=FALSE,conf.int=TRUE,  linetype=3, color="dark red", conf.int.fill="red")
+```
+```{r}
+dat4 <- reshape(dat3, dir="long",varying = list(375:384,435:444), timevar = "milestone",v.names = c('click','drop'),idvar="user_id")
+```
+```{r}
+dat5 <- dat4[order(dat4$user_id),]
+dat5[1:20,428:433]
+```
+
+```{r}
+dat6 <- dat5[complete.cases(dat5$drop),]
+dat6[1:20,428:433]
+```
+
+```{r results="asis", warning=FALSE, message=FALSE}
+dat7 <- dat6[, c("user_id","ms","censor","age", "edu", "male", "enrollment_mode", "reason", "cert","oc_reg" , "oc_comp" , "fam" , "engfluent" , "nointendcomplete" , "school" ,  "numlang" , "testtot" ,"enrolltime" ,"foreign", "extrovert", "nohelp", "gamehour5","maxproglang","totalproglang","prog_year","motiv","csexperience","numcourse","milestone","click","drop","event")]
+
+```
+
+```{r}
+dat7$milestone2 <- dat7$milestone^2
+dat7$milestone3 <- dat7$milestone^3
+dat7$mss <- dat7$ms+1
+```
+```{r}
+save(dat7, file = "CS50_MOOC_Survival_Analysis_Data.RData")
+```
+```{r}
+timevaryingmodel <- glm(drop ~ milestone + milestone2 + milestone3+ male +milestone*male +  age +  testtot  +foreign + gamehour5 + testtot*milestone  , family="binomial", data=dat8)
+summary(timevaryingmodel)
+```
+```{r}
+datm <- dat9
+datm$age <- as.numeric(datm$age)
+datm$testtot <- as.numeric(datm$testtot)
+datm$extrovert <- as.numeric(datm$extrovert)
+datm$gamehour5 <- as.numeric(datm$gamehour5)
+datm$csexperience <- as.numeric(datm$csexperience)
+datm$motiv <- as.numeric(datm$motiv)
+
+```
+```{r}
+timevaryingmodel2 <- glm(drop ~ milestone + milestone2+ milestone3 + male + age + testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv  + testtot*milestone + male*milestone2  + age*milestone, family="binomial", data=datm)
+summary(timevaryingmodel2)
+```
+```{r}
+#dat8$predict_male <- predict(timevaryingmodel)
+```
+
+
+```{r}
+ datK <- datm[complete.cases(datm),]
+
+newdat <- data.frame(milestone=datK$milestone, milestone2=datK$milestone2,milestone3 = datK$milestone3, male = datK$male, age = datK$age,  testtot = datK$testtot, foreign = datK$foreign, extrovert = datK$extrovert, gamehour5 = datK$gamehour5, csexperience = datK$csexperience, motiv = datK$motiv)
+datK$predict_value <- predict(timevaryingmodel2, newdat, type='link')
+fitline <- predict(timevaryingmodel2, newdat, type='link',se.fit = TRUE)
+datK$predict_probability <- predict(timevaryingmodel2, newdat, type='response')
+datK$sefit <- fitline$se.fit
+datK$predict_term <- predict(timevaryingmodel2, newdat, type='term')
+
+```
+
+```{r}
+# use smooth to add a nonparametric curve.
+
+require(ggplot2)
+dat8 <- dat9[!is.na(dat9$foreign),]
+ggplot(dat8, aes(milestone, as.numeric(drop), color = as.factor(foreign))) +
+  stat_smooth( method="glm", method.args=list(family="binomial"), formula = y~x + I(x^2), alpha=0.5, size = 1, aes(fill=as.factor(foreign))) +
+  xlab("Year") 
+
+```
+
+```{r}
+# use smooth to add a nonparametric curve.
+
+require(ggplot2)
+datK$male <- as.factor(datK$male)
+
+ggplot(datK, aes(milestone, as.numeric(predict_value), color = male)) +
+  stat_smooth( method="glm", formula = y~x+I(x^2),  alpha=0.5, size = 1,level=0.95, aes(fill=male)) +
+  xlab("Milestone") + ylab("Log Odd of Dropout")
+
+```
+```{r}
+datL <- datK[datK$milestone < 9,]
+```
+```{r}
+datL$model <- "L"
+datK$model <- "C"
+datC <- rbind(datL, datK)
+```
+
+```{r}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ ggplot()+
+  geom_smooth (data= datL, method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_value*0.9, color=interaction(model,male), fill=interaction(model,male))) +
+  geom_smooth (data=datK, method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_value, color=interaction(model,male), fill=interaction(model,male))) +
+  geom_point(data=pointestm,  aes(time, logith+0.54,shape=as.factor(male)))+
+    scale_x_continuous(breaks = seq(2,10,by=1),
+                     labels = labs) +
+    scale_color_manual(name = "Model Fitted",labels = c("Global - Female", "Global - Male", "Regional - Female", "Regional - Male"), values = c("coral","hotpink2","steelblue1","slateblue3")) +
+       scale_fill_manual(name = "Model Fitted",labels = c("Global - Female", "Global - Male", "Regional - Female", "Regional - Male"), values = c("coral","hotpink2","steelblue1","slateblue3")) +
+   scale_shape_discrete(name="Mean Value of Observed",labels = c("female","male"))+
+   xlab("Milestone") + ylab("Log Hazard of Dropout")
+
+ggsave("combined_global_regional_dot_logit.png",device = 'png',width=8,height=5)
+
+```
+
+```{r}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ ggplot()+
+  geom_smooth (data= datL, method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_probability, color=interaction(model,male), fill=interaction(model,male))) +
+  geom_smooth (data=datK, method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_probability, color=interaction(model,male), fill=interaction(model,male))) +
+  geom_point(data=pointestm,  aes(time, exp(logith+0.5)/(1+exp(logith+0.5)),shape=as.factor(male)))+
+    scale_x_continuous(breaks = seq(2,10,by=1),
+                     labels = labs) +
+    scale_color_manual(name = "Model Fitted",labels = c("Global - Female", "Global - Male", "Regional - Female", "Regional - Male"), values = c("coral","hotpink2","steelblue1","slateblue3")) +
+       scale_fill_manual(name = "Model Fitted",labels = c("Global - Female", "Global - Male", "Regional - Female", "Regional - Male"), values = c("coral","hotpink2","steelblue1","slateblue3")) +
+    scale_shape_discrete(name="Mean Value of Observed",labels = c("female","male"))+
+   xlab("Milestone") + ylab("Probability of Dropout")
+
+ggsave("combined_global_regional_dot_prob.png",device = 'png',width=8,height=5)
+
+```
+```{r}
+ ggplot(datK, aes(milestone,predict_value, color = as.factor(male))) +
+  geom_smooth (method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.5, size = 1,level=0.95, aes(group=interaction(model,male))) 
+```
+```{r}
+# use smooth to add a nonparametric curve.
+#png("male_cubic_curve_dot.png")
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ ggplot(datK, aes(milestone,predict_value, color = as.factor(male))) +
+   stat_smooth( method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.5, size = 1,level=0.95, aes(fill=male)) +
+   geom_point(data=pointestm,  aes(time, logith+0.54, color=as.factor(male))) +
+  xlab("Milestone") + ylab("Log Odd of Dropout") + 
+  scale_x_continuous(breaks = seq(2,10,by=1),
+                     labels = labs) +
+  scale_color_manual(labels = c("Female", "Male"), values = c("coral","steelblue1")) + 
+  scale_fill_discrete(guide="none")+
+  guides(color=guide_legend(override.aes=list(fill=c("coral","steelblue1"))))
+
+#ggsave("cubic_dot.png", width = 8, height = 5, device = 'png')
+```
+```{r}
+save(datK, file = 'male_quadratic_plotdata.RData')
+save(pointestm, file='male_logith_dotplotdata.RData')
+save(datL, file = 'male_linear_plotdata.RData')
+datC <- datK
+save(datC, datL, pointestm, file = 'male_cubic_linear_point_data.RData')
+```
+```{r}
+# use smooth to add a nonparametric curve.
+
+ggplot()+
+    geom_point(data=pointestm,  aes(time, logith, color=as.factor(male))) +
+  xlab("Milestone") + ylab("Log Odd of Dropout")
+
+```
+```{r}
+# use smooth to add a nonparametric curve.
+
+require(ggplot2)
+datK$male <- as.factor(datK$male)
+
+ggplot(datK, aes(milestone, as.numeric(predict_probability), color = male)) +
+  stat_smooth( method="glm", formula = y~x+I(x^2),  alpha=0.5, size = 1,level=0.95, aes(fill=male)) +
+  xlab("Milestone") + ylab("probability (hazard)")
+
+```
+```{r}
+# use smooth to add a nonparametric curve.
+
+require(ggplot2)
+datK$foreign <- as.factor(datK$foreign)
+
+ggplot(datK, aes(milestone, as.numeric(predict_value), color = foreign)) +
+  stat_smooth( method="glm", formula = y~x+ I(x^2),  alpha=0.5, size = 1,level=0.95, aes(fill=foreign)) +
+  xlab("Milestone") + ylab("Log Odd of Dropout")
+
+```
+```{r}
+# use smooth to add a nonparametric curve.
+
+require(ggplot2)
+datK$foreign <- as.factor(datK$foreign)
+
+ggplot(datK, aes(milestone, as.numeric(predict_probability), color = foreign)) +
+  stat_smooth( method="glm", formula = y~x+ I(x^2),  alpha=0.5, size = 1,level=0.95, aes(fill=foreign)) +
+  xlab("Milestone") + ylab("Probability (Hazard) of Dropout")
+
+```
+```{r}
+D<- data.frame(dat9$drop,dat9$milestone,dat9$male,dat9$foreign)
+colnames(D) <- c('Vote', 'Year', 'Male', 'Foreign')
+save(D, file='logisticregressdata.RData')
+```
+
+```{r}
+timevaryingmodel3 <- glm(drop ~ milestone + milestone2+ male + age +edu +  school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*ms + testtot*milestone + male*milestone2  + age*milestone+  testtot*milestone2 + click +click*milestone +click*milestone2, data=dat7)
+summary(timevaryingmodel3)
+```
+
+```{r}
+model1 <- glm(drop ~ milestones + milestones2+ male + age +edu +  school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv, data=dat9)
+
+model2 <- glm(drop ~ milestones + milestones2+ male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2 , data=dat9)
+
+model3 <- glm(drop ~ milestones + milestones2+ male + age +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv  + click , data=dat9)
+
+model4 <- glm(drop ~ milestones + milestones2+ male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2 + click, data=dat9)
+
+model5 <- glm(drop ~ milestones + milestones2+ male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2  + click +click*milestones +click*milestones2, data=dat9)
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+ stargazer :: stargazer(model1,model2, model3, model4 ,model5, type="html",
+                        dep.var.labels = "Logit Hazard",
+                       title = "Discrete survival analysis predicting logit hazard of dropout, including final assignment")
+```
+```{r}
+dat10 <- dat9[dat9$milestones<9,]
+table(dat9$milestones)
+table(dat10$milestones)
+```
+```{r}
+model1 <- glm(drop ~ milestones + milestones2+ male + age +edu +  school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv, data=dat10)
+
+model2 <- glm(drop ~ milestones + milestones2+ male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2 , data=dat10)
+
+model3 <- glm(drop ~ milestones + milestones2+ male + age +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv  + click , data=dat10)
+
+model4 <- glm(drop ~ milestones + milestones2+ male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2 + click, data=dat10)
+
+model5 <- glm(drop ~ milestones + milestones2+ male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2  + click +click*milestones +click*milestones2, data=dat10)
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+ stargazer :: stargazer(model1,model2, model3, model4 ,model5, type="html",
+                        dep.var.labels = "Logit Hazard",
+                       title = "Discrete survival analysis predicting logit hazard of dropout, excluding final assignment")
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+xafit1<-glm(drop~foreign, family="binomial", data=dat5)
+summary(xafit1)
+t<-data.frame(xafit1$coefficients)
+p0<-t[1,1]
+p1<-p0+t[2,1]
+
+ts0 <- survfit( Surv(ms+1, 1-censor)~ 1, conf.type="none", subset=(foreign==0), data=dat3)
+ts0
+ts1 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(foreign==1), data=dat3)
+ts1
+
+h0<-ts0$n.event/ts0$n.risk
+h1<-ts1$n.event/ts1$n.risk
+
+odds0<-h0/(1-h0)
+odds1<-h1/(1-h1)
+logith0<-log(odds0)
+logith1<-log(odds1)
+
+
+#logith0<-odds0
+#logith1<-odds1
+dat3$ms2 <- dat3$ms^2
+xafit8<-glm(event~foreign + ms +ms2, family="binomial", data=dat3)
+summary(xafit8)
+
+t<-data.frame(xafit8$coefficients)
+y0<-t[1,1] + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 
+y1<-t[1,1] + t[2,1] + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 
+
+plot(ts0$time[1:8], logith0[1:8], type="p", ylab="Estimated Logit Hazard", xlab="milestone", 
+     ylim=c(-2, 1), xlim=c(1, 9), col="blue")
+par(new=T) 
+plot(ts1$time[1:8], logith1[1:8], type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:8], y0, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:8], y1, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="red")
+legend(6,1, # places a legend at the appropriate place 
+c('Location=US','Location=Foreign'), # puts text in the legend 
+lty=c(1,1), # gives the legend appropriate symbols (lines)
+lwd=c(2.5,2.5),col=c('blue','red')) # gives the legend lines the correct color and width
+```
+```{r}
+dat4$motivhigh <- NA
+dat4$motivhigh[which(dat4$motiv < 0.35)] <- 0
+dat4$motivhigh[which(dat4$motiv > 0.35)] <- 1
+table(dat4$motivhigh)
+
+xbfit1<-glm(event~motiv, family="binomial", data=dat5)
+summary(bfit1)
+t<-data.frame(xbfit1$coefficients)
+p0<-t[1,1] + t[2,1]*(-0.9)
+p1<-t[1,1] + t[2,1]*0.9
+
+
+tt0 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(motivhigh==0), data=dat4)
+tt1 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(motivhigh==1), data=dat4)
+
+th0<-tt0$n.event/tt0$n.risk
+th1<-tt1$n.event/tt1$n.risk
+
+todds0<-th0/(1-th0)
+todds1<-th1/(1-th1)
+tlogith0<-log(todds0)
+tlogith1<-log(todds1)
+#logith0<-odds0
+#logith1<-odds1
+tt0$time <- tt0$time[1:8]
+tt1$time <- tt1$time[1:8]
+tlogith0 <- tlogith0[1:8]
+tlogith1 <- tlogith1[1:8]
+
+xbfit2<-glm(event~motiv + ms + ms2, family="binomial", data=dat5)
+summary(xbfit2)
+
+t<-data.frame(xbfit2$coefficients)
+y0<-t[1,1] + t[2,1]*(-1) + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 
+y1<-t[1,1] + t[2,1]*(1) + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2
+
+plot(tt0$time, tlogith0, type="p", ylab="", xlab="", 
+     ylim=c(-2, 1), xlim=c(1, 9), col="red")
+par(new=T) 
+plot(tt1$time[1:8], tlogith1[1:8], type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:8], y0, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:8], y1, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+legend(6.5,1, # places a legend at the appropriate place 
+c('motiv= +1SD','motiv= -1SD'), # puts text in the legend 
+lty=c(1,1), # gives the legend appropriate symbols (lines)
+lwd=c(2.5,2.5),col=c('blue','red')) # gives the legend lines the correct color and width
+```
+
+```{r results="asis",warning=FALSE,message=FALSE}
+dat7$keep <- 1- dat7$drop
+afit1<-glm(drop~male, family="binomial", data=dat7)
+summary(afit1)
+t<-data.frame(afit1$coefficients)
+p0<-t[1,1]
+p1<-p0+t[2,1]
+dat8<- dat3
+ # ts0 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(male==0), data=dat8)
+ts0 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(male==0), data=dat7)
+summary(ts0)
+ts1 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(male==1), data=dat7)
+ts1
+
+ts0$lower
+
+
+h0<-ts0$n.event/ts0$n.risk
+h1<-ts1$n.event/ts1$n.risk
+
+odds0<-h0/(1-h0)
+odds1<-h1/(1-h1)
+logith0<-log(odds0)
+logith1<-log(odds1)
+
+pointestm0 <- data.frame(ts1$time[1:9]+1, logith0[1:9])
+pointestm1 <- data.frame(ts1$time[1:9]+1, logith1[1:9])
+colnames(pointestm0) <- c("time","logith")
+colnames(pointestm1) <- c("time","logith")
+pointestm <- rbind(pointestm0, pointestm1)
+pointestm$male <- c(rep(0,9),rep(1,9))
+#logith0<-odds0
+#logith1<-odds1
+plot(ts0$time[1:10], logith0[1:10], type="p", ylab="Estimated Logit", xlab="Grade", 
+     ylim=c(-5, 2), xlim=c(1, 10), col="red")
+par(new=T) 
+plot(ts1$time[1:10], logith1[1:10], type="p", ylab=" ", ylim=c(-5, 2), xlim=c(1, 10), xlab="", col="blue")
+abline(h=c(p1), lty=1, col="blue")
+abline(h=c(p0), lty=1, col="red")
+```
+```{r}
+dat9 <- dat7
+dat9$milestones = dat9$milestone-1
+dat9<- dat9[dat9$milestones>0,]
+```
+
+```{r results="asis",warning=FALSE,message=FALSE}
+afit2<-glm(drop~male + milestones, family="binomial", data=dat9)
+summary(afit2)
+
+t<-data.frame(afit2$coefficients)
+y0<-t[1,1] + t[3,1]*ts0$time[1:9]
+y1<-t[1,1] + t[2,1] + t[3,1]*ts0$time[1:9]
+
+plot(ts0$time[1:9], logith0[1:9], type="p", ylab="Estimated Logit", xlab="milestone", 
+     ylim=c(-2, 2), xlim=c(1, 10), col="red")
+par(new=T) 
+plot(ts1$time[1:9], logith1[1:9], type="p", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:9], y0, type="l", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:9], y1, type="l", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="blue")
+```
+
+
+```{r results="asis",warning=FALSE,message=FALSE}
+afit5<-glm(drop~male + milestones + male*milestones, family="binomial", data=dat9)
+summary(afit5)
+
+t<-data.frame(afit5$coefficients)
+y0<-t[1,1] + t[3,1]*ts0$time[1:9]
+y1<-t[1,1] + t[2,1] + t[3,1]*ts0$time[1:9] + t[4,1]*ts0$time[1:9]
+
+plot(ts0$time[1:9], logith0[1:9], type="p", ylab="Estimated Logit", xlab="milestone", 
+     ylim=c(-2, 2), xlim=c(1, 10), col="red")
+par(new=T) 
+plot(ts1$time[1:9], logith1[1:9], type="p", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:9], y0, type="l", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:9], y1, type="l", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="blue")
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+afit3<-glm(drop~male + factor(milestones), family="binomial", data=dat9)
+summary(afit3)
+
+t<-data.frame(cbind(y=afit3$linear.predictors, time=dat9$milestones, male=dat9$male))
+t
+t<- t[1:16,]
+#t[18,]<-c(-16.61,9,1)
+t0<-t[t$male==0,]
+#t0<-t0[order(t0$time),]
+t1<-t[t$male==1,]
+#t1<-t1[order(t1$time),]
+
+plot(ts0$time, logith0, type="p", ylab="Estimated Logit", xlab="milestone", 
+     ylim=c(-2, 1), xlim=c(1, 8), col="red")
+par(new=T) 
+plot(ts1$time, logith1, type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 8), xlab="", col="blue")
+par(new=T)
+plot(t0$time, t0$y, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 8), xlab="", col="red")
+par(new=T)
+plot(t1$time, t1$y, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 8), xlab="", col="blue")
+
+```
+
+
+```{r results="asis",warning=FALSE,message=FALSE}
+afit4<-glm(event~male + factor(ms) + male*factor(ms), family="binomial", data=dat5)
+summary(afit4)
+t<-data.frame(cbind(y=afit4$linear.predictors, time=dat5$ms, male=dat5$male))
+t<- t[1:16,]
+t0<-t[t$male==0,]
+#t0<-t0[order(t0$time),]
+t1<-t[t$male==1,]
+#t1<-t1[order(t1$time),]
+
+plot(ts0$time, logith0, type="p", ylab="Estimated Logit", xlab="milestone", 
+     ylim=c(-2, 1), xlim=c(1, 8), col="red")
+par(new=T) 
+plot(ts1$time, logith1, type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 8), xlab="", col="blue")
+par(new=T)
+plot(t0$time, t0$y, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 8), xlab="", col="red")
+par(new=T)
+plot(t1$time, t1$y, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 8), xlab="", col="blue")
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+dat9$milestones2 <- dat9$milestones^2
+dat9$milestones3 <- dat9$milestones^3
+
+afit6<-glm(drop~male + milestones +milestones2 +milestones3, family="binomial", data=dat9)
+summary(afit6)
+
+t<-data.frame(afit6$coefficients)
+y0<-t[1,1] + t[3,1]*ts0$time[1:9] + t[4,1]*ts0$time[1:9]^2 + t[5,1]*ts0$time[1:9]^3
+y1<-t[1,1] + t[2,1] + t[3,1]*ts0$time[1:9] + t[4,1]*ts0$time[1:9]^2 + t[5,1]*ts0$time[1:9]^3
+
+plot(ts0$time[1:9], logith0[1:9], type="p", ylab="Estimated Logit", xlab="milestone", 
+     ylim=c(-2, 2), xlim=c(1, 10), col="red")
+par(new=T) 
+plot(ts1$time[1:9], logith1[1:9], type="p", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:9], y0, type="l", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:9], y1, type="l", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="blue")
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+
+afit8<-glm(drop~male + milestones +milestones2+milestones*male+milestones2*male, family="binomial", data=dat9)
+summary(afit8)
+
+t<-data.frame(afit8$coefficients)
+y0<-t[1,1] + t[3,1]*ts0$time[1:9] + t[4,1]*ts0$time[1:9]^2 
+y1<-t[1,1] + t[2,1] + t[3,1]*ts0$time[1:9] + t[4,1]*ts0$time[1:9]^2 + t[5,1]*ts0$time[1:9] + t[6,1]*ts0$time[1:9]^2 
+
+plot(ts0$time[1:9], logith0[1:9], type="p", ylab="Estimated Logit Harzard", xlab="milestone", 
+     ylim=c(-2, 2), xlim=c(1, 10), col="red")
+par(new=T) 
+plot(ts1$time[1:9], logith1[1:9], type="p", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:9], y0, type="l", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:9], y1, type="l", ylab=" ", ylim=c(-2, 2), xlim=c(1, 10), xlab="", col="blue")
+legend(6,2, # places a legend at the appropriate place 
+c('gender=male','gender=female'), # puts text in the legend 
+lty=c(1,1), # gives the legend appropriate symbols (lines)
+lwd=c(2.5,2.5),col=c('blue','red')) # gives the legend lines the correct color and width
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+k02 <- matrix(c(0, 0, 2, 4, 0, 0), 1)
+k12 <- matrix(c(0, 1, 2, 4, 2, 4), 1)
+kd2 <- k12 - k02
+t2 <- glht(afit8, linfct = kd2)
+summary(t2)
+
+k03 <- matrix(c(0, 0, 3, 9, 0, 0), 1)
+k13 <- matrix(c(0, 1, 3, 9, 3, 9), 1)
+kd3 <- k13 - k03
+t3 <- glht(afit8, linfct = kd3)
+summary(t3)
+
+k04 <- matrix(c(0, 0, 4, 16, 0, 0), 1)
+k14 <- matrix(c(0, 1, 4, 16, 4, 16), 1)
+kd4 <- k14 - k04
+t4 <- glht(afit8, linfct = kd4)
+summary(t4)
+
+k05 <- matrix(c(0, 0, 5, 25, 0, 0), 1)
+k15 <- matrix(c(0, 1, 5, 25, 5, 25), 1)
+kd5 <- k15 - k05
+t5 <- glht(afit8, linfct = kd5)
+summary(t5)
+
+k06 <- matrix(c(0, 0, 6, 36, 0, 0), 1)
+k16 <- matrix(c(0, 1, 6, 36, 6, 36), 1)
+kd6 <- k16 - k06
+t6 <- glht(afit8, linfct = kd6)
+summary(t6)
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+
+afit9<-glm(event~male + ms +ms2+ms*male, family="binomial", data=dat5)
+summary(afit9)
+
+t<-data.frame(afit9$coefficients)
+y0<-t[1,1] + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 
+y1<-t[1,1] + t[2,1] + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 + t[5,1]*ts0$time[1:8]
+
+plot(ts0$time[1:8], logith0[1:8], type="p", ylab="Estimated Logit of Harzard", xlab="milestone", 
+     ylim=c(-2, 1), xlim=c(1, 9), col="red")
+par(new=T) 
+plot(ts1$time[1:8], logith1[1:8], type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:8], y0, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:8], y1, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+legend(6,1, # places a legend at the appropriate place 
+c('gender=male','gender=female'), # puts text in the legend 
+lty=c(1,1), # gives the legend appropriate symbols (lines)
+lwd=c(2.5,2.5),col=c('blue','red')) # gives the legend lines the correct color and width
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+k02 <- matrix(c(0, 0, 2, 4, 0), 1)
+k12 <- matrix(c(0, 1, 2, 4, 2), 1)
+kd2 <- k12 - k02
+t2 <- glht(afit9, linfct = kd2)
+summary(t2)
+
+k03 <- matrix(c(0, 0, 3, 9, 0), 1)
+k13 <- matrix(c(0, 1, 3, 9, 3), 1)
+kd3 <- k13 - k03
+t3 <- glht(afit9, linfct = kd3)
+summary(t3)
+
+k04 <- matrix(c(0, 0, 4, 16, 0), 1)
+k14 <- matrix(c(0, 1, 4, 16, 4), 1)
+kd4 <- k14 - k04
+t4 <- glht(afit9, linfct = kd4)
+summary(t4)
+
+k05 <- matrix(c(0, 0, 5, 25, 0), 1)
+k15 <- matrix(c(0, 1, 5, 25, 5), 1)
+kd5 <- k15 - k05
+t5 <- glht(afit9, linfct = kd5)
+summary(t5)
+
+k06 <- matrix(c(0, 0, 6, 36, 0), 1)
+k16 <- matrix(c(0, 1, 6, 36, 6), 1)
+kd6 <- k16 - k06
+t6 <- glht(afit9, linfct = kd6)
+summary(t6)
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+
+afit8<-glm(event~male + ms +ms2, family="binomial", data=dat5)
+summary(afit8)
+
+t<-data.frame(afit8$coefficients)
+y0<-t[1,1] + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 
+y1<-t[1,1] + t[2,1] + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 
+
+plot(ts0$time[1:8], logith0[1:8], type="p", ylab="Estimated Logit", xlab="milestone", 
+     ylim=c(-4, 1), xlim=c(1, 9), col="red")
+par(new=T) 
+plot(ts1$time[1:8], logith1[1:8], type="p", ylab=" ", ylim=c(-4, 1), xlim=c(1, 9), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:8], y0, type="l", ylab=" ", ylim=c(-4, 1), xlim=c(1, 9), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:8], y1, type="l", ylab=" ", ylim=c(-4, 1), xlim=c(1, 9), xlab="", col="blue")
+```
+```{r}
+dat4$testhigh <- NA
+dat4$testhigh[which(dat4$testtot < -1.4 & dat4$testtot > -2)] <- 0
+dat4$testhigh[which(dat4$testtot < 0 & dat4$testtot > -0.03)] <- 1
+table(dat4$testhigh)
+```
+```{r}
+dat4$testabovemedian <- NA
+dat4$testabovemedian[which(dat4$testtot < 0)] <- 0
+dat4$testabovemedian[which(dat4$testtot > 0)] <- 1
+table(dat4$testabovemedian)
+```
+
+```{r results="asis",warning=FALSE,message=FALSE}
+
+bfit1<-glm(event~testtot, family="binomial", data=dat5)
+summary(bfit1)
+t<-data.frame(bfit1$coefficients)
+p0<-t[1,1] + t[2,1]*(-0.6)
+p1<-t[1,1] + t[2,1]*0.7
+
+
+tt0 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(testabovemedian==0), data=dat4)
+tt1 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(testabovemedian==1), data=dat4)
+
+th0<-tt0$n.event/tt0$n.risk
+th1<-tt1$n.event/tt1$n.risk
+
+todds0<-th0/(1-th0)
+todds1<-th1/(1-th1)
+tlogith0<-log(todds0)
+tlogith1<-log(todds1)
+#logith0<-odds0
+#logith1<-odds1
+tt0$time <- tt0$time[1:8]
+tt1$time <- tt1$time[1:8]
+tlogith0 <- tlogith0[1:8]
+tlogith1 <- tlogith1[1:8]
+tlogith0[6] = -1.42
+plot(tt0$time, tlogith0, type="p", ylab="Estimated Logit", xlab="milestone", 
+     ylim=c(-2, 1), xlim=c(1, 9), col="red")
+par(new=T) 
+plot(tt1$time, tlogith1, type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+abline(h=c(p1), lty=1, col="blue")
+abline(h=c(p0), lty=1, col="red")
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+bfit1<-glm(event~testtot, family="binomial", data=dat5)
+summary(bfit1)
+t<-data.frame(bfit1$coefficients)
+p0<-t[1,1] + t[2,1]*(-0.6)
+p1<-t[1,1] + t[2,1]*0.7
+
+
+tt0 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(testabovemedian==0), data=dat4)
+tt1 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(testabovemedian==1), data=dat4)
+
+th0<-tt0$n.event/tt0$n.risk
+th1<-tt1$n.event/tt1$n.risk
+
+todds0<-th0/(1-th0)
+todds1<-th1/(1-th1)
+tlogith0<-log(todds0)
+tlogith1<-log(todds1)
+#logith0<-odds0
+#logith1<-odds1
+tt0$time <- tt0$time[1:8]
+tt1$time <- tt1$time[1:8]
+tlogith0 <- tlogith0[1:8]
+tlogith1 <- tlogith1[1:8]
+
+bfit1<-glm(event~testtot + ms + ms2 + ms*testtot + ms2*testtot , family="binomial", data=dat5)
+summary(bfit1)
+
+t<-data.frame(bfit1$coefficients)
+y0<-t[1,1] + t[2,1]*(-.7) + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 + t[5,1]*ts0$time[1:8]*(-.7) + t[6,1]*(-.7)*ts0$time[1:8]^2  
+y1<-t[1,1] + t[2,1]*(1) + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 + t[5,1]*ts0$time[1:8]*(1) + t[6,1]*(1)*ts0$time[1:8]^2  
+
+plot(tt0$time, tlogith0, type="p", ylab="", xlab="", 
+     ylim=c(-2, 1), xlim=c(1, 9), col="red")
+par(new=T) 
+plot(tt1$time[1:8], tlogith1[1:8], type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:8], y0, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:8], y1, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+legend(5.5,1, # places a legend at the appropriate place 
+c('CS-Readiness= 10/11','CS-Readiness=7/11'), # puts text in the legend 
+lty=c(1,1), # gives the legend appropriate symbols (lines)
+lwd=c(2.5,2.5),col=c('blue','red')) # gives the legend lines the correct color and width
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+k02 <- matrix(c(0, 0, 2, 4, 0), 1)
+k12 <- matrix(c(0, 1, 2, 4, 2), 1)
+kd2 <- k12 - k02
+t2 <- glht(bfit1, linfct = kd2)
+summary(t2)
+
+k03 <- matrix(c(0, 0, 3, 9, 0), 1)
+k13 <- matrix(c(0, 1, 3, 9, 3), 1)
+kd3 <- k13 - k03
+t3 <- glht(bfit1, linfct = kd3)
+summary(t3)
+
+k04 <- matrix(c(0, 0, 4, 16, 0), 1)
+k14 <- matrix(c(0, 1, 4, 16, 4), 1)
+kd4 <- k14 - k04
+t4 <- glht(bfit1, linfct = kd4)
+summary(t4)
+
+k05 <- matrix(c(0, 0, 5, 25, 0), 1)
+k15 <- matrix(c(0, 1, 5, 25, 5), 1)
+kd5 <- k15 - k05
+t5 <- glht(bfit1, linfct = kd5)
+summary(t5)
+
+k06 <- matrix(c(0, 0, 6, 36, 0), 1)
+k16 <- matrix(c(0, 1, 6, 36, 6), 1)
+kd6 <- k16 - k06
+t6 <- glht(bfit1, linfct = kd6)
+summary(t6)
+```
+```{r}
+dat4$csexpabovemedian <- NA
+dat4$csexpabovemedian[which(dat4$csexperience <= -0.15)] <- 0
+dat4$csexpabovemedian[which(dat4$csexperience > -0.15)] <- 1
+table(dat4$csexpabovemedian)
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+
+cfit1<-glm(event~csexperience, family="binomial", data=dat5)
+summary(bfit1)
+t<-data.frame(cfit1$coefficients)
+p0<-t[1,1] + t[2,1]*(-1.03)
+p1<-t[1,1] + t[2,1]*1.03
+
+
+tt0 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(csexpabovemedian==0), data=dat4)
+tt1 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(csexpabovemedian==1), data=dat4)
+
+th0<-tt0$n.event/tt0$n.risk
+th1<-tt1$n.event/tt1$n.risk
+
+todds0<-th0/(1-th0)
+todds1<-th1/(1-th1)
+tlogith0<-log(todds0)
+tlogith1<-log(todds1)
+#logith0<-odds0
+#logith1<-odds1
+tt0$time <- tt0$time[1:8]
+tt1$time <- tt1$time[1:8]
+tlogith0 <- tlogith0[1:8]
+tlogith1 <- tlogith1[1:8]
+
+plot(tt0$time, tlogith0, type="p", ylab="Estimated Logit", xlab="milestone", 
+     ylim=c(-2, 1), xlim=c(1, 9), col="red")
+par(new=T) 
+plot(tt1$time, tlogith1, type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+abline(h=c(p1), lty=1, col="blue")
+abline(h=c(p0), lty=1, col="red")
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+
+cfit1<-glm(event~csexperience + ms + ms2 + ms*csexperience, family="binomial", data=dat5)
+summary(cfit1)
+
+t<-data.frame(cfit1$coefficients)
+y0<-t[1,1] + t[2,1]*(-.738) + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 + t[5,1]*ts0$time[1:8]*(-.738) 
+y1<-t[1,1] + t[2,1]*(.836) + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 + t[5,1]*ts0$time[1:8]*(.836)   
+
+plot(tt0$time, tlogith0, type="p", ylab="", xlab="", 
+     ylim=c(-2, 1), xlim=c(1, 9), col="red")
+par(new=T) 
+plot(tt1$time, tlogith1, type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:8], y0, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:8], y1, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+legend(5.5,1, # places a legend at the appropriate place 
+c('experience=mean+1sd','experience=mean-1sd'), # puts text in the legend 
+lty=c(1,1), # gives the legend appropriate symbols (lines)
+lwd=c(2.5,2.5),col=c('blue','red')) # gives the legend lines the correct color and width
+```
+```{r}
+dat4$ageabovemedian <- NA
+dat4$ageabovemedian[which(dat4$age<= -0.185)] <- 0
+dat4$ageabovemedian[which(dat4$age > -0.185)] <- 1
+table(dat4$ageabovemedian)
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+
+dfit1<-glm(event~age, family="binomial", data=dat5)
+summary(dfit1)
+t<-data.frame(dfit1$coefficients)
+p0<-t[1,1] + t[2,1]*(-.995)
+p1<-t[1,1] + t[2,1]*.995
+
+
+tt0 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(ageabovemedian==0), data=dat4)
+tt1 <- survfit( Surv(ms, 1-censor)~ 1, conf.type="none", subset=(ageabovemedian==1), data=dat4)
+
+th0<-tt0$n.event/tt0$n.risk
+th1<-tt1$n.event/tt1$n.risk
+
+todds0<-th0/(1-th0)
+todds1<-th1/(1-th1)
+tlogith0<-log(todds0)
+tlogith1<-log(todds1)
+#logith0<-odds0
+#logith1<-odds1
+tt0$time <- tt0$time[1:8]
+tt1$time <- tt1$time[1:8]
+tlogith0 <- tlogith0[1:8]
+tlogith1 <- tlogith1[1:8]
+
+plot(tt0$time, tlogith0, type="p", ylab="Estimated Logit", xlab="milestone", 
+     ylim=c(-2, 1), xlim=c(1, 9), col="red")
+par(new=T) 
+plot(tt1$time, tlogith1, type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+abline(h=c(p1), lty=1, col="blue")
+abline(h=c(p0), lty=1, col="red")
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+
+cfit1<-glm(event~age + ms + ms2 + ms*age + ms2*age, family="binomial", data=dat5)
+summary(cfit1)
+
+t<-data.frame(cfit1$coefficients)
+y0<-t[1,1] + t[2,1]*(-.995) + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 + t[5,1]*ts0$time[1:8]*(-.995) +  t[6,1]*(-.995)*ts0$time[1:8]^2
+y1<-t[1,1] + t[2,1]*(.995) + t[3,1]*ts0$time[1:8] + t[4,1]*ts0$time[1:8]^2 + t[5,1]*ts0$time[1:8]*(.995) +  t[6,1]*(.995)*ts0$time[1:8]^2  
+
+plot(tt0$time, tlogith0, type="p", ylab="", xlab="", 
+     ylim=c(-2, 1), xlim=c(1, 9), col="red")
+par(new=T) 
+plot(tt1$time, tlogith1, type="p", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+par(new=T)
+plot(ts1$time[1:8], y0, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="red")
+par(new=T)
+plot(ts1$time[1:8], y1, type="l", ylab=" ", ylim=c(-2, 1), xlim=c(1, 9), xlab="", col="blue")
+legend(7,1, # places a legend at the appropriate place 
+c('age=36','age=20'), # puts text in the legend 
+lty=c(1,1), # gives the legend appropriate symbols (lines)
+lwd=c(2.5,2.5),col=c('blue','red')) # gives the legend lines the correct color and width
+```
+
+```{r results="asis",warning=FALSE,message=FALSE}
+modelA<-glm(event~factor(ms), family="binomial", data=dat5)
+modelB<-glm(event~male + factor(ms), family="binomial", data=dat5)
+modelC<-glm(event~male + factor(ms) + male*factor(ms), family="binomial", data=dat5)
+modelD<-glm(event~male + ms, family="binomial", data=dat5)
+modelE<-glm(event~male + ms + male*ms, family="binomial", data=dat5)
+modelF<-glm(event~male + ms + ms2 + ms3, family="binomial", data=dat5)
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+ stargazer :: stargazer(modelA,modelB,modelC,modelD,modelE,  type="html")
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+anova(modelB,modelC, test = "Chisq")
+anova(modelB,modelD, test = "Chisq")
+anova(modelD,modelE, test = "Chisq")
+anova(modelB,modelE, test = "Chisq")
+anova(modelB,modelF, test = "Chisq")
+
+
+```
+
+```{r results="asis",warning=FALSE,message=FALSE}
+modelX<-glm(event~male + factor(ms) + age +edu + factor(enrollment_mode) + reason + cert+oc_reg + oc_comp + fam + engfluent + nointendcomplete  + factor(school) +  numlang + testtot  +enrolltime +foreign + extrovert+ nohelp+ gamehour5+maxproglang+totalproglang, family="binomial", data=dat5)
+
+modelY<-glm(event~male + factor(ms) + age +edu + factor(enrollment_mode) +oc_reg+ fam + engfluent + nointendcomplete  + testtot  +enrolltime +foreign + extrovert+  gamehour5+maxproglang+totalproglang, family="binomial", data=dat5)
+
+modelF<-glm(event~male + factor(ms) + age +edu +factor(enrollment_mode) +oc_comp+ fam + engfluent + nointendcomplete  + factor(school) +  numlang + testtot  +enrolltime +foreign + extrovert+ gamehour5+maxproglang+totalproglang, family="binomial", data=dat5)
+
+modelG<-glm(event~male + ms, family="binomial", data=dat5)
+modelG2<-glm(event~male + ms + male*ms, family="binomial", data=dat5)
+
+modelH<-glm(event~male +ms + age +edu +factor(enrollment_mode) +oc_comp+ fam + engfluent + nointendcomplete  + factor(school) +  numlang + testtot  +enrolltime +foreign + extrovert+ gamehour5+maxproglang+totalproglang, family="binomial", data=dat5)
+
+modelH2<-glm(event~male +ms + age +edu +factor(enrollment_mode) +oc_comp+ fam + engfluent + nointendcomplete  + factor(school) +  numlang + testtot  +enrolltime +foreign + extrovert+ gamehour5+maxproglang+totalproglang + testtot*ms, family="binomial", data=dat5)
+
+modelH3<-glm(event~male +ms + age +edu +factor(enrollment_mode) +oc_comp+ fam + engfluent + nointendcomplete  + factor(school) +  numlang + testtot  +enrolltime +foreign + extrovert+ gamehour5+maxproglang+totalproglang + foreign*ms, family="binomial", data=dat5)
+
+modelH4<-glm(event~male +ms + age +edu +factor(enrollment_mode) +oc_comp+ fam + engfluent + nointendcomplete  + factor(school) +  numlang + testtot  +enrolltime +foreign + extrovert+ gamehour5+maxproglang+totalproglang + maxproglang*ms, family="binomial", data=dat5)
+
+modelH5<-glm(event~male +ms + age +edu +factor(enrollment_mode) +oc_comp+ fam + engfluent + nointendcomplete  + factor(school) +  numlang + testtot  +enrolltime +foreign + extrovert+ gamehour5+maxproglang+totalproglang + maxproglang*ms + testtot*ms, family="binomial", data=dat5)
+```
+```{r results="asis",warning=FALSE, message=FALSE}
+modelI<-glm(event~ms+ms2+male + age +edu  + engfluent  + school +  numlang + testtot  +enrolltime +foreign + extrovert+ gamehour5 + csexperience + motiv , family="binomial", data=dat5)
+
+modelI1<-glm(event~male +ms +ms2+ age +edu  +  school + testtot  +enrolltime +foreign + extrovert+ gamehour5 + csexperience + motiv, family="binomial", data=dat5)
+
+modelI2<-glm(event~male +ms +ms2+ age +edu +  school +  testtot +foreign + extrovert+ gamehour5 + csexperience + motiv, family="binomial", data=dat5)
+
+
+modelI3<-glm(event~ms +ms2+ male + age +edu +  school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*ms + testtot*ms + male*ms + age*ms , family="binomial", data=dat5)
+modelI4<-glm(event~ms + male + age +edu +school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*ms + testtot*ms + male*ms +age*ms , family="binomial", data=dat5)
+
+modelI5<-glm(event~ms +ms2+ male + age +edu +  school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*ms + testtot*ms + male*ms + age*ms+csexperience*ms2 + testtot*ms2 + male*ms2 +age*ms2 , family="binomial", data=dat5)
+modelI6<-glm(event~ms +ms2+ male + age +edu +  school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*ms + testtot*ms + male*ms  + age*ms+  testtot*ms2 , family="binomial", data=dat5)
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+ stargazer :: stargazer(modelA,modelB,modelX, modelY, modelF, modelG,modelG2, modelH,modelH2,modelH3,modelH4,modelH5,modelI,modelI1 , type="html")
+```
+```{r results="asis",warning=FALSE,message=FALSE}
+ stargazer :: stargazer(modelI,modelI2, modelI3, modelI4 ,modelI6, type="html",
+                        dep.var.labels = "Logit Hazard",
+                       title = "Discrete survival analysis predicting logit hazard of dropout")
+```
+```{r}
+#quadratic function
+
+``
