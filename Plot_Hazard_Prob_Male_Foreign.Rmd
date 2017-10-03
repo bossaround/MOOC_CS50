@@ -2,11 +2,16 @@
 title: "Draw Hazard Plot from Survival Analysis"
 output: html_notebook
 ---
-
+Load RData from Github
+datL is the data to be used for the linear line
+datC is the data to be used for the cubic curve
+pointestm is the mean log hazard at each milestone by male
+pointestf is the mean log hazard at each mileston by foreign
 ```{r}
 setwd(("~/Dropbox/MOOK/MOOC_CS50"))
 load(url("https://github.com/bossaround/MOOC_CS50/raw/master/male_foreign_cubic_linear_point_data.RData"))
 ```
+Log Hazard by Gender.
 ```{r}
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 
@@ -24,7 +29,7 @@ labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 ggsave("combined_global_regional_dot_logit.png",device = 'png',width=8,height=5)
 
 ```
-
+probability by male
 ```{r}
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 
@@ -42,13 +47,8 @@ labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 ggsave("combined_global_regional_dot_prob.png",device = 'png',width=8,height=5)
 
 ```
+cubic for male
 ```{r}
- ggplot(datC, aes(milestone,predict_value, color = as.factor(male))) +
-  geom_smooth (method="glm", formula = y~x+I(x^2) + I(x^3),  alpha=0.5, size = 1,level=0.95, aes(group=interaction(model,male))) 
-```
-```{r}
-# use smooth to add a nonparametric curve.
-#png("male_cubic_curve_dot.png")
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 
  ggplot(datC, aes(milestone,predict_value, color = as.factor(male))) +
@@ -63,7 +63,7 @@ labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 
 #ggsave("cubic_dot.png", width = 8, height = 5, device = 'png')
 ```
-Foreign
+log hazard by Foreign
 ```{r}
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 labs_legend = c("Global - US", "Global - Foreign", "Regional - US", "Regional - Foreign")
@@ -83,6 +83,7 @@ color_legend = c("coral","hotpink2","steelblue1","slateblue3")
  ggsave("foreign_combined_global_regional_dot_logit.png",device = 'png',width=8,height=5)
 
 ```
+probability by foreign
 ```{r}
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 labs_legend = c("Global - US", "Global - Foreign", "Regional - US", "Regional - Foreign")
