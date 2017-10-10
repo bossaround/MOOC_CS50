@@ -174,9 +174,31 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubG9hZCh1cmwoXCJodHRwczovL2dpdGh1Yi5jb20vYm9zc2Fyb3VuZC9NT09DX0NTNTAvcmF3L21hc3Rlci9DUzUwX01PT0NfU3Vydml2YWxfQW5hbHlzaXNfRGF0YV8wLlJEYXRhXCIpKVxubG9hZCh1cmwoXCJodHRwczovL2dpdGh1Yi5jb20vYm9zc2Fyb3VuZC9NT09DX0NTNTAvcmF3L21hc3Rlci9DUzUwX01PT0NfU3Vydml2YWxfQW5hbHlzaXNfRGF0YV8xLlJEYXRhXCIpKVxuYGBgIn0= -->
-<pre class="r"><code>load(url(&quot;https://github.com/bossaround/MOOC_CS50/raw/master/CS50_MOOC_Survival_Analysis_Data_0.RData&quot;))
-load(url(&quot;https://github.com/bossaround/MOOC_CS50/raw/master/CS50_MOOC_Survival_Analysis_Data_1.RData&quot;))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzdGFyZ2F6ZXIpXG5cbmBgYCJ9 -->
+<pre class="r"><code>library(stargazer)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5QbGVhc2UgY2l0ZSBhczogXG5cbiBIbGF2YWMsIE1hcmVrICgyMDE1KS4gc3RhcmdhemVyOiBXZWxsLUZvcm1hdHRlZCBSZWdyZXNzaW9uIGFuZCBTdW1tYXJ5IFN0YXRpc3RpY3MgVGFibGVzLlxuIFIgcGFja2FnZSB2ZXJzaW9uIDUuMi4gaHR0cDovL0NSQU4uUi1wcm9qZWN0Lm9yZy9wYWNrYWdlPXN0YXJnYXplciBcbiJ9 -->
+<pre><code>
+Please cite as: 
+
+ Hlavac, Marek (2015). stargazer: Well-Formatted Regression and Summary Statistics Tables.
+ R package version 5.2. http://CRAN.R-project.org/package=stargazer </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0OCA8LSBkYXQ3XG5kYXQ4JG05IDwtIDBcbmRhdDgkbWYgPC0gMFxuZGF0OCRtOVt3aGljaChkYXQ4JG1pbGVzdG9uZT09OSldIDwtIDFcbmRhdDgkbWZbd2hpY2goZGF0OCRtaWxlc3RvbmU9PTEwKV0gPC0gMVxuYGBgIn0= -->
+<pre class="r"><code>dat8 &lt;- dat7
+dat8$m9 &lt;- 0
+dat8$mf &lt;- 0
+dat8$m9[which(dat8$milestone==9)] &lt;- 1
+dat8$mf[which(dat8$milestone==10)] &lt;- 1</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0OCRtaWxlc3RvbmVbd2hpY2goZGF0OCRtaWxlc3RvbmU9PTkpXSA8LSAwXG5kYXQ4JG1pbGVzdG9uZVt3aGljaChkYXQ4JG1pbGVzdG9uZT09MTApXSA8LSAwXG5gYGAifQ== -->
+<pre class="r"><code>dat8$milestone[which(dat8$milestone==9)] &lt;- 0
+dat8$milestone[which(dat8$milestone==10)] &lt;- 0</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -224,65 +246,1980 @@ AIC: 51115
 Number of Fisher Scoring iterations: 5</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZXZhcnlpbmdtb2RlbCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZSArIG1pbGVzdG9uZTIrIG1hbGUgKyBhZ2UgK2VkdSArICBzY2hvb2wgKyAgdGVzdHRvdCAgK2ZvcmVpZ24gKyBleHRyb3ZlcnQrIGdhbWVob3VyNSArIGNzZXhwZXJpZW5jZSArIG1vdGl2ICtjc2V4cGVyaWVuY2UqbXMgKyB0ZXN0dG90Km1pbGVzdG9uZSArIG1hbGUqbWlsZXN0b25lMiAgKyBhZ2UqbWlsZXN0b25lKyAgdGVzdHRvdCptaWxlc3RvbmUyICsgY2xpY2sgK2NsaWNrKm1pbGVzdG9uZSArY2xpY2sqbWlsZXN0b25lMiwgZGF0YT1kYXQ3KVxuc3VtbWFyeSh0aW1ldmFyeWluZ21vZGVsKVxuYGBgIn0= -->
-<pre class="r"><code>timevaryingmodel &lt;- glm(drop ~ milestone + milestone2+ male + age +edu +  school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*ms + testtot*milestone + male*milestone2  + age*milestone+  testtot*milestone2 + click +click*milestone +click*milestone2, data=dat7)
-summary(timevaryingmodel)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubS5jdWJpYy5iYXNlIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lICsgbWlsZXN0b25lMiArIG1pbGVzdG9uZTMsIGZhbWlseT1cImJpbm9taWFsXCIsIGRhdGE9ZGF0NylcbnN1bW1hcnkobS5jdWJpYy5iYXNlKVxuYGBgIn0= -->
+<pre class="r"><code>m.cubic.base &lt;- glm(drop ~ milestone + milestone2 + milestone3, family=&quot;binomial&quot;, data=dat7)
+summary(m.cubic.base)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSBkcm9wIH4gbWlsZXN0b25lICsgbWlsZXN0b25lMiArIG1pbGVzdG9uZTMsIGZhbWlseSA9IFwiYmlub21pYWxcIiwgXG4gICAgZGF0YSA9IGRhdDcpXG5cbkRldmlhbmNlIFJlc2lkdWFsczogXG4gICAgTWluICAgICAgIDFRICAgTWVkaWFuICAgICAgIDNRICAgICAgTWF4ICBcbi0yLjI2NjkgIC0wLjk1NjkgIC0wLjM4NTQgICAxLjEzMDMgICAyLjIwNDQgIFxuXG5Db2VmZmljaWVudHM6XG4gICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgeiB2YWx1ZSBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpIC02LjM3MzY4NTUgIDAuMDYzNTcyMSAtMTAwLjI2ICAgPDJlLTE2ICoqKlxubWlsZXN0b25lICAgIDQuODQ5NTI4MSAgMC4wNTM0MjIwICAgOTAuNzggICA8MmUtMTYgKioqXG5taWxlc3RvbmUyICAtMS4xMDk5ODkxICAwLjAxMjc1MjAgIC04Ny4wNCAgIDwyZS0xNiAqKipcbm1pbGVzdG9uZTMgICAwLjA3MTM2NzEgIDAuMDAwODY2MyAgIDgyLjM5ICAgPDJlLTE2ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbihEaXNwZXJzaW9uIHBhcmFtZXRlciBmb3IgYmlub21pYWwgZmFtaWx5IHRha2VuIHRvIGJlIDEpXG5cbiAgICBOdWxsIGRldmlhbmNlOiA3ODQyNSAgb24gNjU0NDMgIGRlZ3JlZXMgb2YgZnJlZWRvbVxuUmVzaWR1YWwgZGV2aWFuY2U6IDY2Mzg1ICBvbiA2NTQ0MCAgZGVncmVlcyBvZiBmcmVlZG9tXG5BSUM6IDY2MzkzXG5cbk51bWJlciBvZiBGaXNoZXIgU2NvcmluZyBpdGVyYXRpb25zOiA1XG4ifQ== -->
+<pre><code>
+Call:
+glm(formula = drop ~ milestone + milestone2 + milestone3, family = &quot;binomial&quot;, 
+    data = dat7)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.2669  -0.9569  -0.3854   1.1303   2.2044  
+
+Coefficients:
+              Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -6.3736855  0.0635721 -100.26   &lt;2e-16 ***
+milestone    4.8495281  0.0534220   90.78   &lt;2e-16 ***
+milestone2  -1.1099891  0.0127520  -87.04   &lt;2e-16 ***
+milestone3   0.0713671  0.0008663   82.39   &lt;2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 78425  on 65443  degrees of freedom
+Residual deviance: 66385  on 65440  degrees of freedom
+AIC: 66393
+
+Number of Fisher Scoring iterations: 5</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWwxYyA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZXMgKyBtaWxlc3RvbmVzMittaWxlc3RvbmVzMysgbWFsZSArIGFnZSArZWR1ICsgIHNjaG9vbCArICB0ZXN0dG90ICArZm9yZWlnbiArIGV4dHJvdmVydCsgZ2FtZWhvdXI1ICsgY3NleHBlcmllbmNlICsgbW90aXYsIGRhdGE9ZGF0NylcblxubW9kZWwyYyA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZXMgKyBtaWxlc3RvbmVzMisgbWlsZXN0b25lczMrbWFsZSArIGFnZSAgKyAgdGVzdHRvdCAgK2ZvcmVpZ24gKyBleHRyb3ZlcnQrIGdhbWVob3VyNSArIGNzZXhwZXJpZW5jZSArIG1vdGl2ICtjc2V4cGVyaWVuY2UqbWlsZXN0b25lcysgY3NleHBlcmllbmNlKm1pbGVzdG9uZXMyICsgdGVzdHRvdCptaWxlc3RvbmVzICttYWxlKm1pbGVzdG9uZXMrIG1hbGUqbWlsZXN0b25lczIgICsgYWdlKm1pbGVzdG9uZXMrIGFnZSptaWxlc3RvbmVzMisgdGVzdHRvdCptaWxlc3RvbmVzMiAsIGRhdGE9ZGF0NylcblxubW9kZWwzYyA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZXMgKyBtaWxlc3RvbmVzMittaWxlc3RvbmVzMysgbWFsZSArIGFnZSArICB0ZXN0dG90ICArZm9yZWlnbiArIGV4dHJvdmVydCsgZ2FtZWhvdXI1ICsgY3NleHBlcmllbmNlICsgbW90aXYgICsgY2xpY2sgLCBkYXRhPWRhdDcpXG5cbm1vZGVsNGMgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmVzICsgbWlsZXN0b25lczIrbWlsZXN0b25lczMrIG1hbGUgKyBhZ2UgICsgIHRlc3R0b3QgICtmb3JlaWduICsgZXh0cm92ZXJ0KyBnYW1laG91cjUgKyBjc2V4cGVyaWVuY2UgKyBtb3RpdiArY3NleHBlcmllbmNlKm1pbGVzdG9uZXMrIGNzZXhwZXJpZW5jZSptaWxlc3RvbmVzMiArIHRlc3R0b3QqbWlsZXN0b25lcyArbWFsZSptaWxlc3RvbmVzKyBtYWxlKm1pbGVzdG9uZXMyICArIGFnZSptaWxlc3RvbmVzKyBhZ2UqbWlsZXN0b25lczIrIHRlc3R0b3QqbWlsZXN0b25lczIgKyBjbGljaywgZGF0YT1kYXQ3KVxuXG5tb2RlbDVjIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lcyArIG1pbGVzdG9uZXMyK21pbGVzdG9uZXMzKyBtYWxlICsgYWdlICArICB0ZXN0dG90ICArZm9yZWlnbiArIGV4dHJvdmVydCsgZ2FtZWhvdXI1ICsgY3NleHBlcmllbmNlICsgbW90aXYgK2NzZXhwZXJpZW5jZSptaWxlc3RvbmVzKyBjc2V4cGVyaWVuY2UqbWlsZXN0b25lczIgKyB0ZXN0dG90Km1pbGVzdG9uZXMgK21hbGUqbWlsZXN0b25lcysgbWFsZSptaWxlc3RvbmVzMiAgKyBhZ2UqbWlsZXN0b25lcysgYWdlKm1pbGVzdG9uZXMyKyB0ZXN0dG90Km1pbGVzdG9uZXMyICArIGNsaWNrICtjbGljayptaWxlc3RvbmVzICtjbGljayptaWxlc3RvbmVzMiwgZGF0YT1kYXQ3KVxuYGBgIn0= -->
-<pre class="r"><code>model1c &lt;- glm(drop ~ milestones + milestones2+milestones3+ male + age +edu +  school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv, data=dat7)
-
-model2c &lt;- glm(drop ~ milestones + milestones2+ milestones3+male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2 , data=dat7)
-
-model3c &lt;- glm(drop ~ milestones + milestones2+milestones3+ male + age +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv  + click , data=dat7)
-
-model4c &lt;- glm(drop ~ milestones + milestones2+milestones3+ male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2 + click, data=dat7)
-
-model5c &lt;- glm(drop ~ milestones + milestones2+milestones3+ male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2  + click +click*milestones +click*milestones2, data=dat7)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubS5kaXNjcmV0ZS5iYXNlIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lICsgbTkgKyBtZiwgZmFtaWx5ID0gXCJiaW5vbWlhbFwiLCBkYXRhID0gZGF0OClcbnN1bW1hcnkobS5kaXNjcmV0ZS5iYXNlKVxuYGBgIn0= -->
+<pre class="r"><code>m.discrete.base &lt;- glm(drop ~ milestone + m9 + mf, family = &quot;binomial&quot;, data = dat8)
+summary(m.discrete.base)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSBkcm9wIH4gbWlsZXN0b25lICsgbTkgKyBtZiwgZmFtaWx5ID0gXCJiaW5vbWlhbFwiLCBcbiAgICBkYXRhID0gZGF0OClcblxuRGV2aWFuY2UgUmVzaWR1YWxzOiBcbiAgICBNaW4gICAgICAgMVEgICBNZWRpYW4gICAgICAgM1EgICAgICBNYXggIFxuLTEuODE4MSAgLTAuODEzMCAgLTAuNzU2MSAgIDEuNDc4MyAgIDEuNjMwNCAgXG5cbkNvZWZmaWNpZW50czpcbiAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHogdmFsdWUgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KSAtMS4xOTA0NDIgICAwLjAxNTk3MyAtNzQuNTMwICA8IDJlLTE2ICoqKlxubWlsZXN0b25lICAgIDAuMDg0MzYwICAgMC4wMDQ2NDYgIDE4LjE1NyAgPCAyZS0xNiAqKipcbm05ICAgICAgICAgICAwLjQ0NDE0OCAgIDAuMDU4OTM4ICAgNy41MzYgNC44NWUtMTQgKioqXG5tZiAgICAgICAgICAgMi42MzA2NjIgICAwLjA4MzMxMiAgMzEuNTc2ICA8IDJlLTE2ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbihEaXNwZXJzaW9uIHBhcmFtZXRlciBmb3IgYmlub21pYWwgZmFtaWx5IHRha2VuIHRvIGJlIDEpXG5cbiAgICBOdWxsIGRldmlhbmNlOiA3ODQyNSAgb24gNjU0NDMgIGRlZ3JlZXMgb2YgZnJlZWRvbVxuUmVzaWR1YWwgZGV2aWFuY2U6IDc2OTM1ICBvbiA2NTQ0MCAgZGVncmVlcyBvZiBmcmVlZG9tXG5BSUM6IDc2OTQzXG5cbk51bWJlciBvZiBGaXNoZXIgU2NvcmluZyBpdGVyYXRpb25zOiA0XG4ifQ== -->
+<pre><code>
+Call:
+glm(formula = drop ~ milestone + m9 + mf, family = &quot;binomial&quot;, 
+    data = dat8)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.8181  -0.8130  -0.7561   1.4783   1.6304  
+
+Coefficients:
+             Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -1.190442   0.015973 -74.530  &lt; 2e-16 ***
+milestone    0.084360   0.004646  18.157  &lt; 2e-16 ***
+m9           0.444148   0.058938   7.536 4.85e-14 ***
+mf           2.630662   0.083312  31.576  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 78425  on 65443  degrees of freedom
+Residual deviance: 76935  on 65440  degrees of freedom
+AIC: 76943
+
+Number of Fisher Scoring iterations: 4</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIHN0YXJnYXplciA6OiBzdGFyZ2F6ZXIobW9kZWwxYyxtb2RlbDJjLCBtb2RlbDNjLCBtb2RlbDRjICxtb2RlbDVjLCB0eXBlPVwiaHRtbFwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgZGVwLnZhci5sYWJlbHMgPSBcIkxvZ2l0IEhhemFyZFwiLFxuICAgICAgICAgICAgICAgICAgICAgICB0aXRsZSA9IFwiRGlzY3JldGUgc3Vydml2YWwgYW5hbHlzaXMgcHJlZGljdGluZyBsb2dpdCBoYXphcmQgb2YgZHJvcG91dCwgaW5jbHVkaW5nIGZpbmFsIGFuZCBvcHRpb25hbCBhc3NpZ25tZW50XCIpXG5gYGAifQ== -->
-<pre class="r"><code> stargazer :: stargazer(model1c,model2c, model3c, model4c ,model5c, type=&quot;html&quot;,
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0OSA8LSBkYXQ3W2RhdDckbWlsZXN0b25lIDw5LF1cbmBgYCJ9 -->
+<pre class="r"><code>dat9 &lt;- dat7[dat7$milestone &lt;9,]</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubS5jdWJpYy5mdWxsIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lICttaWxlc3RvbmUyK21pbGVzdG9uZTMrY3NleHBlcmllbmNlK21hbGUgK3Rlc3R0b3QgK2FnZSttb3RpditnYW1laG91cjUrZm9yZWlnbisgbWlsZXN0b25lKnRlc3R0b3QrbWlsZXN0b25lKmNzZXhwZXJpZW5jZSAsIGZhbWlseSA9IFwiYmlub21pYWxcIiwgZGF0YT1kYXQ3KVxuc3VtbWFyeShtLmN1YmljLmZ1bGwpXG5gYGAifQ== -->
+<pre class="r"><code>m.cubic.full &lt;- glm(drop ~ milestone +milestone2+milestone3+csexperience+male +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*csexperience , family = &quot;binomial&quot;, data=dat7)
+summary(m.cubic.full)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSBkcm9wIH4gbWlsZXN0b25lICsgbWlsZXN0b25lMiArIG1pbGVzdG9uZTMgKyBjc2V4cGVyaWVuY2UgKyBcbiAgICBtYWxlICsgdGVzdHRvdCArIGFnZSArIG1vdGl2ICsgZ2FtZWhvdXI1ICsgZm9yZWlnbiArIG1pbGVzdG9uZSAqIFxuICAgIHRlc3R0b3QgKyBtaWxlc3RvbmUgKiBjc2V4cGVyaWVuY2UsIGZhbWlseSA9IFwiYmlub21pYWxcIiwgXG4gICAgZGF0YSA9IGRhdDcpXG5cbkRldmlhbmNlIFJlc2lkdWFsczogXG4gICAgTWluICAgICAgIDFRICAgTWVkaWFuICAgICAgIDNRICAgICAgTWF4ICBcbi0yLjM0NzYgIC0wLjgzMTMgIC0wLjQ0OTcgICAwLjQ4MzEgICAyLjM2NjUgIFxuXG5Db2VmZmljaWVudHM6XG4gICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHogdmFsdWUgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KSAgICAgICAgICAgIC02LjEyMTYxOSAgIDAuMTA3MzI3IC01Ny4wMzcgIDwgMmUtMTYgKioqXG5taWxlc3RvbmUgICAgICAgICAgICAgICA0LjQwMTM3MCAgIDAuMDgxNDczICA1NC4wMjIgIDwgMmUtMTYgKioqXG5taWxlc3RvbmUyICAgICAgICAgICAgIC0wLjk3NjE4MyAgIDAuMDE4NjgxIC01Mi4yNTYgIDwgMmUtMTYgKioqXG5taWxlc3RvbmUzICAgICAgICAgICAgICAwLjA2MTk5MiAgIDAuMDAxMjMzICA1MC4yOTIgIDwgMmUtMTYgKioqXG5jc2V4cGVyaWVuY2UgICAgICAgICAgIC0wLjI0ODc1NSAgIDAuMDMwMzc4ICAtOC4xODkgMi42NGUtMTYgKioqXG5tYWxlICAgICAgICAgICAgICAgICAgIC0wLjI3ODczNSAgIDAuMDQwODI1ICAtNi44MjggOC42NGUtMTIgKioqXG50ZXN0dG90ICAgICAgICAgICAgICAgIC0wLjM4NjA0MyAgIDAuMDI5Njg2IC0xMy4wMDQgIDwgMmUtMTYgKioqXG5hZ2UgICAgICAgICAgICAgICAgICAgIC0wLjA2NzczOCAgIDAuMDE0OTkwICAtNC41MTkgNi4yMmUtMDYgKioqXG5tb3RpdiAgICAgICAgICAgICAgICAgIC0wLjA5MTgxMyAgIDAuMDE1Mjk4ICAtNi4wMDEgMS45NmUtMDkgKioqXG5nYW1laG91cjUgICAgICAgICAgICAgICAwLjA0NzUyMCAgIDAuMDE1MjY4ICAgMy4xMTIgIDAuMDAxODYgKiogXG5mb3JlaWduICAgICAgICAgICAgICAgICAwLjI2MTk4OSAgIDAuMDMxMjEzICAgOC4zOTQgIDwgMmUtMTYgKioqXG5taWxlc3RvbmU6dGVzdHRvdCAgICAgICAwLjA1NTc5MSAgIDAuMDA3OTYyICAgNy4wMDcgMi40M2UtMTIgKioqXG5taWxlc3RvbmU6Y3NleHBlcmllbmNlICAwLjAyMDE2OCAgIDAuMDA3MjQyICAgMi43ODUgIDAuMDA1MzYgKiogXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuKERpc3BlcnNpb24gcGFyYW1ldGVyIGZvciBiaW5vbWlhbCBmYW1pbHkgdGFrZW4gdG8gYmUgMSlcblxuICAgIE51bGwgZGV2aWFuY2U6IDMyNjU1ICBvbiAyODYzOSAgZGVncmVlcyBvZiBmcmVlZG9tXG5SZXNpZHVhbCBkZXZpYW5jZTogMjc4OTAgIG9uIDI4NjI3ICBkZWdyZWVzIG9mIGZyZWVkb21cbiAgKDM2ODA0IG9ic2VydmF0aW9ucyBkZWxldGVkIGR1ZSB0byBtaXNzaW5nbmVzcylcbkFJQzogMjc5MTZcblxuTnVtYmVyIG9mIEZpc2hlciBTY29yaW5nIGl0ZXJhdGlvbnM6IDVcbiJ9 -->
+<pre><code>
+Call:
+glm(formula = drop ~ milestone + milestone2 + milestone3 + csexperience + 
+    male + testtot + age + motiv + gamehour5 + foreign + milestone * 
+    testtot + milestone * csexperience, family = &quot;binomial&quot;, 
+    data = dat7)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.3476  -0.8313  -0.4497   0.4831   2.3665  
+
+Coefficients:
+                        Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)            -6.121619   0.107327 -57.037  &lt; 2e-16 ***
+milestone               4.401370   0.081473  54.022  &lt; 2e-16 ***
+milestone2             -0.976183   0.018681 -52.256  &lt; 2e-16 ***
+milestone3              0.061992   0.001233  50.292  &lt; 2e-16 ***
+csexperience           -0.248755   0.030378  -8.189 2.64e-16 ***
+male                   -0.278735   0.040825  -6.828 8.64e-12 ***
+testtot                -0.386043   0.029686 -13.004  &lt; 2e-16 ***
+age                    -0.067738   0.014990  -4.519 6.22e-06 ***
+motiv                  -0.091813   0.015298  -6.001 1.96e-09 ***
+gamehour5               0.047520   0.015268   3.112  0.00186 ** 
+foreign                 0.261989   0.031213   8.394  &lt; 2e-16 ***
+milestone:testtot       0.055791   0.007962   7.007 2.43e-12 ***
+milestone:csexperience  0.020168   0.007242   2.785  0.00536 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 32655  on 28639  degrees of freedom
+Residual deviance: 27890  on 28627  degrees of freedom
+  (36804 observations deleted due to missingness)
+AIC: 27916
+
+Number of Fisher Scoring iterations: 5</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubS5jdWJpYy5tYWxlLml0ciA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZSArbWlsZXN0b25lMittaWxlc3RvbmUzK21hbGUgK3Rlc3R0b3QgK2FnZSttb3RpditnYW1laG91cjUrZm9yZWlnbisgbWlsZXN0b25lKnRlc3R0b3QrbWlsZXN0b25lKm1hbGUgLCBmYW1pbHkgPSBcImJpbm9taWFsXCIsIGRhdGE9ZGF0NylcbnN1bW1hcnkobS5jdWJpYy5tYWxlLml0cilcbmBgYCJ9 -->
+<pre class="r"><code>m.cubic.male.itr &lt;- glm(drop ~ milestone +milestone2+milestone3+male +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*male , family = &quot;binomial&quot;, data=dat7)
+summary(m.cubic.male.itr)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSBkcm9wIH4gbWlsZXN0b25lICsgbWlsZXN0b25lMiArIG1pbGVzdG9uZTMgKyBtYWxlICsgXG4gICAgdGVzdHRvdCArIGFnZSArIG1vdGl2ICsgZ2FtZWhvdXI1ICsgZm9yZWlnbiArIG1pbGVzdG9uZSAqIFxuICAgIHRlc3R0b3QgKyBtaWxlc3RvbmUgKiBtYWxlLCBmYW1pbHkgPSBcImJpbm9taWFsXCIsIGRhdGEgPSBkYXQ3KVxuXG5EZXZpYW5jZSBSZXNpZHVhbHM6IFxuICAgIE1pbiAgICAgICAxUSAgIE1lZGlhbiAgICAgICAzUSAgICAgIE1heCAgXG4tMi40OTQ5ICAtMC44NjQ4ICAtMC4zOTkxICAgMS4wNDQ4ICAgMi40NDQyICBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgeiB2YWx1ZSBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpICAgICAgIC02LjQ3ODM2NyAgIDAuMDg4Mzc2IC03My4zMDUgIDwgMmUtMTYgKioqXG5taWxlc3RvbmUgICAgICAgICAgNS4wMDc1ODkgICAwLjA2NjI5NSAgNzUuNTM1ICA8IDJlLTE2ICoqKlxubWlsZXN0b25lMiAgICAgICAgLTEuMTM1NTM0ICAgMC4wMTU1MjEgLTczLjE2MiAgPCAyZS0xNiAqKipcbm1pbGVzdG9uZTMgICAgICAgICAwLjA3MjMwMiAgIDAuMDAxMDQ2ICA2OS4xMzcgIDwgMmUtMTYgKioqXG5tYWxlICAgICAgICAgICAgICAtMC40NTQwMjMgICAwLjA1NDY2NCAgLTguMzA2ICA8IDJlLTE2ICoqKlxudGVzdHRvdCAgICAgICAgICAgLTAuNDQwMDkzICAgMC4wMjI0ODkgLTE5LjU2OSAgPCAyZS0xNiAqKipcbmFnZSAgICAgICAgICAgICAgIC0wLjExODI3MCAgIDAuMDExNjYyIC0xMC4xNDIgIDwgMmUtMTYgKioqXG5tb3RpdiAgICAgICAgICAgICAtMC4wNjgyNzEgICAwLjAxMTgxOCAgLTUuNzc3IDcuNjJlLTA5ICoqKlxuZ2FtZWhvdXI1ICAgICAgICAgIDAuMDMwNjk0ICAgMC4wMTE4NjAgICAyLjU4OCAgMC4wMDk2NSAqKiBcbmZvcmVpZ24gICAgICAgICAgICAwLjM1ODMxNyAgIDAuMDIzOTkzICAxNC45MzQgIDwgMmUtMTYgKioqXG5taWxlc3RvbmU6dGVzdHRvdCAgMC4wNTcxODIgICAwLjAwNjc5MSAgIDguNDIwICA8IDJlLTE2ICoqKlxubWlsZXN0b25lOm1hbGUgICAgIDAuMDQzMDMyICAgMC4wMTYwNzMgICAyLjY3NyAgMC4wMDc0MiAqKiBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG4oRGlzcGVyc2lvbiBwYXJhbWV0ZXIgZm9yIGJpbm9taWFsIGZhbWlseSB0YWtlbiB0byBiZSAxKVxuXG4gICAgTnVsbCBkZXZpYW5jZTogNTQ5OTggIG9uIDQ1OTQ5ICBkZWdyZWVzIG9mIGZyZWVkb21cblJlc2lkdWFsIGRldmlhbmNlOiA0NTU0NSAgb24gNDU5MzggIGRlZ3JlZXMgb2YgZnJlZWRvbVxuICAoMTk0OTQgb2JzZXJ2YXRpb25zIGRlbGV0ZWQgZHVlIHRvIG1pc3NpbmduZXNzKVxuQUlDOiA0NTU2OVxuXG5OdW1iZXIgb2YgRmlzaGVyIFNjb3JpbmcgaXRlcmF0aW9uczogNVxuIn0= -->
+<pre><code>
+Call:
+glm(formula = drop ~ milestone + milestone2 + milestone3 + male + 
+    testtot + age + motiv + gamehour5 + foreign + milestone * 
+    testtot + milestone * male, family = &quot;binomial&quot;, data = dat7)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.4949  -0.8648  -0.3991   1.0448   2.4442  
+
+Coefficients:
+                   Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)       -6.478367   0.088376 -73.305  &lt; 2e-16 ***
+milestone          5.007589   0.066295  75.535  &lt; 2e-16 ***
+milestone2        -1.135534   0.015521 -73.162  &lt; 2e-16 ***
+milestone3         0.072302   0.001046  69.137  &lt; 2e-16 ***
+male              -0.454023   0.054664  -8.306  &lt; 2e-16 ***
+testtot           -0.440093   0.022489 -19.569  &lt; 2e-16 ***
+age               -0.118270   0.011662 -10.142  &lt; 2e-16 ***
+motiv             -0.068271   0.011818  -5.777 7.62e-09 ***
+gamehour5          0.030694   0.011860   2.588  0.00965 ** 
+foreign            0.358317   0.023993  14.934  &lt; 2e-16 ***
+milestone:testtot  0.057182   0.006791   8.420  &lt; 2e-16 ***
+milestone:male     0.043032   0.016073   2.677  0.00742 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 54998  on 45949  degrees of freedom
+Residual deviance: 45545  on 45938  degrees of freedom
+  (19494 observations deleted due to missingness)
+AIC: 45569
+
+Number of Fisher Scoring iterations: 5</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubS5jdWJpYy5tYWxlLml0ci5ucyA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZSArbWlsZXN0b25lMittaWxlc3RvbmUzK21hbGUgK2NzZXhwZXJpZW5jZSArdGVzdHRvdCArYWdlK21vdGl2K2dhbWVob3VyNStmb3JlaWduKyBtaWxlc3RvbmUqdGVzdHRvdCttaWxlc3RvbmUqbWFsZSwgZmFtaWx5ID0gXCJiaW5vbWlhbFwiLCBkYXRhPWRhdDcpXG5zdW1tYXJ5KG0uY3ViaWMubWFsZS5pdHIubnMpXG5gYGAifQ== -->
+<pre class="r"><code>m.cubic.male.itr.ns &lt;- glm(drop ~ milestone +milestone2+milestone3+male +csexperience +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*male, family = &quot;binomial&quot;, data=dat7)
+summary(m.cubic.male.itr.ns)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSBkcm9wIH4gbWlsZXN0b25lICsgbWlsZXN0b25lMiArIG1pbGVzdG9uZTMgKyBtYWxlICsgXG4gICAgY3NleHBlcmllbmNlICsgdGVzdHRvdCArIGFnZSArIG1vdGl2ICsgZ2FtZWhvdXI1ICsgZm9yZWlnbiArIFxuICAgIG1pbGVzdG9uZSAqIHRlc3R0b3QgKyBtaWxlc3RvbmUgKiBtYWxlLCBmYW1pbHkgPSBcImJpbm9taWFsXCIsIFxuICAgIGRhdGEgPSBkYXQ3KVxuXG5EZXZpYW5jZSBSZXNpZHVhbHM6IFxuICAgIE1pbiAgICAgICAxUSAgIE1lZGlhbiAgICAgICAzUSAgICAgIE1heCAgXG4tMi4zNDg5ICAtMC44Mjk1ICAtMC40NDMwICAgMC40NzM4ICAgMi40MzEzICBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgeiB2YWx1ZSBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpICAgICAgIC02LjA0NzU2NSAgIDAuMTE4MTcxIC01MS4xNzYgIDwgMmUtMTYgKioqXG5taWxlc3RvbmUgICAgICAgICAgNC4zNzY4MTQgICAwLjA4MjcyMSAgNTIuOTEwICA8IDJlLTE2ICoqKlxubWlsZXN0b25lMiAgICAgICAgLTAuOTc1OTIwICAgMC4wMTg2ODEgLTUyLjI0MCAgPCAyZS0xNiAqKipcbm1pbGVzdG9uZTMgICAgICAgICAwLjA2MjA0NSAgIDAuMDAxMjMzICA1MC4zMjIgIDwgMmUtMTYgKioqXG5tYWxlICAgICAgICAgICAgICAtMC4zNTUxMDUgICAwLjA3NzMzMSAgLTQuNTkyIDQuMzllLTA2ICoqKlxuY3NleHBlcmllbmNlICAgICAgLTAuMTc3MDE5ICAgMC4wMTU4NTcgLTExLjE2MyAgPCAyZS0xNiAqKipcbnRlc3R0b3QgICAgICAgICAgIC0wLjM4OTA3MCAgIDAuMDI5NjUyIC0xMy4xMjEgIDwgMmUtMTYgKioqXG5hZ2UgICAgICAgICAgICAgICAtMC4wNjY1NjIgICAwLjAxNDk4MiAgLTQuNDQzIDguODhlLTA2ICoqKlxubW90aXYgICAgICAgICAgICAgLTAuMDkyMzQyICAgMC4wMTUyOTggIC02LjAzNiAxLjU4ZS0wOSAqKipcbmdhbWVob3VyNSAgICAgICAgICAwLjA0NzIwMCAgIDAuMDE1MjY1ICAgMy4wOTIgIDAuMDAxOTkgKiogXG5mb3JlaWduICAgICAgICAgICAgMC4yNjM3NDQgICAwLjAzMTIwOCAgIDguNDUxICA8IDJlLTE2ICoqKlxubWlsZXN0b25lOnRlc3R0b3QgIDAuMDU2MzkwICAgMC4wMDc5NjEgICA3LjA4MyAxLjQxZS0xMiAqKipcbm1pbGVzdG9uZTptYWxlICAgICAwLjAyMzgxNiAgIDAuMDIwOTEwICAgMS4xMzkgIDAuMjU0NzEgICAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuKERpc3BlcnNpb24gcGFyYW1ldGVyIGZvciBiaW5vbWlhbCBmYW1pbHkgdGFrZW4gdG8gYmUgMSlcblxuICAgIE51bGwgZGV2aWFuY2U6IDMyNjU1ICBvbiAyODYzOSAgZGVncmVlcyBvZiBmcmVlZG9tXG5SZXNpZHVhbCBkZXZpYW5jZTogMjc4OTYgIG9uIDI4NjI3ICBkZWdyZWVzIG9mIGZyZWVkb21cbiAgKDM2ODA0IG9ic2VydmF0aW9ucyBkZWxldGVkIGR1ZSB0byBtaXNzaW5nbmVzcylcbkFJQzogMjc5MjJcblxuTnVtYmVyIG9mIEZpc2hlciBTY29yaW5nIGl0ZXJhdGlvbnM6IDVcbiJ9 -->
+<pre><code>
+Call:
+glm(formula = drop ~ milestone + milestone2 + milestone3 + male + 
+    csexperience + testtot + age + motiv + gamehour5 + foreign + 
+    milestone * testtot + milestone * male, family = &quot;binomial&quot;, 
+    data = dat7)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.3489  -0.8295  -0.4430   0.4738   2.4313  
+
+Coefficients:
+                   Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)       -6.047565   0.118171 -51.176  &lt; 2e-16 ***
+milestone          4.376814   0.082721  52.910  &lt; 2e-16 ***
+milestone2        -0.975920   0.018681 -52.240  &lt; 2e-16 ***
+milestone3         0.062045   0.001233  50.322  &lt; 2e-16 ***
+male              -0.355105   0.077331  -4.592 4.39e-06 ***
+csexperience      -0.177019   0.015857 -11.163  &lt; 2e-16 ***
+testtot           -0.389070   0.029652 -13.121  &lt; 2e-16 ***
+age               -0.066562   0.014982  -4.443 8.88e-06 ***
+motiv             -0.092342   0.015298  -6.036 1.58e-09 ***
+gamehour5          0.047200   0.015265   3.092  0.00199 ** 
+foreign            0.263744   0.031208   8.451  &lt; 2e-16 ***
+milestone:testtot  0.056390   0.007961   7.083 1.41e-12 ***
+milestone:male     0.023816   0.020910   1.139  0.25471    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 32655  on 28639  degrees of freedom
+Residual deviance: 27896  on 28627  degrees of freedom
+  (36804 observations deleted due to missingness)
+AIC: 27922
+
+Number of Fisher Scoring iterations: 5</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubS5kaXNjcmV0ZS5mdWxsIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lICttOSArIG1mICtjc2V4cGVyaWVuY2UrbWFsZSArdGVzdHRvdCArYWdlK21vdGl2K2dhbWVob3VyNStmb3JlaWduKyBtaWxlc3RvbmUqdGVzdHRvdCttaWxlc3RvbmUqY3NleHBlcmllbmNlICsgbTkqdGVzdHRvdCArIG1mKnRlc3R0b3QgKyBtOSpjc2V4cGVyaWVuY2UgKyBtZipjc2V4cGVyaWVuY2UgLCBmYW1pbHkgPSBcImJpbm9taWFsXCIsIGRhdGE9ZGF0OClcbnN1bW1hcnkobS5kaXNjcmV0ZS5mdWxsKVxuYGBgIn0= -->
+<pre class="r"><code>m.discrete.full &lt;- glm(drop ~ milestone +m9 + mf +csexperience+male +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*csexperience + m9*testtot + mf*testtot + m9*csexperience + mf*csexperience , family = &quot;binomial&quot;, data=dat8)
+summary(m.discrete.full)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSBkcm9wIH4gbWlsZXN0b25lICsgbTkgKyBtZiArIGNzZXhwZXJpZW5jZSArIG1hbGUgKyBcbiAgICB0ZXN0dG90ICsgYWdlICsgbW90aXYgKyBnYW1laG91cjUgKyBmb3JlaWduICsgbWlsZXN0b25lICogXG4gICAgdGVzdHRvdCArIG1pbGVzdG9uZSAqIGNzZXhwZXJpZW5jZSArIG05ICogdGVzdHRvdCArIG1mICogXG4gICAgdGVzdHRvdCArIG05ICogY3NleHBlcmllbmNlICsgbWYgKiBjc2V4cGVyaWVuY2UsIGZhbWlseSA9IFwiYmlub21pYWxcIiwgXG4gICAgZGF0YSA9IGRhdDgpXG5cbkRldmlhbmNlIFJlc2lkdWFsczogXG4gICAgTWluICAgICAgIDFRICAgTWVkaWFuICAgICAgIDNRICAgICAgTWF4ICBcbi0yLjE2NzggIC0wLjc3NTMgIC0wLjY3NTQgICAwLjU5MDUgICAyLjEyODIgIFxuXG5Db2VmZmljaWVudHM6XG4gICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHogdmFsdWUgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KSAgICAgICAgICAgIC0xLjMyODY5NCAgIDAuMDQzMTU4IC0zMC43ODcgIDwgMmUtMTYgKioqXG5taWxlc3RvbmUgICAgICAgICAgICAgICAwLjExOTU4NiAgIDAuMDA3NDk3ICAxNS45NTIgIDwgMmUtMTYgKioqXG5tOSAgICAgICAgICAgICAgICAgICAgICAwLjczODM0OSAgIDAuMDkzMDIxICAgNy45MzcgMi4wNmUtMTUgKioqXG5tZiAgICAgICAgICAgICAgICAgICAgICAzLjAxNTM3MCAgIDAuMTI5NzYyICAyMy4yMzggIDwgMmUtMTYgKioqXG5jc2V4cGVyaWVuY2UgICAgICAgICAgIC0wLjA5MTYzNCAgIDAuMDI3NjgxICAtMy4zMTAgMC4wMDA5MzIgKioqXG5tYWxlICAgICAgICAgICAgICAgICAgIC0wLjI0NjM5MSAgIDAuMDM4MjQwICAtNi40NDMgMS4xN2UtMTAgKioqXG50ZXN0dG90ICAgICAgICAgICAgICAgIC0wLjE4Nzk3MSAgIDAuMDI3Mzc1ICAtNi44NjYgNi41OGUtMTIgKioqXG5hZ2UgICAgICAgICAgICAgICAgICAgIC0wLjA1NjMyNiAgIDAuMDE0MTQxICAtMy45ODMgNi44MGUtMDUgKioqXG5tb3RpdiAgICAgICAgICAgICAgICAgIC0wLjA4MzcxNSAgIDAuMDE0MzQ4ICAtNS44MzUgNS4zOWUtMDkgKioqXG5nYW1laG91cjUgICAgICAgICAgICAgICAwLjA0NDU1NiAgIDAuMDE0Mzc4ICAgMy4wOTkgMC4wMDE5NDMgKiogXG5mb3JlaWduICAgICAgICAgICAgICAgICAwLjI0MDI3OCAgIDAuMDI5NDA3ICAgOC4xNzEgMy4wNmUtMTYgKioqXG5taWxlc3RvbmU6dGVzdHRvdCAgICAgICAwLjAwMjIyNCAgIDAuMDA4MDQxICAgMC4yNzcgMC43ODIxMjUgICAgXG5taWxlc3RvbmU6Y3NleHBlcmllbmNlIC0wLjAyNTA5MiAgIDAuMDA3MzMyICAtMy40MjIgMC4wMDA2MjEgKioqXG5tOTp0ZXN0dG90ICAgICAgICAgICAgICAwLjI3MjQxMSAgIDAuMTAxMjM5ICAgMi42OTEgMC4wMDcxMjkgKiogXG5tZjp0ZXN0dG90ICAgICAgICAgICAgICAwLjQyMTk1NiAgIDAuMTE3MjA0ICAgMy42MDAgMC4wMDAzMTggKioqXG5tOTpjc2V4cGVyaWVuY2UgICAgICAgICAwLjA1MTc5NiAgIDAuMDgwMTI0ICAgMC42NDYgMC41MTc5ODcgICAgXG5tZjpjc2V4cGVyaWVuY2UgICAgICAgICAwLjIwODYxMiAgIDAuMTIwNDkwICAgMS43MzEgMC4wODMzODggLiAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuKERpc3BlcnNpb24gcGFyYW1ldGVyIGZvciBiaW5vbWlhbCBmYW1pbHkgdGFrZW4gdG8gYmUgMSlcblxuICAgIE51bGwgZGV2aWFuY2U6IDMyNjU1ICBvbiAyODYzOSAgZGVncmVlcyBvZiBmcmVlZG9tXG5SZXNpZHVhbCBkZXZpYW5jZTogMzEyMTAgIG9uIDI4NjIzICBkZWdyZWVzIG9mIGZyZWVkb21cbiAgKDM2ODA0IG9ic2VydmF0aW9ucyBkZWxldGVkIGR1ZSB0byBtaXNzaW5nbmVzcylcbkFJQzogMzEyNDRcblxuTnVtYmVyIG9mIEZpc2hlciBTY29yaW5nIGl0ZXJhdGlvbnM6IDRcbiJ9 -->
+<pre><code>
+Call:
+glm(formula = drop ~ milestone + m9 + mf + csexperience + male + 
+    testtot + age + motiv + gamehour5 + foreign + milestone * 
+    testtot + milestone * csexperience + m9 * testtot + mf * 
+    testtot + m9 * csexperience + mf * csexperience, family = &quot;binomial&quot;, 
+    data = dat8)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.1678  -0.7753  -0.6754   0.5905   2.1282  
+
+Coefficients:
+                        Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)            -1.328694   0.043158 -30.787  &lt; 2e-16 ***
+milestone               0.119586   0.007497  15.952  &lt; 2e-16 ***
+m9                      0.738349   0.093021   7.937 2.06e-15 ***
+mf                      3.015370   0.129762  23.238  &lt; 2e-16 ***
+csexperience           -0.091634   0.027681  -3.310 0.000932 ***
+male                   -0.246391   0.038240  -6.443 1.17e-10 ***
+testtot                -0.187971   0.027375  -6.866 6.58e-12 ***
+age                    -0.056326   0.014141  -3.983 6.80e-05 ***
+motiv                  -0.083715   0.014348  -5.835 5.39e-09 ***
+gamehour5               0.044556   0.014378   3.099 0.001943 ** 
+foreign                 0.240278   0.029407   8.171 3.06e-16 ***
+milestone:testtot       0.002224   0.008041   0.277 0.782125    
+milestone:csexperience -0.025092   0.007332  -3.422 0.000621 ***
+m9:testtot              0.272411   0.101239   2.691 0.007129 ** 
+mf:testtot              0.421956   0.117204   3.600 0.000318 ***
+m9:csexperience         0.051796   0.080124   0.646 0.517987    
+mf:csexperience         0.208612   0.120490   1.731 0.083388 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 32655  on 28639  degrees of freedom
+Residual deviance: 31210  on 28623  degrees of freedom
+  (36804 observations deleted due to missingness)
+AIC: 31244
+
+Number of Fisher Scoring iterations: 4</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubS5yZWdpb25hbC5iYXNlIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lICwgZmFtaWx5ID0gXCJiaW5vbWlhbFwiLCBkYXRhPWRhdDkpXG5zdW1tYXJ5KG0ucmVnaW9uYWwuYmFzZSlcbmBgYCJ9 -->
+<pre class="r"><code>m.regional.base &lt;- glm(drop ~ milestone , family = &quot;binomial&quot;, data=dat9)
+summary(m.regional.base)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSBkcm9wIH4gbWlsZXN0b25lLCBmYW1pbHkgPSBcImJpbm9taWFsXCIsIGRhdGEgPSBkYXQ5KVxuXG5EZXZpYW5jZSBSZXNpZHVhbHM6IFxuICAgIE1pbiAgICAgICAxUSAgIE1lZGlhbiAgICAgICAzUSAgICAgIE1heCAgXG4tMC45Njc3ICAtMC44MTMwICAtMC43NTYxICAgMS41MTYzICAgMS42MzA0ICBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgeiB2YWx1ZSBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpIC0xLjE5MDQ0MiAgIDAuMDE1OTczICAtNzQuNTMgICA8MmUtMTYgKioqXG5taWxlc3RvbmUgICAgMC4wODQzNjAgICAwLjAwNDY0NiAgIDE4LjE2ICAgPDJlLTE2ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbihEaXNwZXJzaW9uIHBhcmFtZXRlciBmb3IgYmlub21pYWwgZmFtaWx5IHRha2VuIHRvIGJlIDEpXG5cbiAgICBOdWxsIGRldmlhbmNlOiA3NDUyNyAgb24gNjMwNTMgIGRlZ3JlZXMgb2YgZnJlZWRvbVxuUmVzaWR1YWwgZGV2aWFuY2U6IDc0MjAzICBvbiA2MzA1MiAgZGVncmVlcyBvZiBmcmVlZG9tXG5BSUM6IDc0MjA3XG5cbk51bWJlciBvZiBGaXNoZXIgU2NvcmluZyBpdGVyYXRpb25zOiA0XG4ifQ== -->
+<pre><code>
+Call:
+glm(formula = drop ~ milestone, family = &quot;binomial&quot;, data = dat9)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.9677  -0.8130  -0.7561   1.5163   1.6304  
+
+Coefficients:
+             Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -1.190442   0.015973  -74.53   &lt;2e-16 ***
+milestone    0.084360   0.004646   18.16   &lt;2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 74527  on 63053  degrees of freedom
+Residual deviance: 74203  on 63052  degrees of freedom
+AIC: 74207
+
+Number of Fisher Scoring iterations: 4</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubS5yZWdpb25hbC5mdWxsIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lICtjc2V4cGVyaWVuY2UrbWFsZSArdGVzdHRvdCArYWdlK21vdGl2K2dhbWVob3VyNStmb3JlaWduKyBtaWxlc3RvbmUqdGVzdHRvdCttaWxlc3RvbmUqY3NleHBlcmllbmNlICsgbWlsZXN0b25lKmFnZSwgZmFtaWx5ID0gXCJiaW5vbWlhbFwiLCBkYXRhPWRhdDkpXG5zdW1tYXJ5KG0ucmVnaW9uYWwuZnVsbClcbmBgYCJ9 -->
+<pre class="r"><code>m.regional.full &lt;- glm(drop ~ milestone +csexperience+male +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*csexperience + milestone*age, family = &quot;binomial&quot;, data=dat9)
+summary(m.regional.full)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSBkcm9wIH4gbWlsZXN0b25lICsgY3NleHBlcmllbmNlICsgbWFsZSArIHRlc3R0b3QgKyBcbiAgICBhZ2UgKyBtb3RpdiArIGdhbWVob3VyNSArIGZvcmVpZ24gKyBtaWxlc3RvbmUgKiB0ZXN0dG90ICsgXG4gICAgbWlsZXN0b25lICogY3NleHBlcmllbmNlICsgbWlsZXN0b25lICogYWdlLCBmYW1pbHkgPSBcImJpbm9taWFsXCIsIFxuICAgIGRhdGEgPSBkYXQ5KVxuXG5EZXZpYW5jZSBSZXNpZHVhbHM6IFxuICAgIE1pbiAgICAgICAxUSAgIE1lZGlhbiAgICAgICAzUSAgICAgIE1heCAgXG4tMS40MDI4ICAtMC43NzA5ICAtMC42NzYyICAtMC41MTAyICAgMi4xNDA5ICBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciB6IHZhbHVlIFByKD58enwpICAgIFxuKEludGVyY2VwdCkgICAgICAgICAgICAtMS4zMjY5MTcgICAwLjA0MzU4OSAtMzAuNDQxICA8IDJlLTE2ICoqKlxubWlsZXN0b25lICAgICAgICAgICAgICAgMC4xMTkwMzMgICAwLjAwNzUwNiAgMTUuODU5ICA8IDJlLTE2ICoqKlxuY3NleHBlcmllbmNlICAgICAgICAgICAtMC4wODM2MDIgICAwLjAyODE4NSAgLTIuOTY2IDAuMDAzMDE2ICoqIFxubWFsZSAgICAgICAgICAgICAgICAgICAtMC4yNDYzNzEgICAwLjAzODgzOSAgLTYuMzQzIDIuMjVlLTEwICoqKlxudGVzdHRvdCAgICAgICAgICAgICAgICAtMC4xODcwMzAgICAwLjAyNzM5MiAgLTYuODI4IDguNjFlLTEyICoqKlxuYWdlICAgICAgICAgICAgICAgICAgICAtMC4wOTA1MDUgICAwLjAyNjI5NSAgLTMuNDQyIDAuMDAwNTc4ICoqKlxubW90aXYgICAgICAgICAgICAgICAgICAtMC4wODE5MTEgICAwLjAxNDYyOCAgLTUuNjAwIDIuMTVlLTA4ICoqKlxuZ2FtZWhvdXI1ICAgICAgICAgICAgICAgMC4wMzk1MjQgICAwLjAxNDY4OSAgIDIuNjkxIDAuMDA3MTI5ICoqIFxuZm9yZWlnbiAgICAgICAgICAgICAgICAgMC4yNDA0MjEgICAwLjAyOTk2NyAgIDguMDIzIDEuMDNlLTE1ICoqKlxubWlsZXN0b25lOnRlc3R0b3QgICAgICAgMC4wMDE3MDkgICAwLjAwODA1NCAgIDAuMjEyIDAuODMxOTIwICAgIFxubWlsZXN0b25lOmNzZXhwZXJpZW5jZSAtMC4wMjc2ODcgICAwLjAwNzU0NCAgLTMuNjcwIDAuMDAwMjQzICoqKlxubWlsZXN0b25lOmFnZSAgICAgICAgICAgMC4wMTAwNTAgICAwLjAwNjgyMyAgIDEuNDczIDAuMTQwNzMwICAgIFxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbihEaXNwZXJzaW9uIHBhcmFtZXRlciBmb3IgYmlub21pYWwgZmFtaWx5IHRha2VuIHRvIGJlIDEpXG5cbiAgICBOdWxsIGRldmlhbmNlOiAzMDQ3MyAgb24gMjczNzkgIGRlZ3JlZXMgb2YgZnJlZWRvbVxuUmVzaWR1YWwgZGV2aWFuY2U6IDI5ODE1ICBvbiAyNzM2OCAgZGVncmVlcyBvZiBmcmVlZG9tXG4gICgzNTY3NCBvYnNlcnZhdGlvbnMgZGVsZXRlZCBkdWUgdG8gbWlzc2luZ25lc3MpXG5BSUM6IDI5ODM5XG5cbk51bWJlciBvZiBGaXNoZXIgU2NvcmluZyBpdGVyYXRpb25zOiA0XG4ifQ== -->
+<pre><code>
+Call:
+glm(formula = drop ~ milestone + csexperience + male + testtot + 
+    age + motiv + gamehour5 + foreign + milestone * testtot + 
+    milestone * csexperience + milestone * age, family = &quot;binomial&quot;, 
+    data = dat9)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.4028  -0.7709  -0.6762  -0.5102   2.1409  
+
+Coefficients:
+                        Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)            -1.326917   0.043589 -30.441  &lt; 2e-16 ***
+milestone               0.119033   0.007506  15.859  &lt; 2e-16 ***
+csexperience           -0.083602   0.028185  -2.966 0.003016 ** 
+male                   -0.246371   0.038839  -6.343 2.25e-10 ***
+testtot                -0.187030   0.027392  -6.828 8.61e-12 ***
+age                    -0.090505   0.026295  -3.442 0.000578 ***
+motiv                  -0.081911   0.014628  -5.600 2.15e-08 ***
+gamehour5               0.039524   0.014689   2.691 0.007129 ** 
+foreign                 0.240421   0.029967   8.023 1.03e-15 ***
+milestone:testtot       0.001709   0.008054   0.212 0.831920    
+milestone:csexperience -0.027687   0.007544  -3.670 0.000243 ***
+milestone:age           0.010050   0.006823   1.473 0.140730    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 30473  on 27379  degrees of freedom
+Residual deviance: 29815  on 27368  degrees of freedom
+  (35674 observations deleted due to missingness)
+AIC: 29839
+
+Number of Fisher Scoring iterations: 4</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIHN0YXJnYXplciA6OiBzdGFyZ2F6ZXIobS5jdWJpYy5iYXNlLG0uY3ViaWMubWFsZS5pdHIsbS5jdWJpYy5tYWxlLml0ci5ucyxtLmN1YmljLmZ1bGwsbS5kaXNjcmV0ZS5iYXNlLG0uZGlzY3JldGUuZnVsbCxtLnJlZ2lvbmFsLmJhc2UsbS5yZWdpb25hbC5mdWxsICwgdHlwZT1cImh0bWxcIixcbiAgICAgICAgICAgICAgICAgICAgICAgIGRlcC52YXIubGFiZWxzID0gXCJMb2dpdCBIYXphcmRcIixcbiAgICAgICAgICAgICAgICAgICAgICAgdGl0bGUgPSBcIlN1cnZpdmFsIGFuYWx5c2lzIHByZWRpY3RpbmcgbG9naXQgaGF6YXJkIG9mIGRyb3BvdXRcIixcbiAgICAgICAgICAgICAgICAgICAgICAgbW9kZWwubmFtZXMgPSBGQUxTRSxcbiAgICAgICAgICAgICAgICAgICAgICAgY29sdW1uLmxhYmVscyA9IGMoXCJjdWJpYy5cXHQgYmFzZVwiLFwiY3ViaWMubWFsZS5cXHQgaW50ZXJhY3Rpb25cIixcImN1YmljLm1hbGUuXFx0IGludGVyYWN0aW9uLm5zXCIsXCJjdWJpYy5cXHQgZmluYWxcIixcImRpc2NyZXRlLlxcdCBiYXNlXCIsXCJkaXNjcmV0ZS5cXHQgZmluYWxcIixcInJlZ2lvbmFsLlxcdCBiYXNlXCIsXCJyZWdpb25hbC5cXHQgZmluYWxcIikgKVxuYGBgIn0= -->
+<pre class="r"><code> stargazer :: stargazer(m.cubic.base,m.cubic.male.itr,m.cubic.male.itr.ns,m.cubic.full,m.discrete.base,m.discrete.full,m.regional.base,m.regional.full , type=&quot;html&quot;,
                         dep.var.labels = &quot;Logit Hazard&quot;,
-                       title = &quot;Discrete survival analysis predicting logit hazard of dropout, including final and optional assignment&quot;)</code></pre>
+                       title = &quot;Survival analysis predicting logit hazard of dropout&quot;,
+                       model.names = FALSE,
+                       column.labels = c(&quot;cubic.\t base&quot;,&quot;cubic.male.\t interaction&quot;,&quot;cubic.male.\t interaction.ns&quot;,&quot;cubic.\t final&quot;,&quot;discrete.\t base&quot;,&quot;discrete.\t final&quot;,&quot;regional.\t base&quot;,&quot;regional.\t final&quot;) )</code></pre>
 <!-- rnb-source-end -->
+<table style="text-align:center">
+<caption>
+<strong>Survival analysis predicting logit hazard of dropout</strong>
+</caption>
+<tr>
+<td colspan="9" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="8">
+<em>Dependent variable:</em>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td colspan="8" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="8">
+Logit Hazard
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+cubic. base
+</td>
+<td>
+cubic.male. interaction
+</td>
+<td>
+cubic.male. interaction.ns
+</td>
+<td>
+cubic. final
+</td>
+<td>
+discrete. base
+</td>
+<td>
+discrete. final
+</td>
+<td>
+regional. base
+</td>
+<td>
+regional. final
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(1)
+</td>
+<td>
+(2)
+</td>
+<td>
+(3)
+</td>
+<td>
+(4)
+</td>
+<td>
+(5)
+</td>
+<td>
+(6)
+</td>
+<td>
+(7)
+</td>
+<td>
+(8)
+</td>
+</tr>
+<tr>
+<td colspan="9" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+milestone
+</td>
+<td>
+4.850<sup>***</sup>
+</td>
+<td>
+5.008<sup>***</sup>
+</td>
+<td>
+4.377<sup>***</sup>
+</td>
+<td>
+4.401<sup>***</sup>
+</td>
+<td>
+0.084<sup>***</sup>
+</td>
+<td>
+0.120<sup>***</sup>
+</td>
+<td>
+0.084<sup>***</sup>
+</td>
+<td>
+0.119<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(0.053)
+</td>
+<td>
+(0.066)
+</td>
+<td>
+(0.083)
+</td>
+<td>
+(0.081)
+</td>
+<td>
+(0.005)
+</td>
+<td>
+(0.007)
+</td>
+<td>
+(0.005)
+</td>
+<td>
+(0.008)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+milestone2
+</td>
+<td>
+-1.110<sup>***</sup>
+</td>
+<td>
+-1.136<sup>***</sup>
+</td>
+<td>
+-0.976<sup>***</sup>
+</td>
+<td>
+-0.976<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(0.013)
+</td>
+<td>
+(0.016)
+</td>
+<td>
+(0.019)
+</td>
+<td>
+(0.019)
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+milestone3
+</td>
+<td>
+0.071<sup>***</sup>
+</td>
+<td>
+0.072<sup>***</sup>
+</td>
+<td>
+0.062<sup>***</sup>
+</td>
+<td>
+0.062<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(0.001)
+</td>
+<td>
+(0.001)
+</td>
+<td>
+(0.001)
+</td>
+<td>
+(0.001)
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+male
+</td>
+<td>
+</td>
+<td>
+-0.454<sup>***</sup>
+</td>
+<td>
+-0.355<sup>***</sup>
+</td>
+<td>
+-0.279<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.246<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.246<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.055)
+</td>
+<td>
+(0.077)
+</td>
+<td>
+(0.041)
+</td>
+<td>
+</td>
+<td>
+(0.038)
+</td>
+<td>
+</td>
+<td>
+(0.039)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+csexperience
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+-0.177<sup>***</sup>
+</td>
+<td>
+-0.249<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.092<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.084<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.016)
+</td>
+<td>
+(0.030)
+</td>
+<td>
+</td>
+<td>
+(0.028)
+</td>
+<td>
+</td>
+<td>
+(0.028)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+testtot
+</td>
+<td>
+</td>
+<td>
+-0.440<sup>***</sup>
+</td>
+<td>
+-0.389<sup>***</sup>
+</td>
+<td>
+-0.386<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.188<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.187<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.022)
+</td>
+<td>
+(0.030)
+</td>
+<td>
+(0.030)
+</td>
+<td>
+</td>
+<td>
+(0.027)
+</td>
+<td>
+</td>
+<td>
+(0.027)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+age
+</td>
+<td>
+</td>
+<td>
+-0.118<sup>***</sup>
+</td>
+<td>
+-0.067<sup>***</sup>
+</td>
+<td>
+-0.068<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.056<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.091<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.012)
+</td>
+<td>
+(0.015)
+</td>
+<td>
+(0.015)
+</td>
+<td>
+</td>
+<td>
+(0.014)
+</td>
+<td>
+</td>
+<td>
+(0.026)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+motiv
+</td>
+<td>
+</td>
+<td>
+-0.068<sup>***</sup>
+</td>
+<td>
+-0.092<sup>***</sup>
+</td>
+<td>
+-0.092<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.084<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.082<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.012)
+</td>
+<td>
+(0.015)
+</td>
+<td>
+(0.015)
+</td>
+<td>
+</td>
+<td>
+(0.014)
+</td>
+<td>
+</td>
+<td>
+(0.015)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+gamehour5
+</td>
+<td>
+</td>
+<td>
+0.031<sup>***</sup>
+</td>
+<td>
+0.047<sup>***</sup>
+</td>
+<td>
+0.048<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+0.045<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+0.040<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.012)
+</td>
+<td>
+(0.015)
+</td>
+<td>
+(0.015)
+</td>
+<td>
+</td>
+<td>
+(0.014)
+</td>
+<td>
+</td>
+<td>
+(0.015)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+foreign
+</td>
+<td>
+</td>
+<td>
+0.358<sup>***</sup>
+</td>
+<td>
+0.264<sup>***</sup>
+</td>
+<td>
+0.262<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+0.240<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+0.240<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.024)
+</td>
+<td>
+(0.031)
+</td>
+<td>
+(0.031)
+</td>
+<td>
+</td>
+<td>
+(0.029)
+</td>
+<td>
+</td>
+<td>
+(0.030)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+milestone:testtot
+</td>
+<td>
+</td>
+<td>
+0.057<sup>***</sup>
+</td>
+<td>
+0.056<sup>***</sup>
+</td>
+<td>
+0.056<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+0.002
+</td>
+<td>
+</td>
+<td>
+0.002
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.007)
+</td>
+<td>
+(0.008)
+</td>
+<td>
+(0.008)
+</td>
+<td>
+</td>
+<td>
+(0.008)
+</td>
+<td>
+</td>
+<td>
+(0.008)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+milestone:male
+</td>
+<td>
+</td>
+<td>
+0.043<sup>***</sup>
+</td>
+<td>
+0.024
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.016)
+</td>
+<td>
+(0.021)
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+milestone:csexperience
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.020<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.025<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+-0.028<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.007)
+</td>
+<td>
+</td>
+<td>
+(0.007)
+</td>
+<td>
+</td>
+<td>
+(0.008)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+m9:testtot
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.272<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.101)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+mf:testtot
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.422<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.117)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+m9:csexperience
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.052
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.080)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+mf:csexperience
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.209<sup>*</sup>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.120)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+m9
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.444<sup>***</sup>
+</td>
+<td>
+0.738<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.059)
+</td>
+<td>
+(0.093)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+mf
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+2.631<sup>***</sup>
+</td>
+<td>
+3.015<sup>***</sup>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.083)
+</td>
+<td>
+(0.130)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+milestone:age
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.010
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.007)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Constant
+</td>
+<td>
+-6.374<sup>***</sup>
+</td>
+<td>
+-6.478<sup>***</sup>
+</td>
+<td>
+-6.048<sup>***</sup>
+</td>
+<td>
+-6.122<sup>***</sup>
+</td>
+<td>
+-1.190<sup>***</sup>
+</td>
+<td>
+-1.329<sup>***</sup>
+</td>
+<td>
+-1.190<sup>***</sup>
+</td>
+<td>
+-1.327<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(0.064)
+</td>
+<td>
+(0.088)
+</td>
+<td>
+(0.118)
+</td>
+<td>
+(0.107)
+</td>
+<td>
+(0.016)
+</td>
+<td>
+(0.043)
+</td>
+<td>
+(0.016)
+</td>
+<td>
+(0.044)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td colspan="9" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Observations
+</td>
+<td>
+65,444
+</td>
+<td>
+45,950
+</td>
+<td>
+28,640
+</td>
+<td>
+28,640
+</td>
+<td>
+65,444
+</td>
+<td>
+28,640
+</td>
+<td>
+63,054
+</td>
+<td>
+27,380
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Log Likelihood
+</td>
+<td>
+-33,192.440
+</td>
+<td>
+-22,772.670
+</td>
+<td>
+-13,948.170
+</td>
+<td>
+-13,944.950
+</td>
+<td>
+-38,467.740
+</td>
+<td>
+-15,605.070
+</td>
+<td>
+-37,101.530
+</td>
+<td>
+-14,907.650
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Akaike Inf. Crit.
+</td>
+<td>
+66,392.890
+</td>
+<td>
+45,569.340
+</td>
+<td>
+27,922.350
+</td>
+<td>
+27,915.910
+</td>
+<td>
+76,943.470
+</td>
+<td>
+31,244.130
+</td>
+<td>
+74,207.070
+</td>
+<td>
+29,839.310
+</td>
+</tr>
+<tr>
+<td colspan="9" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<em>Note:</em>
+</td>
+<td colspan="8" style="text-align:right">
+<sup><em></sup>p&lt;0.1; <sup><strong></sup>p&lt;0.05; <sup></strong></em></sup>p&lt;0.01
+</td>
+</tr>
+</table>
 <!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0MTAgPC0gZGF0N1tkYXQ3JG1pbGVzdG9uZXM8OSxdXG50YWJsZShkYXQ3JG1pbGVzdG9uZXMpXG50YWJsZShkYXQ3JG1pbGVzdG9uZXMpXG5gYGAifQ== -->
-<pre class="r"><code>dat10 &lt;- dat7[dat7$milestones&lt;9,]
-table(dat7$milestones)
-table(dat7$milestones)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWwxbCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZXMgKyBtYWxlICsgYWdlICtlZHUgKyAgc2Nob29sICsgIHRlc3R0b3QgICtmb3JlaWduICsgZXh0cm92ZXJ0KyBnYW1laG91cjUgKyBjc2V4cGVyaWVuY2UgKyBtb3RpdiwgZGF0YT1kYXQxMClcblxubW9kZWwybCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZXMgKyBtYWxlICsgYWdlICArICB0ZXN0dG90ICArZm9yZWlnbiArIGV4dHJvdmVydCsgZ2FtZWhvdXI1ICsgY3NleHBlcmllbmNlICsgbW90aXYgK2NzZXhwZXJpZW5jZSptaWxlc3RvbmVzKyBjc2V4cGVyaWVuY2UqbWlsZXN0b25lczIgKyB0ZXN0dG90Km1pbGVzdG9uZXMgK21hbGUqbWlsZXN0b25lcysgbWFsZSptaWxlc3RvbmVzMiAgKyBhZ2UqbWlsZXN0b25lcysgYWdlKm1pbGVzdG9uZXMyKyB0ZXN0dG90Km1pbGVzdG9uZXMyICwgZGF0YT1kYXQxMClcblxubW9kZWwzbCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZXMgKyBtYWxlICsgYWdlICsgIHRlc3R0b3QgICtmb3JlaWduICsgZXh0cm92ZXJ0KyBnYW1laG91cjUgKyBjc2V4cGVyaWVuY2UgKyBtb3RpdiAgKyBjbGljayAsIGRhdGE9ZGF0MTApXG5cbm1vZGVsNGwgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmVzICsgbWFsZSArIGFnZSAgKyAgdGVzdHRvdCAgK2ZvcmVpZ24gKyBleHRyb3ZlcnQrIGdhbWVob3VyNSArIGNzZXhwZXJpZW5jZSArIG1vdGl2ICtjc2V4cGVyaWVuY2UqbWlsZXN0b25lcysgY3NleHBlcmllbmNlKm1pbGVzdG9uZXMyICsgdGVzdHRvdCptaWxlc3RvbmVzICttYWxlKm1pbGVzdG9uZXMrIG1hbGUqbWlsZXN0b25lczIgICsgYWdlKm1pbGVzdG9uZXMrIGFnZSptaWxlc3RvbmVzMisgdGVzdHRvdCptaWxlc3RvbmVzMiArIGNsaWNrLCBkYXRhPWRhdDEwKVxuXG5tb2RlbDVsIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lcyArIG1hbGUgKyBhZ2UgICsgIHRlc3R0b3QgICtmb3JlaWduICsgZXh0cm92ZXJ0KyBnYW1laG91cjUgKyBjc2V4cGVyaWVuY2UgKyBtb3RpdiArY3NleHBlcmllbmNlKm1pbGVzdG9uZXMrIGNzZXhwZXJpZW5jZSptaWxlc3RvbmVzMiArIHRlc3R0b3QqbWlsZXN0b25lcyArbWFsZSptaWxlc3RvbmVzKyBtYWxlKm1pbGVzdG9uZXMyICArIGFnZSptaWxlc3RvbmVzKyBhZ2UqbWlsZXN0b25lczIrIHRlc3R0b3QqbWlsZXN0b25lczIgICsgY2xpY2sgK2NsaWNrKm1pbGVzdG9uZXMgK2NsaWNrKm1pbGVzdG9uZXMyLCBkYXRhPWRhdDEwKVxuYGBgIn0= -->
-<pre class="r"><code>model1l &lt;- glm(drop ~ milestones + male + age +edu +  school +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv, data=dat10)
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
 
-model2l &lt;- glm(drop ~ milestones + male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2 , data=dat10)
-
-model3l &lt;- glm(drop ~ milestones + male + age +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv  + click , data=dat10)
-
-model4l &lt;- glm(drop ~ milestones + male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2 + click, data=dat10)
-
-model5l &lt;- glm(drop ~ milestones + male + age  +  testtot  +foreign + extrovert+ gamehour5 + csexperience + motiv +csexperience*milestones+ csexperience*milestones2 + testtot*milestones +male*milestones+ male*milestones2  + age*milestones+ age*milestones2+ testtot*milestones2  + click +click*milestones +click*milestones2, data=dat10)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIHN0YXJnYXplciA6OiBzdGFyZ2F6ZXIobW9kZWwxbCxtb2RlbDJsLCBtb2RlbDNsLCBtb2RlbDRsICxtb2RlbDVsLCB0eXBlPVwiaHRtbFwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgZGVwLnZhci5sYWJlbHMgPSBcIkxvZ2l0IEhhemFyZFwiLFxuICAgICAgICAgICAgICAgICAgICAgICB0aXRsZSA9IFwiRGlzY3JldGUgc3Vydml2YWwgYW5hbHlzaXMgcHJlZGljdGluZyBsb2dpdCBoYXphcmQgb2YgZHJvcG91dCwgZXhjbHVkaW5nIGZpbmFsIGFuZCBvcHRpb25hbCBhc3NpZ25tZW50XCIpXG5gYGAifQ== -->
-<pre class="r"><code> stargazer :: stargazer(model1l,model2l, model3l, model4l ,model5l, type=&quot;html&quot;,
-                        dep.var.labels = &quot;Logit Hazard&quot;,
-                       title = &quot;Discrete survival analysis predicting logit hazard of dropout, excluding final and optional assignment&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiU3Vydml2YWwgQW5hbHlzaXMiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KYGBge3J9CmxvYWQodXJsKCJodHRwczovL2dpdGh1Yi5jb20vYm9zc2Fyb3VuZC9NT09DX0NTNTAvcmF3L21hc3Rlci9DUzUwX01PT0NfU3Vydml2YWxfQW5hbHlzaXNfRGF0YV8wLlJEYXRhIikpCmxvYWQodXJsKCJodHRwczovL2dpdGh1Yi5jb20vYm9zc2Fyb3VuZC9NT09DX0NTNTAvcmF3L21hc3Rlci9DUzUwX01PT0NfU3Vydml2YWxfQW5hbHlzaXNfRGF0YV8xLlJEYXRhIikpCmBgYApUaGlzIGlzIHRoZSBtb2RlbCB1c2VkIHRvIGRyYXcgdGhlIGhhemFyZCBwbG90CmBgYHtyfQptb2RlbC5mb3IucGxvdCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZSArIG1pbGVzdG9uZTIgKyBtaWxlc3RvbmUzKyBtYWxlICttaWxlc3RvbmUqbWFsZSArICBhZ2UgKyAgdGVzdHRvdCAgK2ZvcmVpZ24gKyBnYW1laG91cjUgKyB0ZXN0dG90Km1pbGVzdG9uZSAgLCBmYW1pbHk9ImJpbm9taWFsIiwgZGF0YT1kYXQ3KQpzdW1tYXJ5KG1vZGVsLmZvci5wbG90KQpgYGAKCgpgYGB7cn0KdGltZXZhcnlpbmdtb2RlbCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZSArIG1pbGVzdG9uZTIrIG1hbGUgKyBhZ2UgK2VkdSArICBzY2hvb2wgKyAgdGVzdHRvdCAgK2ZvcmVpZ24gKyBleHRyb3ZlcnQrIGdhbWVob3VyNSArIGNzZXhwZXJpZW5jZSArIG1vdGl2ICtjc2V4cGVyaWVuY2UqbXMgKyB0ZXN0dG90Km1pbGVzdG9uZSArIG1hbGUqbWlsZXN0b25lMiAgKyBhZ2UqbWlsZXN0b25lKyAgdGVzdHRvdCptaWxlc3RvbmUyICsgY2xpY2sgK2NsaWNrKm1pbGVzdG9uZSArY2xpY2sqbWlsZXN0b25lMiwgZGF0YT1kYXQ3KQpzdW1tYXJ5KHRpbWV2YXJ5aW5nbW9kZWwpCmBgYAoKYGBge3J9Cm1vZGVsMWMgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmVzICsgbWlsZXN0b25lczIrbWlsZXN0b25lczMrIG1hbGUgKyBhZ2UgK2VkdSArICBzY2hvb2wgKyAgdGVzdHRvdCAgK2ZvcmVpZ24gKyBleHRyb3ZlcnQrIGdhbWVob3VyNSArIGNzZXhwZXJpZW5jZSArIG1vdGl2LCBkYXRhPWRhdDcpCgptb2RlbDJjIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lcyArIG1pbGVzdG9uZXMyKyBtaWxlc3RvbmVzMyttYWxlICsgYWdlICArICB0ZXN0dG90ICArZm9yZWlnbiArIGV4dHJvdmVydCsgZ2FtZWhvdXI1ICsgY3NleHBlcmllbmNlICsgbW90aXYgK2NzZXhwZXJpZW5jZSptaWxlc3RvbmVzKyBjc2V4cGVyaWVuY2UqbWlsZXN0b25lczIgKyB0ZXN0dG90Km1pbGVzdG9uZXMgK21hbGUqbWlsZXN0b25lcysgbWFsZSptaWxlc3RvbmVzMiAgKyBhZ2UqbWlsZXN0b25lcysgYWdlKm1pbGVzdG9uZXMyKyB0ZXN0dG90Km1pbGVzdG9uZXMyICwgZGF0YT1kYXQ3KQoKbW9kZWwzYyA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZXMgKyBtaWxlc3RvbmVzMittaWxlc3RvbmVzMysgbWFsZSArIGFnZSArICB0ZXN0dG90ICArZm9yZWlnbiArIGV4dHJvdmVydCsgZ2FtZWhvdXI1ICsgY3NleHBlcmllbmNlICsgbW90aXYgICsgY2xpY2sgLCBkYXRhPWRhdDcpCgptb2RlbDRjIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lcyArIG1pbGVzdG9uZXMyK21pbGVzdG9uZXMzKyBtYWxlICsgYWdlICArICB0ZXN0dG90ICArZm9yZWlnbiArIGV4dHJvdmVydCsgZ2FtZWhvdXI1ICsgY3NleHBlcmllbmNlICsgbW90aXYgK2NzZXhwZXJpZW5jZSptaWxlc3RvbmVzKyBjc2V4cGVyaWVuY2UqbWlsZXN0b25lczIgKyB0ZXN0dG90Km1pbGVzdG9uZXMgK21hbGUqbWlsZXN0b25lcysgbWFsZSptaWxlc3RvbmVzMiAgKyBhZ2UqbWlsZXN0b25lcysgYWdlKm1pbGVzdG9uZXMyKyB0ZXN0dG90Km1pbGVzdG9uZXMyICsgY2xpY2ssIGRhdGE9ZGF0NykKCm1vZGVsNWMgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmVzICsgbWlsZXN0b25lczIrbWlsZXN0b25lczMrIG1hbGUgKyBhZ2UgICsgIHRlc3R0b3QgICtmb3JlaWduICsgZXh0cm92ZXJ0KyBnYW1laG91cjUgKyBjc2V4cGVyaWVuY2UgKyBtb3RpdiArY3NleHBlcmllbmNlKm1pbGVzdG9uZXMrIGNzZXhwZXJpZW5jZSptaWxlc3RvbmVzMiArIHRlc3R0b3QqbWlsZXN0b25lcyArbWFsZSptaWxlc3RvbmVzKyBtYWxlKm1pbGVzdG9uZXMyICArIGFnZSptaWxlc3RvbmVzKyBhZ2UqbWlsZXN0b25lczIrIHRlc3R0b3QqbWlsZXN0b25lczIgICsgY2xpY2sgK2NsaWNrKm1pbGVzdG9uZXMgK2NsaWNrKm1pbGVzdG9uZXMyLCBkYXRhPWRhdDcpCmBgYApgYGB7ciByZXN1bHRzPSJhc2lzIix3YXJuaW5nPUZBTFNFLG1lc3NhZ2U9RkFMU0V9CiBzdGFyZ2F6ZXIgOjogc3RhcmdhemVyKG1vZGVsMWMsbW9kZWwyYywgbW9kZWwzYywgbW9kZWw0YyAsbW9kZWw1YywgdHlwZT0iaHRtbCIsCiAgICAgICAgICAgICAgICAgICAgICAgIGRlcC52YXIubGFiZWxzID0gIkxvZ2l0IEhhemFyZCIsCiAgICAgICAgICAgICAgICAgICAgICAgdGl0bGUgPSAiRGlzY3JldGUgc3Vydml2YWwgYW5hbHlzaXMgcHJlZGljdGluZyBsb2dpdCBoYXphcmQgb2YgZHJvcG91dCwgaW5jbHVkaW5nIGZpbmFsIGFuZCBvcHRpb25hbCBhc3NpZ25tZW50IikKYGBgCmBgYHtyfQpkYXQxMCA8LSBkYXQ3W2RhdDckbWlsZXN0b25lczw5LF0KdGFibGUoZGF0NyRtaWxlc3RvbmVzKQp0YWJsZShkYXQ3JG1pbGVzdG9uZXMpCmBgYApgYGB7cn0KbW9kZWwxbCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZXMgKyBtYWxlICsgYWdlICtlZHUgKyAgc2Nob29sICsgIHRlc3R0b3QgICtmb3JlaWduICsgZXh0cm92ZXJ0KyBnYW1laG91cjUgKyBjc2V4cGVyaWVuY2UgKyBtb3RpdiwgZGF0YT1kYXQxMCkKCm1vZGVsMmwgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmVzICsgbWFsZSArIGFnZSAgKyAgdGVzdHRvdCAgK2ZvcmVpZ24gKyBleHRyb3ZlcnQrIGdhbWVob3VyNSArIGNzZXhwZXJpZW5jZSArIG1vdGl2ICtjc2V4cGVyaWVuY2UqbWlsZXN0b25lcysgY3NleHBlcmllbmNlKm1pbGVzdG9uZXMyICsgdGVzdHRvdCptaWxlc3RvbmVzICttYWxlKm1pbGVzdG9uZXMrIG1hbGUqbWlsZXN0b25lczIgICsgYWdlKm1pbGVzdG9uZXMrIGFnZSptaWxlc3RvbmVzMisgdGVzdHRvdCptaWxlc3RvbmVzMiAsIGRhdGE9ZGF0MTApCgptb2RlbDNsIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lcyArIG1hbGUgKyBhZ2UgKyAgdGVzdHRvdCAgK2ZvcmVpZ24gKyBleHRyb3ZlcnQrIGdhbWVob3VyNSArIGNzZXhwZXJpZW5jZSArIG1vdGl2ICArIGNsaWNrICwgZGF0YT1kYXQxMCkKCm1vZGVsNGwgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmVzICsgbWFsZSArIGFnZSAgKyAgdGVzdHRvdCAgK2ZvcmVpZ24gKyBleHRyb3ZlcnQrIGdhbWVob3VyNSArIGNzZXhwZXJpZW5jZSArIG1vdGl2ICtjc2V4cGVyaWVuY2UqbWlsZXN0b25lcysgY3NleHBlcmllbmNlKm1pbGVzdG9uZXMyICsgdGVzdHRvdCptaWxlc3RvbmVzICttYWxlKm1pbGVzdG9uZXMrIG1hbGUqbWlsZXN0b25lczIgICsgYWdlKm1pbGVzdG9uZXMrIGFnZSptaWxlc3RvbmVzMisgdGVzdHRvdCptaWxlc3RvbmVzMiArIGNsaWNrLCBkYXRhPWRhdDEwKQoKbW9kZWw1bCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZXMgKyBtYWxlICsgYWdlICArICB0ZXN0dG90ICArZm9yZWlnbiArIGV4dHJvdmVydCsgZ2FtZWhvdXI1ICsgY3NleHBlcmllbmNlICsgbW90aXYgK2NzZXhwZXJpZW5jZSptaWxlc3RvbmVzKyBjc2V4cGVyaWVuY2UqbWlsZXN0b25lczIgKyB0ZXN0dG90Km1pbGVzdG9uZXMgK21hbGUqbWlsZXN0b25lcysgbWFsZSptaWxlc3RvbmVzMiAgKyBhZ2UqbWlsZXN0b25lcysgYWdlKm1pbGVzdG9uZXMyKyB0ZXN0dG90Km1pbGVzdG9uZXMyICArIGNsaWNrICtjbGljayptaWxlc3RvbmVzICtjbGljayptaWxlc3RvbmVzMiwgZGF0YT1kYXQxMCkKYGBgCmBgYHtyIHJlc3VsdHM9ImFzaXMiLHdhcm5pbmc9RkFMU0UsbWVzc2FnZT1GQUxTRX0KIHN0YXJnYXplciA6OiBzdGFyZ2F6ZXIobW9kZWwxbCxtb2RlbDJsLCBtb2RlbDNsLCBtb2RlbDRsICxtb2RlbDVsLCB0eXBlPSJodG1sIiwKICAgICAgICAgICAgICAgICAgICAgICAgZGVwLnZhci5sYWJlbHMgPSAiTG9naXQgSGF6YXJkIiwKICAgICAgICAgICAgICAgICAgICAgICB0aXRsZSA9ICJEaXNjcmV0ZSBzdXJ2aXZhbCBhbmFseXNpcyBwcmVkaWN0aW5nIGxvZ2l0IGhhemFyZCBvZiBkcm9wb3V0LCBleGNsdWRpbmcgZmluYWwgYW5kIG9wdGlvbmFsIGFzc2lnbm1lbnQiKQpgYGAK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiU3Vydml2YWwgQW5hbHlzaXMiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KYGBge3J9CmxpYnJhcnkoc3RhcmdhemVyKQpsb2FkKHVybCgiaHR0cHM6Ly9yYXcuZ2l0aHViLmNvbS9ib3NzYXJvdW5kL01PT0NfQ1M1MC9tYXN0ZXIvQ1M1MF9NT09DX1N1cnZpdmFsX0FuYWx5c2lzX0RhdGFfMC5SRGF0YSIpKQoKYGBgCmBgYHtyfQpkYXQ4IDwtIGRhdDcKZGF0OCRtOSA8LSAwCmRhdDgkbWYgPC0gMApkYXQ4JG05W3doaWNoKGRhdDgkbWlsZXN0b25lPT05KV0gPC0gMQpkYXQ4JG1mW3doaWNoKGRhdDgkbWlsZXN0b25lPT0xMCldIDwtIDEKYGBgCmBgYHtyfQpkYXQ4JG1pbGVzdG9uZVt3aGljaChkYXQ4JG1pbGVzdG9uZT09OSldIDwtIDAKZGF0OCRtaWxlc3RvbmVbd2hpY2goZGF0OCRtaWxlc3RvbmU9PTEwKV0gPC0gMAoKYGBgCgoKVGhpcyBpcyB0aGUgbW9kZWwgdXNlZCB0byBkcmF3IHRoZSBoYXphcmQgcGxvdApgYGB7cn0KbW9kZWwuZm9yLnBsb3QgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmUgKyBtaWxlc3RvbmUyICsgbWlsZXN0b25lMysgbWFsZSArbWlsZXN0b25lKm1hbGUgKyAgYWdlICsgIHRlc3R0b3QgICtmb3JlaWduICsgZ2FtZWhvdXI1ICsgdGVzdHRvdCptaWxlc3RvbmUgICwgZmFtaWx5PSJiaW5vbWlhbCIsIGRhdGE9ZGF0NykKc3VtbWFyeShtb2RlbC5mb3IucGxvdCkKYGBgCmBgYHtyfQptLmN1YmljLmJhc2UgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmUgKyBtaWxlc3RvbmUyICsgbWlsZXN0b25lMywgZmFtaWx5PSJiaW5vbWlhbCIsIGRhdGE9ZGF0NykKc3VtbWFyeShtLmN1YmljLmJhc2UpCmBgYAoKYGBge3J9Cm0uZGlzY3JldGUuYmFzZSA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZSArIG05ICsgbWYsIGZhbWlseSA9ICJiaW5vbWlhbCIsIGRhdGEgPSBkYXQ4KQpzdW1tYXJ5KG0uZGlzY3JldGUuYmFzZSkKYGBgCmBgYHtyfQpkYXQ5IDwtIGRhdDdbZGF0NyRtaWxlc3RvbmUgPDksXQpgYGAKCmBgYHtyfQptLmN1YmljLmZ1bGwgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmUgK21pbGVzdG9uZTIrbWlsZXN0b25lMytjc2V4cGVyaWVuY2UrbWFsZSArdGVzdHRvdCArYWdlK21vdGl2K2dhbWVob3VyNStmb3JlaWduKyBtaWxlc3RvbmUqdGVzdHRvdCttaWxlc3RvbmUqY3NleHBlcmllbmNlICwgZmFtaWx5ID0gImJpbm9taWFsIiwgZGF0YT1kYXQ3KQpzdW1tYXJ5KG0uY3ViaWMuZnVsbCkKYGBgCmBgYHtyfQptLmN1YmljLm1hbGUuaXRyIDwtIGdsbShkcm9wIH4gbWlsZXN0b25lICttaWxlc3RvbmUyK21pbGVzdG9uZTMrbWFsZSArdGVzdHRvdCArYWdlK21vdGl2K2dhbWVob3VyNStmb3JlaWduKyBtaWxlc3RvbmUqdGVzdHRvdCttaWxlc3RvbmUqbWFsZSAsIGZhbWlseSA9ICJiaW5vbWlhbCIsIGRhdGE9ZGF0NykKc3VtbWFyeShtLmN1YmljLm1hbGUuaXRyKQpgYGAKYGBge3J9Cm0uY3ViaWMubWFsZS5pdHIubnMgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmUgK21pbGVzdG9uZTIrbWlsZXN0b25lMyttYWxlICtjc2V4cGVyaWVuY2UgK3Rlc3R0b3QgK2FnZSttb3RpditnYW1laG91cjUrZm9yZWlnbisgbWlsZXN0b25lKnRlc3R0b3QrbWlsZXN0b25lKm1hbGUsIGZhbWlseSA9ICJiaW5vbWlhbCIsIGRhdGE9ZGF0NykKc3VtbWFyeShtLmN1YmljLm1hbGUuaXRyLm5zKQpgYGAKYGBge3J9Cm0uZGlzY3JldGUuZnVsbCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZSArbTkgKyBtZiArY3NleHBlcmllbmNlK21hbGUgK3Rlc3R0b3QgK2FnZSttb3RpditnYW1laG91cjUrZm9yZWlnbisgbWlsZXN0b25lKnRlc3R0b3QrbWlsZXN0b25lKmNzZXhwZXJpZW5jZSArIG05KnRlc3R0b3QgKyBtZip0ZXN0dG90ICsgbTkqY3NleHBlcmllbmNlICsgbWYqY3NleHBlcmllbmNlICwgZmFtaWx5ID0gImJpbm9taWFsIiwgZGF0YT1kYXQ4KQpzdW1tYXJ5KG0uZGlzY3JldGUuZnVsbCkKYGBgCmBgYHtyfQptLnJlZ2lvbmFsLmJhc2UgPC0gZ2xtKGRyb3AgfiBtaWxlc3RvbmUgLCBmYW1pbHkgPSAiYmlub21pYWwiLCBkYXRhPWRhdDkpCnN1bW1hcnkobS5yZWdpb25hbC5iYXNlKQpgYGAKYGBge3J9Cm0ucmVnaW9uYWwuZnVsbCA8LSBnbG0oZHJvcCB+IG1pbGVzdG9uZSArY3NleHBlcmllbmNlK21hbGUgK3Rlc3R0b3QgK2FnZSttb3RpditnYW1laG91cjUrZm9yZWlnbisgbWlsZXN0b25lKnRlc3R0b3QrbWlsZXN0b25lKmNzZXhwZXJpZW5jZSArIG1pbGVzdG9uZSphZ2UsIGZhbWlseSA9ICJiaW5vbWlhbCIsIGRhdGE9ZGF0OSkKc3VtbWFyeShtLnJlZ2lvbmFsLmZ1bGwpCmBgYAoKYGBge3IgcmVzdWx0cz0iYXNpcyIsd2FybmluZz1GQUxTRSxtZXNzYWdlPUZBTFNFfQogc3RhcmdhemVyIDo6IHN0YXJnYXplcihtLmN1YmljLmJhc2UsbS5jdWJpYy5tYWxlLml0cixtLmN1YmljLm1hbGUuaXRyLm5zLG0uY3ViaWMuZnVsbCxtLmRpc2NyZXRlLmJhc2UsbS5kaXNjcmV0ZS5mdWxsLG0ucmVnaW9uYWwuYmFzZSxtLnJlZ2lvbmFsLmZ1bGwgLCB0eXBlPSJodG1sIiwKICAgICAgICAgICAgICAgICAgICAgICAgZGVwLnZhci5sYWJlbHMgPSAiTG9naXQgSGF6YXJkIiwKICAgICAgICAgICAgICAgICAgICAgICB0aXRsZSA9ICJTdXJ2aXZhbCBhbmFseXNpcyBwcmVkaWN0aW5nIGxvZ2l0IGhhemFyZCBvZiBkcm9wb3V0IiwKICAgICAgICAgICAgICAgICAgICAgICBtb2RlbC5uYW1lcyA9IEZBTFNFLAogICAgICAgICAgICAgICAgICAgICAgIGNvbHVtbi5sYWJlbHMgPSBjKCJjdWJpYy5cdCBiYXNlIiwiY3ViaWMubWFsZS5cdCBpbnRlcmFjdGlvbiIsImN1YmljLm1hbGUuXHQgaW50ZXJhY3Rpb24ubnMiLCJjdWJpYy5cdCBmaW5hbCIsImRpc2NyZXRlLlx0IGJhc2UiLCJkaXNjcmV0ZS5cdCBmaW5hbCIsInJlZ2lvbmFsLlx0IGJhc2UiLCJyZWdpb25hbC5cdCBmaW5hbCIpICkKYGBgCgo=</div>
 
 
 
