@@ -349,9 +349,9 @@ datC <- rbind(datL, datK)
 mean log hazard of each mileston by foreign
 ```{r results="asis",warning=FALSE,message=FALSE}
 
-ts0 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(foreign==0), data=dat7)
+ts0 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(foreign==0), data=dat9)
 ts0
-ts1 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(foreign==1), data=dat7)
+ts1 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(foreign==1), data=dat9)
 ts1
 
 h0<-ts0$n.event/ts0$n.risk
@@ -371,9 +371,9 @@ pointestf$foreign <- c(rep(0,9),rep(1,9))
 ```
 mean log hazard of each mileston by male
 ```{r}
-ts0 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(male==0), data=dat7)
+ts0 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(male==0), data=dat9)
 summary(ts0)
-ts1 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(male==1), data=dat7)
+ts1 <- survfit( Surv(ms, event)~ 1, conf.type="log", subset=(male==1), data=dat9)
 ts1
 
 ts0$lower
@@ -396,8 +396,8 @@ pointestm$male <- c(rep(0,9),rep(1,9))
 ```
 mean log hazard of each milestone by motivehigh
 ```{r}
-ts0 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(motivhigh==0), data=dat7)
-ts1 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(motivhigh==1), data=dat7)
+ts0 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(motivhigh==0), data=dat9)
+ts1 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(motivhigh==1), data=dat9)
 
 h0<-ts0$n.event/ts0$n.risk
 h1<-ts1$n.event/ts1$n.risk
@@ -418,8 +418,9 @@ pointestmotiv$motivhigh <- c(rep(0,9),rep(1,9))
 ```
 mean log hazard for each milestone by pretest score above or below median
 ```{r}
-ts0 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(testabovemedian==0), data=dat7)
-ts1 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(testabovemedian==1), data=dat7)
+
+ts0 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(testabovemedian==0), data=dat9)
+ts1 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(testabovemedian==1), data=dat9)
 
 h0<-ts0$n.event/ts0$n.risk
 h1<-ts1$n.event/ts1$n.risk
@@ -439,6 +440,29 @@ pointestpretest <- rbind(pointestpretest0, pointestpretest1)
 pointestpretest$abovemedian <- c(rep(0,9),rep(1,9))
 ```
 ```{r}
+dat9$csexperience.above.mean <- ifelse(dat9$csexperience>0,1,0)
+
+ts0 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(csexperience.above.mean==0), data=dat9)
+ts1 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(csexperience.above.mean==1), data=dat9)
+
+h0<-ts0$n.event/ts0$n.risk
+h1<-ts1$n.event/ts1$n.risk
+
+odds0<-h0/(1-h0)
+odds1<-h1/(1-h1)
+logith0<-log(odds0)
+logith1<-log(odds1)
+#logith0<-odds0
+#logith1<-odds1
+
+pointestcsexperience0 <- data.frame(ts1$time[1:9]+1, logith0[1:9])
+pointestcsexperience1 <- data.frame(ts1$time[1:9]+1, logith1[1:9])
+colnames(pointestcsexperience0) <- c("time","logith")
+colnames(pointestcsexperience1) <- c("time","logith")
+pointestcsexperience <- rbind(pointestcsexperience0, pointestcsexperience1)
+pointestcsexperience$abovemean <- c(rep(0,9),rep(1,9))
+```
+```{r}
 datC <- datK
 save(pointestm, file='male_logith_dotplotdata.RData')
 save(pointestf, file='foreign_logith_dotplotdata.RData')
@@ -447,5 +471,6 @@ save(pointestpretest, file='pretest_logith_dotplotdata.RData')
 save(datL, file = 'male_linear_plotdata.RData')
 save(datC, file = 'male_quadratic_plotdata.RData')
 save(datC, datL, pointestm,pointestf,pointestmotiv,pointestpretest ,file = 'male_foreign_cubic_linear_point_data.RData')
+save(pointestcsexperience,file = 'csexperience_logith_dotplotdata.RData')
 ```
 
