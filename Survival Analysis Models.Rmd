@@ -4,7 +4,7 @@ output: html_notebook
 ---
 Three models are included thus far. 
 
-A cubic model(p1 - Final)
+A quatrics model(p1 - Final)
 
 A discrete model (p1-p7 as linear, and p8.optional & Final as dummies)
 
@@ -19,101 +19,122 @@ The final model includes all significant predictors and interaction terms.
 ```{r include=FALSE}
 library(rmarkdown)
 library(stargazer)
-load(url("https://raw.github.com/bossaround/MOOC_CS50/master/CS50_MOOC_Survival_Analysis_Data_0.RData"))
+#load(url("https://raw.github.com/bossaround/MOOC_CS50/master/CS50_MOOC_Survival_Analysis_Data_0.RData"))
+#use dat9 from Data_1, the time var is milestones, make sure it is plural.
+load(url("https://raw.github.com/bossaround/MOOC_CS50/master/CS50_MOOC_Survival_Analysis_Data_1.RData"))
 
 ```
 ```{r include=FALSE}
-dat7$csexperience <- as.numeric(dat7$csexperience)
-dat7$motiv <- as.numeric(dat7$motiv)
-dat8 <- dat7
-dat8$m9 <- 0
+# dat7$csexperience <- as.numeric(dat7$csexperience)
+# dat7$motiv <- as.numeric(dat7$motiv)
+dat9$csexperience <- as.numeric(dat9$csexperience)
+dat9$motiv <- as.numeric(dat9$motiv)
+dat8 <- dat9
+dat8$m8 <- 0
 dat8$mf <- 0
-dat8$m9[which(dat8$milestone==9)] <- 1
-dat8$mf[which(dat8$milestone==10)] <- 1
+dat8$m8[which(dat8$milestones==8)] <- 1
+dat8$mf[which(dat8$milestones==9)] <- 1
 ```
 ```{r include=FALSE}
-dat8$milestone[which(dat8$milestone==9)] <- 0
-dat8$milestone[which(dat8$milestone==10)] <- 0
+dat8$milestones[which(dat8$milestones==8)] <- 0
+dat8$milestones[which(dat8$milestones==9)] <- 0
 
 ```
 ```{r include=FALSE}
 # This is the model used to draw the hazard plot with an 
 # interaction effect with male
-model.for.plot <- glm(drop ~ milestone + milestone2 + milestone3+ male +milestone*male +  age +  testtot  +foreign + gamehour5 + testtot*milestone  , family="binomial", data=dat7)
-summary(model.for.plot)
+model.for.plot1 <- glm(drop ~ milestones + milestones2 + milestones3+ male +milestones*male +  age +  testtot  +foreign + gamehour5 + testtot*milestones  , family="binomial", data=dat9)
+
+summary(model.for.plot1)
 ```
 ```{r include=FALSE}
-m.cubic.base <- glm(drop ~ milestone + milestone2 + milestone3, family="binomial", data=dat7)
-summary(m.cubic.base)
+m.quatrics.base <- glm(drop ~ milestones + milestones2 + milestones3, family="binomial", data=dat9)
+summary(m.quatrics.base)
 ```
 
 ```{r include=FALSE}
-m.discrete.base <- glm(drop ~ milestone + m9 + mf, family = "binomial", data = dat8)
+m.discrete.base <- glm(drop ~ milestones + m8 + mf, family = "binomial", data = dat8)
 summary(m.discrete.base)
 ```
 ```{r include=FALSE}
-dat9 <- dat7[dat7$milestone <9,]
+dat10 <- dat9[dat9$milestones <8,]
 ```
 
 ```{r include=FALSE}
-m.cubic.full <- glm(drop ~ milestone +milestone2+milestone3+csexperience+male +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*csexperience , data=dat7)
-summary(m.cubic.full)
+m.quatrics.full <- glm(drop ~ milestones +milestones2+csexperience+male+school +testtot +age+motiv+gamehour5+foreign+ milestones*testtot+milestones*csexperience +milestones*male +milestones*age , family = "binomial", data=dat9)
+summary(m.quatrics.full)
 ```
+
 ```{r include=FALSE}
-m.cubic.male.itr <- glm(drop ~ milestone +milestone2+milestone3+male +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*male , family = "binomial", data=dat7)
-summary(m.cubic.male.itr)
-```
-```{r include=FALSE}
-m.cubic.male.itr.ns <- glm(drop ~ milestone +milestone2+milestone3+male +csexperience +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*male, family = "binomial", data=dat7)
-summary(m.cubic.male.itr.ns)
-```
-```{r include=FALSE}
-m.discrete.full <- glm(drop ~ milestone +m9 + mf +csexperience+male +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*csexperience + m9*testtot + mf*testtot + m9*csexperience + mf*csexperience , family = "binomial", data=dat8)
+m.discrete.full <- glm(drop ~ milestones +m8 + mf +csexperience+male +testtot +age+school+motiv+gamehour5+foreign+ milestones*testtot+ m8*testtot + mf*testtot+milestones*csexperience  + m8*csexperience + mf*csexperience + milestones*male + m8*male + mf*male + milestones*age + m8*age + mf*age , family = "binomial", data=dat8)
 summary(m.discrete.full)
 ```
 ```{r include=FALSE}
-m.regional.base <- glm(drop ~ milestone , family = "binomial", data=dat9)
+m.regional.base <- glm(drop ~ milestones , family = "binomial", data=dat10)
 summary(m.regional.base)
 ```
 ```{r include=FALSE}
-m.regional.full <- glm(drop ~ milestone +csexperience+male +testtot +age+motiv+gamehour5+foreign+ milestone*testtot+milestone*csexperience + milestone*age, family = "binomial", data=dat9)
+m.regional.full <- glm(drop ~ milestones +csexperience+male +testtot +age+motiv+gamehour5+foreign+ milestones*testtot+milestones*csexperience +milestones*male + milestones*age, family = "binomial", data=dat9)
 summary(m.regional.full)
 ```
 table all models 
 ```{r results="asis",warning=FALSE,message=FALSE, echo=FALSE}
- stargazer :: stargazer(m.cubic.base,m.cubic.male.itr,m.cubic.male.itr.ns,m.cubic.full,m.discrete.base,m.discrete.full,m.regional.base,m.regional.full , type="html",
+ stargazer :: stargazer(m.quatrics.base,m.quatrics.full,m.discrete.base,m.discrete.full,m.regional.base,m.regional.full , type="html",
                         dep.var.labels = "Logit Hazard",
                        title = "Survival analysis predicting logit hazard of dropout",
                        model.names = FALSE,
-                       column.labels = c("cubic.\t base","cubic.male.\t interaction","cubic.male.\t interaction.ns","cubic.\t final","discrete.\t base","discrete.\t final","regional.\t base","regional.\t final") )
+                       column.labels = c("quatrics.\t base","quatrics.\t final","discrete.\t base","discrete.\t final","regional.\t base","regional.\t final") )
 ```
 ```{r include=FALSE}
- d.cubic.complete <- dat7[complete.cases(dat7),]
- d.discrete.complete <- dat8[complete.cases(dat8),] 
-newdat.cubic <- data.frame(milestone=d.cubic.complete$milestone, milestone2=d.cubic.complete$milestone2,milestone3 = d.cubic.complete$milestone3, male = d.cubic.complete$male, age = d.cubic.complete$age,  testtot = d.cubic.complete$testtot, foreign = d.cubic.complete$foreign, extrovert = d.cubic.complete$extrovert, gamehour5 = d.cubic.complete$gamehour5, csexperience = as.numeric(d.cubic.complete$csexperience), motiv = as.numeric(d.cubic.complete$motiv))
-#predicted log hazard value based on newdat for cubic
-newdat.cubic$predict_log <- predict(m.cubic.full, newdat.cubic, type='link')
-#predicted probability based on newdat for cubic
-newdat.cubic$predict_probability <- predict(m.cubic.full, newdat.cubic, type='response')
-newdat.cubic$csexperience.above.mean <- ifelse(newdat.cubic$csexperience>0,1,0)
+ d.quatrics.complete <- dat9[!is.na(dat9$reason),]
+ d.discrete.complete <- dat8[!is.na(dat8$reason),] 
+newdat.quatrics <- data.frame(milestones=d.quatrics.complete$milestones, milestones2=d.quatrics.complete$milestones2,milestones3 = d.quatrics.complete$milestone3, male = d.quatrics.complete$male, age = d.quatrics.complete$age,  testtot = d.quatrics.complete$testtot, foreign = d.quatrics.complete$foreign, extrovert = d.quatrics.complete$extrovert, gamehour5 = d.quatrics.complete$gamehour5, csexperience = d.quatrics.complete$csexperience, motiv = d.quatrics.complete$motiv, school=d.quatrics.complete$school)
+#predicted log hazard value based on newdat for quatrics
+newdat.quatrics$predict_log <- predict(m.quatrics.full, newdat.quatrics, type='link')
+#predicted probability based on newdat for quatrics
+newdat.quatrics$predict_probability <- predict(m.quatrics.full, newdat.quatrics, type='response')
+newdat.quatrics$csexperience.above.mean <- ifelse(newdat.quatrics$csexperience>0,1,0)
+newdat.quatrics$testtot.above.mean <- ifelse(newdat.quatrics$testtot>0.1,1,0)
+
 # fitline <- predict(timevaryingmodel2, newdat, type='link',se.fit = TRUE)
 
 # # datK$sefit <- fitline$se.fit
 # datK$predict_term <- predict(timevaryingmodel2, newdat, type='term')
-# newdat.discrete <- data.frame(milestone=d.discrete.complete$milestone, m8=d.discrete.complete$m8,mf = d.discrete.complete$mf, male = d.discrete.complete$male, age = d.discrete.complete$age,  testtot = d.discrete.complete$testtot, foreign = d.discrete.complete$foreign, extrovert = d.discrete.complete$extrovert, gamehour5 = d.discrete.complete$gamehour5, csexperience = d.discrete.complete$csexperience, motiv = d.discrete.complete$motiv)
+ newdat.discrete <- data.frame(milestones=d.discrete.complete$milestones, m8=d.discrete.complete$m8,mf = d.discrete.complete$mf, male = d.discrete.complete$male, age = d.discrete.complete$age,  testtot = d.discrete.complete$testtot, foreign = d.discrete.complete$foreign, extrovert = d.discrete.complete$extrovert, gamehour5 = d.discrete.complete$gamehour5, csexperience = d.discrete.complete$csexperience, motiv = d.discrete.complete$motiv, school=d.quatrics.complete$school)
 
 # #predicted log hazard value based on newdat for discrete
-# newdat.discrete$predict_log <- predict(m.discrete.full, newdat.discrete, type='link')
+ newdat.discrete$predict_log <- predict(m.discrete.full, newdat.discrete, type='link')
 # #predicted probability based on newdat for discrete
-# newdat.discrete$predict_probability <- predict(m.discrete.full, newdat.discrete, type='response')
+ newdat.discrete$predict_probability <- predict(m.discrete.full, newdat.discrete, type='response')
+ newdat.discrete$csexperience.above.mean <- ifelse(newdat.quatrics$csexperience>0,1,0)
+newdat.discrete$testtot.above.mean <- ifelse(newdat.quatrics$testtot>0.1,1,0)
+newdat.discrete.cont <- newdat.discrete
+newdat.discrete.cont$milestones[which(newdat.discrete.cont$m8==1)] <- 8
+newdat.discrete.cont$milestones[which(newdat.discrete.cont$mf==1)] <- 9
+
 ```
 Draw plot
 
-```{r}
+```{r warning=FALSE}
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 
  ggplot()+
-  geom_smooth (data= newdat.cubic[newdat.cubic$milestone<8,], method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_probability,  fill=as.factor(male) , color=as.factor(male))) +
-  geom_smooth (data=newdat.cubic, method="glm", formula = y~x+I(x^2) ,  alpha=0.65, size = 1,level=0.95, aes(milestone, predict_probability,  fill=as.factor(male) , color=as.factor(male)))
+  geom_smooth (data= newdat.quatrics[newdat.quatrics$milestones<8,], method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.99, aes(milestones, predict_probability,  fill=as.factor(csexperience.above.mean) , color=as.factor(csexperience.above.mean))) +
+  geom_smooth (data=newdat.quatrics, method="glm", formula = y~x+I(x^2),  alpha=0.65, size = 1,level=0.99, aes(milestones, predict_probability,  fill=as.factor(csexperience.above.mean) , color=as.factor(csexperience.above.mean)))
+```
+```{r warning=FALSE}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ ggplot()+
+  geom_smooth (data= newdat.discrete[newdat.discrete$milestones>0,], method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.99, aes(milestones, predict_probability,  fill=as.factor(testtot.above.mean) , color=as.factor(testtot.above.mean))) +
+  geom_smooth (data=newdat.discrete.cont, method="glm", formula = y~x+I(x^2),  alpha=0.65, size = 1,level=0.99, aes(milestones, predict_probability,  fill=as.factor(testtot.above.mean) , color=as.factor(testtot.above.mean))) +
+   geom_pointrange(data=newdat.discrete.cont[newdat.discrete.cont$m8==1,],aes(milestones,mean(predict_probability), ymin=mean(predict_probability)-0.06, ymax=mean(predict_probability)+0.06, color=as.factor(testtot.above.mean)))
+```
+```{r warning=FALSE}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ ggplot()+
+  geom_smooth (data= newdat.quatrics[newdat.quatrics$milestones<8,], method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.99, aes(milestones, predict_probability,  fill=as.factor(male) , color=as.factor(male))) +
+  geom_smooth (data=newdat.quatrics, method="glm", formula = y~x+I(x^2),  alpha=0.65, size = 1,level=0.95, aes(milestones, predict_probability,  fill=as.factor(male) , color=as.factor(male)))
 ```
 

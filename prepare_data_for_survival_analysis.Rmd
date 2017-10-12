@@ -10,7 +10,7 @@ setwd("~/Dropbox/MOOK")
 #load data
 dat <- read.csv("CS50_ChosenUsers_1_irt.csv",header=TRUE, sep=",")
 ```
-```{r warning=FALSE}
+```{r warning=FALSE, include=FALSE}
 #those folllow the sequence are regular students, and those do not follow the seqence are irregular students
 #please note this does not count p9, the final.
 dat$regular<-NA
@@ -42,7 +42,7 @@ dat$irregular <- NA
 dat$irregular[which(is.na(dat$regularf) & dat$p0==1)] <- 1
 dat$irregular[which(dat$regularf > 0 & dat$p0==1)] <- 0
 ```
-```{r warning=FALSE}
+```{r warning=FALSE, include=FALSE}
 #processing some other variables
 #set reference date to 2014 May, created binary enroll phase.
 #add number of computer language, number of none-zero, highest profeciency in any language
@@ -97,7 +97,7 @@ dat$progroup[which(dat$colab_pref==6)] <- 0
 dat$progroup[which(dat$colab_pref==3 | dat$colab_pref==5)] <- 1
 #dat$cert <- 4- dat$cert
 dat$nohelp <- dat$ppl_help_11
-dat$gamehour5 <- as.numeric(as.character(dat$games))
+dat$gamehour5 <- as.numeric(as.character(dat$gamehour5))
 dat$maxproglang <- apply(dat[187:223], 1, function(x) max(x, na.rm=TRUE))
 dat$maxproglang[which(dat$maxproglang<0)] <- 0
 dat$totalproglang <- apply(dat[301:332], 1, function(x) sum(x, na.rm=TRUE))
@@ -299,12 +299,23 @@ dat7$milestone3 <- dat7$milestone^3
 
 dat9 <- dat7
 dat9$milestones = dat9$milestone-1
+
+table(dat7$milestone)
+table(dat9$milestones)
+```
+```{r}
 dat9<- dat9[dat9$milestones>0,]
 ```
 ```{r}
-dat9$milestone2 <- dat9$milestone^2
-dat9$milestone3 <- dat9$milestone^3
+dat9$milestones2 <- dat9$milestones^2
+dat9$milestones3 <- dat9$milestones^3
 dat9$mss <- dat9$ms+1
+```
+```{r include=FALSE}
+m.cubic.base1 <- glm(drop ~ milestone + milestone2 + milestone3, family="binomial", data=dat7)
+summary(m.cubic.base1)
+m.cubic.base2 <- glm(drop ~ milestones + milestones2 + milestones3, family="binomial", data=dat9)
+summary(m.cubic.base2)
 ```
 ```{r}
 save(dat7, file = "CS50_MOOC_Survival_Analysis_Data_0.RData")
