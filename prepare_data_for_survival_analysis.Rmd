@@ -46,10 +46,11 @@ dat$irregular[which(dat$regularf > 0 & dat$p0==1)] <- 0
 #processing some other variables
 #set reference date to 2014 May, created binary enroll phase.
 #add number of computer language, number of none-zero, highest profeciency in any language
-dat$age = 2015- as.numeric(as.character(dat$profile_year_of_birth))
-dat$age[which(dat$age<10)] <- NA
-dat$age[which(dat$age>80)] <- NA
-dat$age[which(dat$age>69)] <- NA
+dat$ageraw = 2015- as.numeric(as.character(dat$profile_year_of_birth))
+dat$age.correct <- dat$ageraw
+dat$age.correct[which(dat$age.correct<10)] <- NA
+dat$age.correct[which(dat$age.correct>80)] <- NA
+dat$age.correct[which(dat$age.correct>69)] <- NA
 #dat$c0 <- as.numeric(as.character(dat$c0))
 dat$c1 <- as.numeric(as.character(dat$c1))
 dat$c2 <- as.numeric(as.character(dat$c2))
@@ -179,7 +180,9 @@ table(dat2$censor)
 
 ```{r warning=FALSE}
 library(MASS)
-dat2$age <- scale(dat2$age,center = TRUE, scale = TRUE)
+dat2$age.scale.raw <- scale(dat2$ageraw,center = TRUE, scale = TRUE)
+dat2$age.scale.correct <- scale(dat2$age.correct,center = TRUE, scale = TRUE)
+
 dat2$cert <- scale(dat2$cert,center = TRUE, scale = TRUE)
 dat2$oc_reg <- scale(dat2$oc_reg,center = TRUE, scale = TRUE)
 dat2$oc_comp <- scale(dat2$oc_comp,center = TRUE, scale = TRUE)
