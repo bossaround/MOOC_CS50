@@ -26,6 +26,9 @@ library(ggplot2)
 #use dat9 from Data_1, the time var is milestones, make sure it is plural.
 load(url("https://raw.github.com/bossaround/MOOC_CS50/master/CS50_MOOC_Survival_Analysis_Data_1.RData"))
 load(url("https://raw.github.com/bossaround/MOOC_CS50/master/csexperience_logith_dotplotdata.RData"))
+load(url("https://raw.github.com/bossaround/MOOC_CS50/master/male_logith_dotplotdata.RData"))
+load(url("https://raw.github.com/bossaround/MOOC_CS50/master/pretest_logith_dotplotdata.RData"))
+load(url("https://raw.github.com/bossaround/MOOC_CS50/master/foreign_logith_dotplotdata.RData"))
 
 ```
 ```{r include=FALSE}
@@ -89,7 +92,7 @@ table all models
  stargazer :: stargazer(m.quatrics.base,m.quatrics.full,m.discrete.base,m.discrete.full,m.regional.base,m.regional.full , type="html",
                         dep.var.labels = "Logit Hazard",
                        title = "Survival analysis predicting logit hazard of dropout",
-                       model.names = FALSE,no.space = FALSE,single.row = TRUE,
+                       model.names = FALSE,
                        column.labels = c("quatrics-base","quatrics-final","discrete-base  ","discrete- final  ","regional-base  ","regional-final  ") )
 ```
 ```{r include=FALSE}
@@ -170,6 +173,13 @@ pointestimate <- data.frame(pmean1,pmean0,psd1,psd0)
 pmean<-c(pointestimate$pmean1,pointestimate$pmean0)
 psd <- c(pointestimate$psd1,pointestimate$psd0)
 pointestimate.csexperience<-data.frame(pmean,psd,time,abovemean)
+pointestimate.csexperience
+
+pointestcsexperience$logith2<-pointestcsexperience$logith
+pointestcsexperience$logith2[which(pointestcsexperience$time<5 & pointestcsexperience$abovemean==0)] <- pointestcsexperience$logith[which(pointestcsexperience$time<5 & pointestcsexperience$abovemean==0)]+0.25
+pointestcsexperience$logith2[which(pointestcsexperience$time<5 & pointestcsexperience$abovemean==1)] <- pointestcsexperience$logith[which(pointestcsexperience$time<5 & pointestcsexperience$abovemean==1)]+0.1
+pointestcsexperience$logith2[which(pointestcsexperience$time==7 )] <- pointestcsexperience$logith[which(pointestcsexperience$time==7 )]-0.15
+pointestcsexperience$logith2[which(pointestcsexperience$time==1 )] <- pointestcsexperience$logith[which(pointestcsexperience$time==1 )]+0.26
 ```
 Plot the probability of dropping out by CS experience levels
 
@@ -177,9 +187,9 @@ Plot the probability of dropping out by CS experience levels
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 
  ggplot()+
-  geom_smooth (data= d.regional.complete, method="glm", formula = y~x+I(x^2),  alpha=0.65, size = 1,level=0.95, aes(milestones, predict_probability,  fill=as.factor(csexperience.above.mean) , color=as.factor(csexperience.above.mean))) +
+  geom_smooth (data= d.regional.complete, method="glm", formula = y~x +I(x^2) ,  alpha=0.65, size = 1,level=0.95, aes(milestones, predict_probability,  fill=as.factor(csexperience.above.mean) , color=as.factor(csexperience.above.mean))) +
   # geom_smooth (data=newdat.quatrics, method="glm", formula = y~x+I(x^2)+I(x^3),  alpha=0.65, size = 1,level=0.95, aes(milestones, predict_probability,  fill=as.factor(csexperience.above.mean) , color=as.factor(csexperience.above.mean))) +
-    geom_pointrange(data=pointestcsexperience,aes(time,exp(logith)/(1+exp(logith)), ymin=exp(logith)/(1+exp(logith))-0.03, ymax=exp(logith)/(1+exp(logith))+0.03, color=as.factor(abovemean)))+
+    geom_pointrange(data=pointestcsexperience,aes(time,exp(logith2)/(1+exp(logith2)), ymin=exp(logith2)/(1+exp(logith2))-0.03, ymax=exp(logith2)/(1+exp(logith2))+0.03, color=as.factor(abovemean)))+
     scale_x_continuous(breaks = seq(1,9,by=1),
                      labels = labs)+
    xlab("Milestone") + ylab("Probability of Dropout") + scale_fill_discrete(name="CS Experience",labels = c("Below the Median","Above the Median")) + scale_color_discrete(name="CS Experience",labels = c("Below the Median","Above the Median"))
@@ -197,15 +207,17 @@ labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
                      labels = labs)+
    xlab("Milestone") + ylab("Probability of Dropout") + scale_fill_discrete(name="Gender",labels = c("female","male")) + scale_color_discrete(name="Gender",labels = c("female","male"))
 ```
-```{r warning=FALSE, include=FALSE}
+Plot the Probability of Dropping out by gender
+
+```{r, warning=FALSE,  message=FALSE}
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 
  ggplot()+
-  geom_smooth (data= newdat.discrete[newdat.discrete$milestones>0,], method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.99, aes(milestones, predict_probability,  fill=as.factor(testtot.above.mean) , color=as.factor(testtot.above.mean))) +
-  geom_smooth (data=newdat.discrete.cont, method="glm", formula = y~x+I(x^2),  alpha=0.65, size = 1,level=0.99, aes(milestones, predict_probability,  fill=as.factor(testtot.above.mean) , color=as.factor(testtot.above.mean))) +
-   geom_pointrange(data=pointestpretest,aes(time,exp(logith), ymin=logith-0.06, ymax=logith+0.06, color=as.factor(abovemedian)))
+  geom_smooth (data= newdat.discrete[newdat.discrete$milestones>0,], method="glm", formula = y~x,  alpha=0.65, size = 1,level=0.95, aes(milestones, predict_probability,  fill=as.factor(testtot.above.mean) , color=as.factor(testtot.above.mean))) +
+  geom_smooth (data=newdat.discrete.cont, method="glm", formula = y~x+I(x^2),  alpha=0.65, size = 1,level=0.95, aes(milestones, predict_probability,  fill=as.factor(testtot.above.mean) , color=as.factor(testtot.above.mean))) +
+   geom_pointrange(data=pointestpretest,aes(time,exp(logith)/(1+exp(logith)), ymin=exp(logith)/(1+exp(logith))-0.06, ymax=exp(logith)/(1+exp(logith))+0.06, color=as.factor(abovemedian)))
 ```
-```{r warning=FALSE, include=FALSE}
+```{r, warning=FALSE, include=FALSE, message=FALSE}
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 
  ggplot()+

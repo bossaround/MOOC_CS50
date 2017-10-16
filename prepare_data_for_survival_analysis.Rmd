@@ -362,8 +362,8 @@ odds1<-h1/(1-h1)
 logith0<-log(odds0)
 logith1<-log(odds1)
 
-pointestf0 <- data.frame(ts1$time[1:9]+1, logith0[1:9])
-pointestf1 <- data.frame(ts1$time[1:9]+1, logith1[1:9])
+pointestf0 <- data.frame(ts1$time[1:9], logith0[1:9])
+pointestf1 <- data.frame(ts1$time[1:9], logith1[1:9])
 colnames(pointestf0) <- c("time","logith")
 colnames(pointestf1) <- c("time","logith")
 pointestf <- rbind(pointestf0, pointestf1)
@@ -387,8 +387,8 @@ odds1<-h1/(1-h1)
 logith0<-log(odds0)
 logith1<-log(odds1)
 
-pointestm0 <- data.frame(ts1$time[1:9]+1, logith0[1:9])
-pointestm1 <- data.frame(ts1$time[1:9]+1, logith1[1:9])
+pointestm0 <- data.frame(ts1$time[1:9], logith0[1:9])
+pointestm1 <- data.frame(ts1$time[1:9], logith1[1:9])
 colnames(pointestm0) <- c("time","logith")
 colnames(pointestm1) <- c("time","logith")
 pointestm <- rbind(pointestm0, pointestm1)
@@ -409,8 +409,8 @@ logith1<-log(odds1)
 #logith0<-odds0
 #logith1<-odds1
 
-pointestmotiv0 <- data.frame(ts1$time[1:9]+1, logith0[1:9])
-pointestmotiv1 <- data.frame(ts1$time[1:9]+1, logith1[1:9])
+pointestmotiv0 <- data.frame(ts1$time[1:9], logith0[1:9])
+pointestmotiv1 <- data.frame(ts1$time[1:9], logith1[1:9])
 colnames(pointestmotiv0) <- c("time","logith")
 colnames(pointestmotiv1) <- c("time","logith")
 pointestmotiv <- rbind(pointestmotiv0, pointestmotiv1)
@@ -432,8 +432,8 @@ logith1<-log(odds1)
 #logith0<-odds0
 #logith1<-odds1
 
-pointestpretest0 <- data.frame(ts1$time[1:9]+1, logith0[1:9])
-pointestpretest1 <- data.frame(ts1$time[1:9]+1, logith1[1:9])
+pointestpretest0 <- data.frame(ts1$time[1:9], logith0[1:9])
+pointestpretest1 <- data.frame(ts1$time[1:9], logith1[1:9])
 colnames(pointestpretest0) <- c("time","logith")
 colnames(pointestpretest1) <- c("time","logith")
 pointestpretest <- rbind(pointestpretest0, pointestpretest1)
@@ -442,8 +442,8 @@ pointestpretest$abovemedian <- c(rep(0,9),rep(1,9))
 ```{r}
 dat9$csexperience.above.mean <- ifelse(dat9$csexperience>0,1,0)
 
-ts0 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(csexperience.above.mean==0), data=dat9)
-ts1 <- survfit( Surv(ms, event)~ 1, conf.type="none", subset=(csexperience.above.mean==1), data=dat9)
+ts0 <- survfit( Surv(milestones, event)~ 1, conf.type="none", subset=(csexperience.above.mean==0), data=dat9)
+ts1 <- survfit( Surv(milestones, event)~ 1, conf.type="none", subset=(csexperience.above.mean==1), data=dat9)
 
 h0<-ts0$n.event/ts0$n.risk
 h1<-ts1$n.event/ts1$n.risk
@@ -455,8 +455,8 @@ logith1<-log(odds1)
 #logith0<-odds0
 #logith1<-odds1
 
-pointestcsexperience0 <- data.frame(ts1$time[1:9]+1, logith0[1:9])
-pointestcsexperience1 <- data.frame(ts1$time[1:9]+1, logith1[1:9])
+pointestcsexperience0 <- data.frame(ts1$time[1:9], logith0[1:9])
+pointestcsexperience1 <- data.frame(ts1$time[1:9], logith1[1:9])
 colnames(pointestcsexperience0) <- c("time","logith")
 colnames(pointestcsexperience1) <- c("time","logith")
 pointestcsexperience <- rbind(pointestcsexperience0, pointestcsexperience1)
