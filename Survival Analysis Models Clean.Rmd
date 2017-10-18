@@ -1,0 +1,597 @@
+---
+title: "Survival Analysis Models"
+output:
+  html_document:
+    df_print: paged
+---
+Three models are included thus far. 
+
+A quatrics model(p1 - Final)
+
+A discrete model (p1-p7 as linear, and p8.optional & Final as dummies)
+
+A regional model (p1-p7, whereas p8 & Final are excluded)
+
+Each of the models contains a base model and a final model.
+
+The base model only includes milestones.
+
+The final model includes all significant predictors and interaction terms.
+
+Import and process data
+---
+```{r include=FALSE}
+library(rmarkdown)
+library(stargazer)
+library(ggplot2)
+#load(url("https://raw.github.com/bossaround/MOOC_CS50/master/CS50_MOOC_Survival_Analysis_Data_0.RData"))
+#use dat9 from Data_1, or Data_2 the time var is milestones, make sure it is plural.
+load(url("https://raw.github.com/bossaround/MOOC_CS50/master/CS50_MOOC_Survival_Analysis_Data_2.RData"))
+# load(url("https://raw.github.com/bossaround/MOOC_CS50/master/csexperience_logith_dotplotdata.RData"))
+# load(url("https://raw.github.com/bossaround/MOOC_CS50/master/male_logith_dotplotdata.RData"))
+# load(url("https://raw.github.com/bossaround/MOOC_CS50/master/pretest_logith_dotplotdata.RData"))
+# load(url("https://raw.github.com/bossaround/MOOC_CS50/master/foreign_logith_dotplotdata.RData"))
+# load(url("https://raw.github.com/bossaround/MOOC_CS50/master/age_logith_dotplotdata.RData"))
+
+```
+```{r include=FALSE}
+# dat7$csexperience <- as.numeric(dat7$csexperience)
+# dat7$motiv <- as.numeric(dat7$motiv)
+dat9$csexperience <- as.numeric(dat9$csexperience)
+dat9$motiv <- as.numeric(dat9$motiv)
+dat8 <- dat9
+dat8$m8 <- 0
+dat8$mf <- 0
+dat8$m8[which(dat8$milestones==8)] <- 1
+dat8$mf[which(dat8$milestones==9)] <- 1
+```
+```{r include=FALSE}
+dat8$milestones[which(dat8$milestones==8)] <- 0
+dat8$milestones[which(dat8$milestones==9)] <- 0
+
+```
+Run models
+---
+```{r include=FALSE}
+# This is the model used to draw the hazard plot with an 
+# interaction effect with male
+model.for.plot1 <- glm(drop ~ milestones + milestones2 + milestones3+ male +milestones*male +  age.scale.correct +  testtot  +foreign + gamehour5 + testtot*milestones  , family="binomial", data=dat9)
+
+summary(model.for.plot1)
+```
+```{r include=FALSE}
+m.quatrics.base <- glm(drop ~ milestones + milestones2 , family="binomial", data=dat9)
+summary(m.quatrics.base)
+```
+
+```{r include=FALSE}
+m.discrete.base <- glm(drop ~ milestones + m8 + mf, family = "binomial", data = dat8)
+summary(m.discrete.base)
+```
+```{r include=FALSE}
+dat10 <- dat9[dat9$milestones <8,]
+```
+
+```{r include=FALSE}
+m.quatrics.full <- glm(drop ~ milestones +milestones2+csexperience+male+school +testtot +age.scale.raw+motiv+gamehour5+foreign+ milestones*testtot+milestones*csexperience +milestones*male +milestones*age.scale.raw , family = "binomial", data=dat9)
+summary(m.quatrics.full)
+```
+
+```{r include=FALSE}
+m.discrete.full <- glm(drop ~ milestones +m8 + mf +csexperience+male +testtot +age.scale.raw+school+motiv+gamehour5+foreign+ milestones*testtot+ m8*testtot + mf*testtot+milestones*csexperience  + m8*csexperience + mf*csexperience + milestones*male + m8*male + mf*male + milestones*age.scale.raw + m8*age.scale.raw + mf*age.scale.raw , family = "binomial", data=dat8)
+summary(m.discrete.full)
+```
+```{r include=FALSE}
+m.regional.base <- glm(drop ~ milestones , family = "binomial", data=dat10)
+summary(m.regional.base)
+```
+```{r include=FALSE}
+m.regional.full <- glm(drop ~ milestones +csexperience+male +testtot +age.scale.raw+motiv+gamehour5+foreign+ milestones*testtot+milestones*csexperience +milestones*male + milestones*age.scale.raw, family = "binomial", data=dat9)
+summary(m.regional.full)
+```
+
+Make model table
+---
+```{r results="asis",warning=FALSE,message=FALSE, echo=FALSE}
+ stargazer :: stargazer(m.quatrics.base,m.quatrics.full,m.discrete.base,m.discrete.full,m.regional.base,m.regional.full , type="html",
+                        dep.var.labels = "Logit Hazard",
+                       title = "Survival analysis predicting logit hazard of dropout",
+                       model.names = FALSE,
+                       column.labels = c("quatrics-base","quatrics-final","discrete-base  ","discrete- final  ","regional-base  ","regional-final  ") )
+```
+Generate predicted dataset
+---
+```{r include=FALSE}
+set.seed(02138)
+library(dplyr)
+
+ d.quatrics.complete <- sample_n(dat9,1800)
+ d.discrete.complete <- sample_n(dat8,2000) 
+ d.discrete.complete.age <- sample_n(dat8,2400) 
+
+#  d.discrete.complete <- sample_n(dat8,2000) 
+
+ d.regional.complete <- sample_n(dat10,1800)
+ d.regional.complete1 <- sample_n(dat10,10000)
+newdat.quatrics <- data.frame(milestones=d.quatrics.complete$milestones, milestones2=d.quatrics.complete$milestones2,milestones3 = d.quatrics.complete$milestone3, male = d.quatrics.complete$male, age.scale.raw = d.quatrics.complete$age.scale.raw,  testtot = d.quatrics.complete$testtot, foreign = d.quatrics.complete$foreign, extrovert = d.quatrics.complete$extrovert, gamehour5 = d.quatrics.complete$gamehour5, csexperience = d.quatrics.complete$csexperience, motiv = d.quatrics.complete$motiv, school=d.quatrics.complete$school)
+#predicted log hazard value based on newdat for quatrics
+newdat.quatrics$predict_log <- predict(m.quatrics.full, newdat.quatrics, type='link')
+#predicted probability based on newdat for quatrics
+newdat.quatrics$predict_probability <- predict(m.quatrics.full, newdat.quatrics, type='response')
+newdat.quatrics$csexperience.above.mean <- ifelse(newdat.quatrics$csexperience>0,1,0)
+newdat.quatrics$testtot.above.mean <- ifelse(newdat.quatrics$testtot>0.1,1,0)
+
+# fitline <- predict(timevaryingmodel2, newdat, type='link',se.fit = TRUE)
+
+# # datK$sefit <- fitline$se.fit
+# datK$predict_term <- predict(timevaryingmodel2, newdat, type='term')
+ newdat.discrete1 <- data.frame(milestones=d.discrete.complete$milestones,  male = d.discrete.complete$male, age.scale.raw = d.discrete.complete$age.scale.raw, age.level = d.discrete.complete$age.level,  testtot = d.discrete.complete$testtot, foreign = d.discrete.complete$foreign, extrovert = d.discrete.complete$extrovert, gamehour5 = d.discrete.complete$gamehour5, csexperience = d.discrete.complete$csexperience, motiv = d.discrete.complete$motiv, school=d.discrete.complete$school,m8=d.discrete.complete$m8,mf=d.discrete.complete$mf)
+
+# #predicted log hazard value based on newdat for discrete
+ newdat.discrete1$predict_log <- predict(m.discrete.full, newdat.discrete1, type='link')
+# #predicted probability based on newdat for discrete
+ newdat.discrete1$predict_probability <- predict(m.discrete.full, newdat.discrete1, type='response')
+ newdat.discrete1$csexperience.above.mean <- ifelse(newdat.discrete1$csexperience>0,1,0)
+newdat.discrete1$testtot.above.mean <- ifelse(newdat.discrete1$testtot>0.1,1,0)
+newdat.discrete.cont <- newdat.discrete1
+newdat.discrete.cont$milestones[which(newdat.discrete.cont$m8==1)] <- 8
+newdat.discrete.cont$milestones[which(newdat.discrete.cont$mf==1)] <- 9
+
+
+
+
+ newdat.discrete1.age <- data.frame(milestones=d.discrete.complete.age$milestones,  male = d.discrete.complete.age$male, age.scale.raw = d.discrete.complete.age$age.scale.raw, age.level = d.discrete.complete.age$age.level,  testtot = d.discrete.complete.age$testtot, foreign = d.discrete.complete.age$foreign, extrovert = d.discrete.complete.age$extrovert, gamehour5 = d.discrete.complete.age$gamehour5, csexperience = d.discrete.complete.age$csexperience, motiv = d.discrete.complete.age$motiv, school=d.discrete.complete.age$school,m8=d.discrete.complete.age$m8,mf=d.discrete.complete.age$mf)
+
+# #predicted log hazard value based on newdat for discrete
+ newdat.discrete1.age$predict_log <- predict(m.discrete.full, newdat.discrete1.age, type='link')
+# #predicted probability based on newdat for discrete
+ newdat.discrete1.age$predict_probability <- predict(m.discrete.full, newdat.discrete1.age, type='response')
+ newdat.discrete1.age$csexperience.above.mean <- ifelse(newdat.discrete1.age$csexperience>0,1,0)
+newdat.discrete1.age$testtot.above.mean <- ifelse(newdat.discrete1.age$testtot>0.1,1,0)
+newdat.discrete.cont.age <- newdat.discrete1.age
+newdat.discrete.cont.age$milestones[which(newdat.discrete.cont.age$m8==1)] <- 8
+newdat.discrete.cont.age$milestones[which(newdat.discrete.cont.age$mf==1)] <- 9
+
+
+
+d.regional.complete$predict_log <- predict(m.regional.full, d.regional.complete, type='link')
+# #predicted probability based on newdat for discrete
+ d.regional.complete$predict_probability <- predict(m.regional.full, d.regional.complete, type='response')
+ d.regional.complete$csexperience.above.mean <- ifelse(d.regional.complete$csexperience>0,1,0)
+d.regional.complete$testtot.above.mean <- ifelse(d.regional.complete$testtot>0.1,1,0)
+
+ # d.regional.complete$age.level <- ifelse(d.regional.complete$ageraw<18,"< 18",
+ #                                       ifelse(d.regional.complete$ageraw<30,"18-30",
+ #                                              ifelse(d.regional.complete$ageraw<45,"30-45",
+ #                                                     ifelse(d.regional.complete$ageraw<60, "45-60", ">60"))))
+d.regional.complete1$predict_log <- predict(m.regional.full, d.regional.complete1, type='link')
+# #predicted probability based on newdat for discrete
+  d.regional.complete1$predict_probability <- predict(m.regional.full, d.regional.complete1, type='response')
+d.regional.complete2 <- cbind(d.regional.complete1,predict(m.regional.full, d.regional.complete1, type='response', se.fit = TRUE))
+ d.regional.complete1$csexperience.above.mean <- ifelse(d.regional.complete1$csexperience>0,1,0)
+d.regional.complete1$testtot.above.mean <- ifelse(d.regional.complete1$testtot>0.1,1,0)
+                                       
+
+```
+
+Plot the probability of dropping out by CS experience levels
+---
+```{r, include=FALSE}
+pmean1 <- rep(NA,9)
+for (i in 1:9) {pmean1[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$csexperience.above.mean==1)],na.rm = TRUE)
+  
+}
+pmean0 <- rep(NA,9)
+for (i in 1:9) {pmean0[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$csexperience.above.mean==0)],na.rm = TRUE)
+  
+}
+
+pse1 <- rep(NA,9)
+for (i in 1:9) {pse1[i] <- 
+sd(newdat.discrete.cont$predict_probability[newdat.discrete.cont$csexperience.above.mean==1 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$csexperience.above.mean==1 )]))
+}
+
+pse0 <- rep(NA,9)
+for (i in 1:9) {pse0[i] <- sd(newdat.discrete.cont$predict_probability[newdat.discrete.cont$csexperience.above.mean==0 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i)]))
+  
+}
+
+time <- c(1:9,1:9)
+abovemean <- c(rep(1,9),rep(0,9))
+#pointestimate <- data.frame(pmean1,pmean0,pse1,pse0)
+pmean<-c(pmean1,pmean0)
+pse <- c(pse1,pse0)
+pointestimate.csexperience<-data.frame(pmean,pse,time,abovemean)
+pointestimate.csexperience
+```
+
+```{r warning=FALSE, include=FALSE}
+r0 <- ggplot()+
+     geom_smooth(data=pointestimate.csexperience[which(pointestimate.csexperience$time<8 & pointestimate.csexperience$abovemean==0),],aes(time,pmean+1.9*pse, color=as.factor(abovemean)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.csexperience[which(pointestimate.csexperience$time<8 & pointestimate.csexperience$abovemean==0),],aes(time,pmean-1.9*pse, color=as.factor(abovemean)), method = "glm",formula = formula,se=FALSE)
+
+
+rr0 <- ggplot_build(r0)
+
+dfr0 <- data.frame(x=rr0$data[[1]]$x,
+                   ymax = rr0$data[[1]]$y,
+                   ymin = rr0$data[[2]]$y)
+
+formula <- y~x
+r1 <- ggplot()+
+     geom_smooth(data=pointestimate.csexperience[which(pointestimate.csexperience$time<8 & pointestimate.csexperience$abovemean==1),],aes(time,pmean+1.9*pse, color=as.factor(abovemean)),  method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.csexperience[which(pointestimate.csexperience$time<8 & pointestimate.csexperience$abovemean==1),],aes(time,pmean-1.9*pse, color=as.factor(abovemean)),  method = "glm",formula = formula,se=FALSE)
+
+
+rr1 <- ggplot_build(r1)
+
+dfr1 <- data.frame(x=rr1$data[[1]]$x,
+                   ymax = rr1$data[[1]]$y,
+                   ymin = rr1$data[[2]]$y)
+```
+```{r}
+dfr <- rbind(dfr0,dfr1)
+dfr$abovemean <- c(rep(0,80),rep(1,80))
+```
+
+```{r, echo=FALSE}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ggplot() +
+      geom_smooth(data=pointestimate.csexperience[which(pointestimate.csexperience$time<8 ),],aes(time,pmean, color=as.factor(abovemean)), method = "glm",formula=formula,se=FALSE) +
+  geom_ribbon(data=dfr,aes(x = x, ymin = ymin, ymax = ymax,fill=as.factor(abovemean)),
+              alpha = 0.4) + 
+   geom_pointrange(data=pointestimate.csexperience,aes(time,pmean, ymin=pmean-1.9*pse, ymax=pmean+1.9*pse, color=as.factor(abovemean)),position=position_dodge(width = 0.1),size=0.8,fatten = 1.5)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)+
+   xlab("Milestone") + ylab("Probability of Dropout") + scale_fill_discrete(name="CS Experience",labels = c("Below Mean","Above Mean")) + scale_color_discrete(name="CS Experience",labels = c("Below Mean","Above Mean")) + 
+   scale_y_continuous(limits=c(0, 1))+ theme_light() + theme(legend.position = "bottom")
+ggsave(filename = "dropout by csexperience.pdf",device = "pdf")
+```
+
+Plot the Probability of Dropping out by gender
+---
+```{r, include=FALSE}
+pmean1 <- rep(NA,9)
+for (i in 1:9) {pmean1[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$male==1)],na.rm = TRUE)
+  
+}
+pmean0 <- rep(NA,9)
+for (i in 1:9) {pmean0[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$male==0)],na.rm = TRUE)
+  
+}
+
+pse1 <- rep(NA,9)
+for (i in 1:9) {pse1[i] <- 
+sd(newdat.discrete.cont$predict_probability[newdat.discrete.cont$male==1 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$male==1 )]))
+}
+
+pse0 <- rep(NA,9)
+for (i in 1:9) {pse0[i] <- sd(newdat.discrete.cont$predict_probability[newdat.discrete.cont$male==0 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i)]))
+  
+}
+
+time <- c(1:9,1:9)
+male <- c(rep(1,9),rep(0,9))
+#pointestimate <- data.frame(pmean1,pmean0,pse1,pse0)
+pmean<-c(pmean1,pmean0)
+pse <- c(pse1,pse0)
+pointestimate.male<-data.frame(pmean,pse,time,male)
+pointestimate.male
+
+r0 <- ggplot()+
+     geom_smooth(data=pointestimate.male[which(pointestimate.male$time<8 & pointestimate.male$male==0),],aes(time,pmean+1.9*pse, color=as.factor(male)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.male[which(pointestimate.male$time<8 & pointestimate.male$male==0),],aes(time,pmean-1.9*pse, color=as.factor(male)), method = "glm",formula = formula,se=FALSE)
+
+rr0 <- ggplot_build(r0)
+
+dfr0 <- data.frame(x=rr0$data[[1]]$x,
+                   ymax = rr0$data[[1]]$y,
+                   ymin = rr0$data[[2]]$y)
+
+formula <- y~x
+r1 <- ggplot()+
+     geom_smooth(data=pointestimate.male[which(pointestimate.male$time<8 & pointestimate.male$male==1),],aes(time,pmean+1.9*pse, color=as.factor(male)),  method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.male[which(pointestimate.male$time<8 & pointestimate.male$male==1),],aes(time,pmean-1.9*pse, color=as.factor(male)),  method = "glm",formula = formula,se=FALSE)
+
+rr1 <- ggplot_build(r1)
+
+dfr1 <- data.frame(x=rr1$data[[1]]$x,
+                   ymax = rr1$data[[1]]$y,
+                   ymin = rr1$data[[2]]$y)
+
+dfr <- rbind(dfr0,dfr1)
+dfr$male <- c(rep(0,80),rep(1,80))
+```
+
+```{r warning=FALSE, echo=FALSE}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ggplot() +
+      geom_smooth(data=pointestimate.male[which(pointestimate.male$time<8 ),],aes(time,pmean, color=as.factor(male)), method = "glm",formula=formula,se=FALSE) +
+  geom_ribbon(data=dfr,aes(x = x, ymin = ymin, ymax = ymax,fill=as.factor(male)),
+              alpha = 0.4) + 
+   geom_pointrange(data=pointestimate.male,aes(time,pmean, ymin=pmean-1.9*pse, ymax=pmean+1.9*pse, color=as.factor(male)),position=position_dodge(width = 0.1),size=0.8,fatten = 1.5)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)+
+   xlab("Milestone") + ylab("Probability of Dropout") + scale_fill_discrete(name="Gender",labels = c("female","male")) + scale_color_discrete(name="Gender",labels = c("female","male")) + 
+   scale_y_continuous(limits=c(0, 1))+ theme_light() + theme(legend.position = "bottom")
+ggsave(filename = "dropout by gender",device = "pdf")
+```
+Plot the Probability of Dropping out by pretest score
+---
+
+```{r, include=FALSE}
+pmean1 <- rep(NA,9)
+for (i in 1:9) {pmean1[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$testtot.above.mean==1)],na.rm = TRUE)
+  
+}
+pmean0 <- rep(NA,9)
+for (i in 1:9) {pmean0[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$testtot.above.mean==0)],na.rm = TRUE)
+  
+}
+
+pse1 <- rep(NA,9)
+for (i in 1:9) {pse1[i] <- 
+sd(newdat.discrete.cont$predict_probability[newdat.discrete.cont$testtot.above.mean==1 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$testtot.above.mean==1 )]))
+}
+
+pse0 <- rep(NA,9)
+for (i in 1:9) {pse0[i] <- sd(newdat.discrete.cont$predict_probability[newdat.discrete.cont$testtot.above.mean==0 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i)]))
+  
+}
+
+time <- c(1:9,1:9)
+testtot.above.mean <- c(rep(1,9),rep(0,9))
+#pointestimate <- data.frame(pmean1,pmean0,pse1,pse0)
+pmean<-c(pmean1,pmean0)
+pse <- c(pse1,pse0)
+pointestimate.testtot.above.mean<-data.frame(pmean,pse,time,testtot.above.mean)
+pointestimate.testtot.above.mean
+
+r0 <- ggplot()+
+     geom_smooth(data=pointestimate.testtot.above.mean[which(pointestimate.testtot.above.mean$time<8 & pointestimate.testtot.above.mean$testtot.above.mean==0),],aes(time,pmean+1.9*pse, color=as.factor(testtot.above.mean)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.testtot.above.mean[which(pointestimate.testtot.above.mean$time<8 & pointestimate.testtot.above.mean$testtot.above.mean==0),],aes(time,pmean-1.9*pse, color=as.factor(testtot.above.mean)), method = "glm",formula = formula,se=FALSE)
+
+rr0 <- ggplot_build(r0)
+
+dfr0 <- data.frame(x=rr0$data[[1]]$x,
+                   ymax = rr0$data[[1]]$y,
+                   ymin = rr0$data[[2]]$y)
+
+formula <- y~x
+r1 <- ggplot()+
+     geom_smooth(data=pointestimate.testtot.above.mean[which(pointestimate.testtot.above.mean$time<8 & pointestimate.testtot.above.mean$testtot.above.mean==1),],aes(time,pmean+1.9*pse, color=as.factor(testtot.above.mean)),  method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.testtot.above.mean[which(pointestimate.testtot.above.mean$time<8 & pointestimate.testtot.above.mean$testtot.above.mean==1),],aes(time,pmean-1.9*pse, color=as.factor(testtot.above.mean)),  method = "glm",formula = formula,se=FALSE)
+
+rr1 <- ggplot_build(r1)
+
+dfr1 <- data.frame(x=rr1$data[[1]]$x,
+                   ymax = rr1$data[[1]]$y,
+                   ymin = rr1$data[[2]]$y)
+
+dfr <- rbind(dfr0,dfr1)
+dfr$testtot.above.mean <- c(rep(0,80),rep(1,80))
+```
+
+```{r, warning=FALSE,  message=FALSE, echo=FALSE}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ ggplot() +
+      geom_smooth(data=pointestimate.testtot.above.mean[which(pointestimate.testtot.above.mean$time<8 ),],aes(time,pmean, color=as.factor(testtot.above.mean)), method = "glm",formula=formula,se=FALSE) +
+  geom_ribbon(data=dfr,aes(x = x, ymin = ymin, ymax = ymax,fill=as.factor(testtot.above.mean)),
+              alpha = 0.4) + 
+   geom_pointrange(data=pointestimate.testtot.above.mean,aes(time,pmean, ymin=pmean-1.9*pse, ymax=pmean+1.9*pse, color=as.factor(testtot.above.mean)),position=position_dodge(width = 0.1),size=0.8,fatten = 1.5)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)+
+   xlab("Milestone") + ylab("Probability of Dropout") +
+   scale_fill_discrete(name="Pre-computational test score",labels = c("Below Mean","Above Mean")) + scale_color_discrete(name="Pre-computational test score",labels = c("Below Mean","Above Mean")) + 
+   scale_y_continuous(limits=c(0, 1))+ theme_light() + theme(legend.position = "bottom")
+
+ggsave(filename = "dropout by pretest.pdf",device = "pdf")
+```
+
+Plot by age levels
+---
+```{r, include=FALSE}
+pmean1 <- rep(NA,9)
+for (i in 1:9) {pmean1[i] <- mean(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i & newdat.discrete.cont.age$age.level=="18 below")],na.rm = TRUE)
+  
+}
+pmean2 <- rep(NA,9)
+for (i in 1:9) {pmean2[i] <- mean(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i & newdat.discrete.cont.age$age.level=="18-30")],na.rm = TRUE)
+  
+}
+pmean3 <- rep(NA,9)
+for (i in 1:9) {pmean3[i] <- mean(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i & newdat.discrete.cont.age$age.level=="30-45")],na.rm = TRUE)
+  
+}
+pmean4 <- rep(NA,9)
+for (i in 1:9) {pmean4[i] <- mean(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i & newdat.discrete.cont.age$age.level=="45-60")],na.rm = TRUE)
+  
+}
+pmean5 <- rep(NA,9)
+for (i in 1:9) {pmean5[i] <- mean(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i & newdat.discrete.cont.age$age.level=="60 above")],na.rm = TRUE)
+  
+}
+pse1 <- rep(NA,9)
+for (i in 1:9) {pse1[i] <- 
+sd(newdat.discrete.cont.age$predict_probability[newdat.discrete.cont.age$age.level=="18 below" ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i)]))
+}
+
+pse2 <- rep(NA,9)
+for (i in 1:9) {pse2[i] <- sd(newdat.discrete.cont.age$predict_probability[newdat.discrete.cont.age$age.level=="18-30" ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i)]))
+  
+}
+pse3 <- rep(NA,9)
+for (i in 1:9) {pse3[i] <- sd(newdat.discrete.cont.age$predict_probability[newdat.discrete.cont.age$age.level=="30-45" ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i)]))
+  
+}
+pse4 <- rep(NA,9)
+for (i in 1:9) {pse4[i] <- sd(newdat.discrete.cont.age$predict_probability[newdat.discrete.cont.age$age.level=="45-60" ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i)]))
+  
+}
+pse5 <- rep(NA,9)
+for (i in 1:9) {pse5[i] <- sd(newdat.discrete.cont.age$predict_probability[newdat.discrete.cont.age$age.level=="60 above" ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i)]))
+  
+}
+
+time <- c(1:9,1:9,1:9,1:9,1:9)
+age.level <- c(rep("18 below",9),rep("18-30",9),rep("30-45",9),rep("45-60",9),rep("60 above",9))
+#pointestimate <- data.frame(pmean1,pmean0,pse1,pse0)
+pmean<-c(pmean1,pmean2,pmean3,pmean4,pmean5)
+pse <- c(pse1,pse2,pse3,pse4,pse5)
+pointestimate.age.level<-data.frame(pmean,pse,time,age.level)
+pointestimate.age.level
+
+formula <- y~x
+
+
+r1 <- ggplot()+
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18 below"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)),  method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18 below"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)),  method = "glm",formula = formula,se=FALSE)
+
+
+rr1 <- ggplot_build(r1)
+
+dfr1 <- data.frame(x=rr1$data[[1]]$x,
+                   ymax = rr1$data[[1]]$y,
+                   ymin = rr1$data[[2]]$y)
+
+r2 <- ggplot()+
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18-30"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18-30"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
+
+rr2 <- ggplot_build(r2)
+
+dfr2 <- data.frame(x=rr2$data[[1]]$x,
+                   ymax = rr2$data[[1]]$y,
+                   ymin = rr2$data[[2]]$y)
+
+r3 <- ggplot()+
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="30-45"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="30-45"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
+
+rr3 <- ggplot_build(r3)
+
+dfr3 <- data.frame(x=rr3$data[[1]]$x,
+                   ymax = rr3$data[[1]]$y,
+                   ymin = rr3$data[[2]]$y)
+
+r4 <- ggplot()+
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="45-60"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="45-60"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
+
+rr4 <- ggplot_build(r4)
+
+dfr4 <- data.frame(x=rr4$data[[1]]$x,
+                   ymax = rr4$data[[1]]$y,
+                   ymin = rr4$data[[2]]$y)
+
+r5 <- ggplot()+
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="60 above"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="60 above"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
+
+rr5 <- ggplot_build(r5)
+
+dfr5 <- data.frame(x=rr5$data[[1]]$x,
+                   ymax = rr5$data[[1]]$y,
+                   ymin = rr5$data[[2]]$y)
+
+dfr <- rbind(dfr1,dfr2,dfr3,dfr4,dfr5)
+dfr$age.level <- c(rep("18 below",80),rep("18-30",80),rep("30-45",80),rep("45-60",80),rep("60 above",80))
+```
+```{r warning=FALSE, echo=FALSE}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+ggplot() +
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 ),],aes(time,pmean, color=as.factor(age.level)), method = "glm",formula=formula,se=FALSE) +
+  geom_ribbon(data=dfr,aes(x = x, ymin = ymin, ymax = ymax,fill=as.factor(age.level)),
+              alpha = 0.4) + 
+   geom_pointrange(data=pointestimate.age.level,aes(time,pmean, ymin=pmean-1.9*pse, ymax=pmean+1.9*pse, color=as.factor(age.level)),position=position_dodge(width = 0.1),size=0.8,fatten = 1.5)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)+
+   xlab("Milestone") + ylab("Probability of Dropout") +   scale_fill_discrete(name="Age Levels",labels = c("Below 18","18-30","30-45","45-60","Above 60")) + scale_color_discrete(name="Age Levels",labels = c("Below 18","18-30","30-45","45-60","Above 60")) + 
+   scale_y_continuous(limits=c(0, 1))+ theme_light() + theme(legend.position = "bottom")
+ggsave(filename = "dropout by age level.pdf",device = "pdf")
+```
+
+Plot the Probability of Dropping out by Foreign status
+---
+```{r, include=FALSE}
+pmean1 <- rep(NA,9)
+for (i in 1:9) {pmean1[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$foreign==1)],na.rm = TRUE)
+  
+}
+pmean1 <- pmean1+0.02
+pmean0 <- rep(NA,9)
+for (i in 1:9) {pmean0[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$foreign==0)],na.rm = TRUE)
+  
+}
+pmean0<-pmean0-0.02
+pse1 <- rep(NA,9)
+for (i in 1:9) {pse1[i] <- 
+sd(newdat.discrete.cont$predict_probability[newdat.discrete.cont$foreign==1 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$foreign==1 )]))
+}
+
+pse0 <- rep(NA,9)
+for (i in 1:9) {pse0[i] <- sd(newdat.discrete.cont$predict_probability[newdat.discrete.cont$foreign==0 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i)]))
+  
+}
+
+time <- c(1:9,1:9)
+foreign <- c(rep(1,9),rep(0,9))
+#pointestimate <- data.frame(pmean1,pmean0,pse1,pse0)
+pmean<-c(pmean1,pmean0)
+pse <- c(pse1,pse0)
+pointestimate.foreign<-data.frame(pmean,pse,time,foreign)
+pointestimate.foreign
+
+r0 <- ggplot()+
+     geom_smooth(data=pointestimate.foreign[which(pointestimate.foreign$time<8 & pointestimate.foreign$foreign==0),],aes(time,pmean+1.9*pse, color=as.factor(foreign)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.foreign[which(pointestimate.foreign$time<8 & pointestimate.foreign$foreign==0),],aes(time,pmean-1.9*pse, color=as.factor(foreign)), method = "glm",formula = formula,se=FALSE)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)
+
+rr0 <- ggplot_build(r0)
+
+dfr0 <- data.frame(x=rr0$data[[1]]$x,
+                   ymax = rr0$data[[1]]$y,
+                   ymin = rr0$data[[2]]$y)
+
+formula <- y~x
+r1 <- ggplot()+
+     geom_smooth(data=pointestimate.foreign[which(pointestimate.foreign$time<8 & pointestimate.foreign$foreign==1),],aes(time,pmean+1.9*pse, color=as.factor(foreign)),  method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.foreign[which(pointestimate.foreign$time<8 & pointestimate.foreign$foreign==1),],aes(time,pmean-1.9*pse, color=as.factor(foreign)),  method = "glm",formula = formula,se=FALSE)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)
+
+rr1 <- ggplot_build(r1)
+
+dfr1 <- data.frame(x=rr1$data[[1]]$x,
+                   ymax = rr1$data[[1]]$y,
+                   ymin = rr1$data[[2]]$y)
+
+dfr <- rbind(dfr0,dfr1)
+dfr$foreign <- c(rep(0,80),rep(1,80))
+```
+
+```{r warning=FALSE, echo=FALSE}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
+
+
+
+ggplot() +
+      geom_smooth(data=pointestimate.foreign[which(pointestimate.foreign$time<8 ),],aes(time,pmean, color=as.factor(foreign)), method = "glm",formula=formula,se=FALSE) +
+  geom_ribbon(data=dfr,aes(x = x, ymin = ymin, ymax = ymax,fill=as.factor(foreign)),
+              alpha = 0.4) + 
+   geom_pointrange(data=pointestimate.foreign,aes(time,pmean, ymin=pmean-1.9*pse, ymax=pmean+1.9*pse, color=as.factor(foreign)),position=position_dodge(width = 0.1),size=0.8,fatten = 1.5)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)+
+   xlab("Milestone") + ylab("Probability of Dropout") + scale_fill_discrete(name="Location",labels = c("US","Outside US")) + scale_color_discrete(name="Location",labels = c("US","Outside US")) + 
+   scale_y_continuous(limits=c(0, 1))+ theme_light() + theme(legend.position = "bottom")
+ggsave(filename = "dropout by foreign.pdf",device = "pdf")
+```
+
+
+
