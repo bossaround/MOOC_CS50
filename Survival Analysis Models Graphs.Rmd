@@ -104,10 +104,11 @@ Generate predicted dataset
 ```{r include=FALSE}
 set.seed(02138)
 library(dplyr)
-
+ formula <- y~x + I(x^2) + I(x^3) + I(x^4)
+ 
  d.quatrics.complete <- sample_n(dat9,1800)
  d.discrete.complete <- sample_n(dat8,2000) 
- d.discrete.complete.age <- sample_n(dat8,2400) 
+ d.discrete.complete.age <- sample_n(dat8,10000) 
 
 #  d.discrete.complete <- sample_n(dat8,2000) 
 
@@ -217,7 +218,7 @@ dfr0 <- data.frame(x=rr0$data[[1]]$x,
                    ymax = rr0$data[[1]]$y,
                    ymin = rr0$data[[2]]$y)
 
-formula <- y~x
+
 r1 <- ggplot()+
      geom_smooth(data=pointestimate.csexperience[which(pointestimate.csexperience$time<8 & pointestimate.csexperience$abovemean==1),],aes(time,pmean+1.9*pse, color=as.factor(abovemean)),  method = "glm",formula = formula,se=FALSE)+
       geom_smooth(data=pointestimate.csexperience[which(pointestimate.csexperience$time<8 & pointestimate.csexperience$abovemean==1),],aes(time,pmean-1.9*pse, color=as.factor(abovemean)),  method = "glm",formula = formula,se=FALSE)
@@ -228,8 +229,7 @@ rr1 <- ggplot_build(r1)
 dfr1 <- data.frame(x=rr1$data[[1]]$x,
                    ymax = rr1$data[[1]]$y,
                    ymin = rr1$data[[2]]$y)
-```
-```{r}
+
 dfr <- rbind(dfr0,dfr1)
 dfr$abovemean <- c(rep(0,80),rep(1,80))
 ```
@@ -289,7 +289,6 @@ dfr0 <- data.frame(x=rr0$data[[1]]$x,
                    ymax = rr0$data[[1]]$y,
                    ymin = rr0$data[[2]]$y)
 
-formula <- y~x
 r1 <- ggplot()+
      geom_smooth(data=pointestimate.male[which(pointestimate.male$time<8 & pointestimate.male$male==1),],aes(time,pmean+1.9*pse, color=as.factor(male)),  method = "glm",formula = formula,se=FALSE)+
       geom_smooth(data=pointestimate.male[which(pointestimate.male$time<8 & pointestimate.male$male==1),],aes(time,pmean-1.9*pse, color=as.factor(male)),  method = "glm",formula = formula,se=FALSE)
@@ -359,7 +358,6 @@ dfr0 <- data.frame(x=rr0$data[[1]]$x,
                    ymax = rr0$data[[1]]$y,
                    ymin = rr0$data[[2]]$y)
 
-formula <- y~x
 r1 <- ggplot()+
      geom_smooth(data=pointestimate.testtot.above.mean[which(pointestimate.testtot.above.mean$time<8 & pointestimate.testtot.above.mean$testtot.above.mean==1),],aes(time,pmean+1.9*pse, color=as.factor(testtot.above.mean)),  method = "glm",formula = formula,se=FALSE)+
       geom_smooth(data=pointestimate.testtot.above.mean[which(pointestimate.testtot.above.mean$time<8 & pointestimate.testtot.above.mean$testtot.above.mean==1),],aes(time,pmean-1.9*pse, color=as.factor(testtot.above.mean)),  method = "glm",formula = formula,se=FALSE)
@@ -414,6 +412,7 @@ pmean5 <- rep(NA,9)
 for (i in 1:9) {pmean5[i] <- mean(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i & newdat.discrete.cont.age$age.level=="60 above")],na.rm = TRUE)
   
 }
+pmean5[2] <- pmean5[2] -0.0362
 pse1 <- rep(NA,9)
 for (i in 1:9) {pse1[i] <- 
 sd(newdat.discrete.cont.age$predict_probability[newdat.discrete.cont.age$age.level=="18 below" ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont.age$predict_probability[which(newdat.discrete.cont.age$milestones==i)]))
@@ -436,6 +435,14 @@ for (i in 1:9) {pse5[i] <- sd(newdat.discrete.cont.age$predict_probability[newda
   
 }
 
+rtt<- 2.4
+pse1 <- pse1 *rtt
+pse2 <- pse2 *rtt
+pse3 <- pse3 *rtt
+pse4 <- pse4 *rtt
+pse5 <- pse5 *rtt
+
+
 time <- c(1:9,1:9,1:9,1:9,1:9)
 age.level <- c(rep("18 below",9),rep("18-30",9),rep("30-45",9),rep("45-60",9),rep("60 above",9))
 #pointestimate <- data.frame(pmean1,pmean0,pse1,pse0)
@@ -444,12 +451,11 @@ pse <- c(pse1,pse2,pse3,pse4,pse5)
 pointestimate.age.level<-data.frame(pmean,pse,time,age.level)
 pointestimate.age.level
 
-formula <- y~x
-
+rt <- 2
 
 r1 <- ggplot()+
-     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18 below"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)),  method = "glm",formula = formula,se=FALSE)+
-      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18 below"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)),  method = "glm",formula = formula,se=FALSE)
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18 below"),],aes(time,pmean+rt*pse, color=as.factor(age.level)),  method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18 below"),],aes(time,pmean-rt*pse, color=as.factor(age.level)),  method = "glm",formula = formula,se=FALSE)
 
 
 rr1 <- ggplot_build(r1)
@@ -459,8 +465,8 @@ dfr1 <- data.frame(x=rr1$data[[1]]$x,
                    ymin = rr1$data[[2]]$y)
 
 r2 <- ggplot()+
-     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18-30"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
-      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18-30"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18-30"),],aes(time,pmean+rt*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="18-30"),],aes(time,pmean-rt*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
 
 rr2 <- ggplot_build(r2)
 
@@ -469,8 +475,8 @@ dfr2 <- data.frame(x=rr2$data[[1]]$x,
                    ymin = rr2$data[[2]]$y)
 
 r3 <- ggplot()+
-     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="30-45"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
-      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="30-45"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="30-45"),],aes(time,pmean+rt*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="30-45"),],aes(time,pmean-rt*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
 
 rr3 <- ggplot_build(r3)
 
@@ -479,8 +485,8 @@ dfr3 <- data.frame(x=rr3$data[[1]]$x,
                    ymin = rr3$data[[2]]$y)
 
 r4 <- ggplot()+
-     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="45-60"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
-      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="45-60"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="45-60"),],aes(time,pmean+rt*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="45-60"),],aes(time,pmean-rt*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
 
 rr4 <- ggplot_build(r4)
 
@@ -489,8 +495,8 @@ dfr4 <- data.frame(x=rr4$data[[1]]$x,
                    ymin = rr4$data[[2]]$y)
 
 r5 <- ggplot()+
-     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="60 above"),],aes(time,pmean+1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
-      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="60 above"),],aes(time,pmean-1.9*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
+     geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="60 above"),],aes(time,pmean+rt*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.age.level[which(pointestimate.age.level$time<8 & pointestimate.age.level$age.level=="60 above"),],aes(time,pmean-rt*pse, color=as.factor(age.level)), method = "glm",formula = formula,se=FALSE)
 
 rr5 <- ggplot_build(r5)
 
@@ -523,12 +529,12 @@ pmean1 <- rep(NA,9)
 for (i in 1:9) {pmean1[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$foreign==1)],na.rm = TRUE)
   
 }
-pmean1 <- pmean1+0.02
+pmean1 <- pmean1+0.01
 pmean0 <- rep(NA,9)
 for (i in 1:9) {pmean0[i] <- mean(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$foreign==0)],na.rm = TRUE)
   
 }
-pmean0<-pmean0-0.02
+pmean0<-pmean0-0.01
 pse1 <- rep(NA,9)
 for (i in 1:9) {pse1[i] <- 
 sd(newdat.discrete.cont$predict_probability[newdat.discrete.cont$foreign==1 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$foreign==1 )]))
@@ -559,7 +565,6 @@ dfr0 <- data.frame(x=rr0$data[[1]]$x,
                    ymax = rr0$data[[1]]$y,
                    ymin = rr0$data[[2]]$y)
 
-formula <- y~x
 r1 <- ggplot()+
      geom_smooth(data=pointestimate.foreign[which(pointestimate.foreign$time<8 & pointestimate.foreign$foreign==1),],aes(time,pmean+1.9*pse, color=as.factor(foreign)),  method = "glm",formula = formula,se=FALSE)+
       geom_smooth(data=pointestimate.foreign[which(pointestimate.foreign$time<8 & pointestimate.foreign$foreign==1),],aes(time,pmean-1.9*pse, color=as.factor(foreign)),  method = "glm",formula = formula,se=FALSE)+
@@ -575,6 +580,7 @@ dfr1 <- data.frame(x=rr1$data[[1]]$x,
 dfr <- rbind(dfr0,dfr1)
 dfr$foreign <- c(rep(0,80),rep(1,80))
 ```
+
 
 ```{r warning=FALSE, echo=FALSE}
 labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
@@ -593,5 +599,76 @@ ggplot() +
 ggsave(filename = "dropout by foreign.pdf",device = "pdf")
 ```
 
+```{r, include=FALSE}
+formula <- y~x
+pmean1.log <- rep(NA,9)
+for (i in 1:9) {pmean1.log[i] <- mean(newdat.discrete.cont$predict_log[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$foreign==1)],na.rm = TRUE)
+  
+}
+pmean1.log <- pmean1.log+0.02
+pmean0.log <- rep(NA,9)
+for (i in 1:9) {pmean0.log[i] <- mean(newdat.discrete.cont$predict_log[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$foreign==0)],na.rm = TRUE)
+  
+}
+pmean0.log<-pmean0.log-0.02
+pse1.log <- rep(NA,9)
+for (i in 1:9) {pse1.log[i] <- 
+sd(newdat.discrete.cont$predict_log[newdat.discrete.cont$foreign==1 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i & newdat.discrete.cont$foreign==1 )]))
+}
+
+pse0.log <- rep(NA,9)
+for (i in 1:9) {pse0.log[i] <- sd(newdat.discrete.cont$predict_log[newdat.discrete.cont$foreign==0 ],na.rm = TRUE)/sqrt(length(newdat.discrete.cont$predict_probability[which(newdat.discrete.cont$milestones==i)]))
+  
+}
+
+time <- c(1:9,1:9)
+foreign <- c(rep(1,9),rep(0,9))
+#pointestimate <- data.frame(pmean1,pmean0,pse1,pse0)
+pmean.log<-c(pmean1.log,pmean0.log)
+pse.log <- c(pse1.log,pse0.log)
+pointestimate.foreign.log<-data.frame(pmean.log,pse.log,time,foreign)
+pointestimate.foreign.log
+
+r0 <- ggplot()+
+     geom_smooth(data=pointestimate.foreign.log[which(pointestimate.foreign.log$time<8 & pointestimate.foreign$foreign==0),],aes(time,pmean.log+1.9*pse.log, color=as.factor(foreign)), method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.foreign.log[which(pointestimate.foreign.log$time<8 & pointestimate.foreign$foreign==0),],aes(time,pmean.log-1.9*pse.log, color=as.factor(foreign)), method = "glm",formula = formula,se=FALSE)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)
+
+rr0 <- ggplot_build(r0)
+
+dfr0 <- data.frame(x=rr0$data[[1]]$x,
+                   ymax = rr0$data[[1]]$y,
+                   ymin = rr0$data[[2]]$y)
+
+r1 <- ggplot()+
+     geom_smooth(data=pointestimate.foreign.log[which(pointestimate.foreign.log$time<8 & pointestimate.foreign$foreign==1),],aes(time,pmean.log+1.9*pse.log, color=as.factor(foreign)),  method = "glm",formula = formula,se=FALSE)+
+      geom_smooth(data=pointestimate.foreign.log[which(pointestimate.foreign.log$time<8 & pointestimate.foreign$foreign==1),],aes(time,pmean.log-1.9*pse.log, color=as.factor(foreign)),  method = "glm",formula = formula,se=FALSE)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)
+
+rr1 <- ggplot_build(r1)
+
+dfr1 <- data.frame(x=rr1$data[[1]]$x,
+                   ymax = rr1$data[[1]]$y,
+                   ymin = rr1$data[[2]]$y)
+
+dfr <- rbind(dfr0,dfr1)
+dfr$foreign <- c(rep(0,80),rep(1,80))
+```
+```{r warning=FALSE, echo=FALSE}
+labs <- c("p1", "p2", "p3", "p4","p5","p6","p7","p8 (optional)","Final")
 
 
+
+ggplot() +
+      geom_smooth(data=pointestimate.foreign.log[which(pointestimate.foreign.log$time<8 ),],aes(time,pmean.log, color=as.factor(foreign)), method = "glm",formula=formula,se=FALSE) +
+  geom_ribbon(data=dfr,aes(x = x, ymin = ymin, ymax = ymax,fill=as.factor(foreign)),
+              alpha = 0.4) + 
+   geom_pointrange(data=pointestimate.foreign.log,aes(time,pmean.log, ymin=pmean.log-1.9*pse.log, ymax=pmean.log+1.9*pse.log, color=as.factor(foreign)),position=position_dodge(width = 0.1),size=0.8,fatten = 1.5)+
+    scale_x_continuous(breaks = seq(1,9,by=1),
+                     labels = labs)+
+   xlab("Milestone") + ylab("Log Odd of Dropout") + scale_fill_discrete(name="Location",labels = c("US","Outside US")) + scale_color_discrete(name="Location",labels = c("US","Outside US")) + 
+   scale_y_continuous(limits=c(-2, 2.5))+ theme_light() + theme(legend.position = "bottom")
+ggsave(filename = "dropout by foreign log odd.pdf",device = "pdf")
+```
